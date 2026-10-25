@@ -25,8 +25,12 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/product_watch.png
+  AssetGenImage get productWatch =>
+      const AssetGenImage('assets/images/product_watch.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [appIcon, appLogo];
+  List<AssetGenImage> get values => [appIcon, appLogo, productWatch];
 }
 
 class $AssetsSvgGen {

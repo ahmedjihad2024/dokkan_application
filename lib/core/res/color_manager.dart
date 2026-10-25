@@ -25,6 +25,7 @@ abstract class ColorM {
   static const Color surfaceLight       = Color(0xFFFFFFFF); // Clean white cards
   static const Color surfaceDarkElevated= Color(0xFF21262D); // Modals, inputs, popups
   static const Color surfaceLightElevated= Color(0xFFF1F5F9); // Light inputs, chips
+  static const Color surfaceDarkSubtle  = Color(0xFF131926); // Subtle dark card background
   static const Color surfaceLightSubtle = Color(0xFFF8FAFC); // Subtle card/image container background
 
   // Banner & Specialized Gradients
@@ -33,8 +34,14 @@ abstract class ColorM {
   static const Color bannerGradientLightStart = Color(0xFF0F172A);
   static const Color bannerGradientLightEnd   = Color(0xFF1E1B18);
 
+  static const Color productGradientDarkStart  = Color(0xFF1E293B);
+  static const Color productGradientDarkEnd    = Color(0xFF0F172A);
+  static const Color productGradientLightStart = Color(0xFFF8FAFC);
+  static const Color productGradientLightEnd   = Color(0xFFF1F5F9);
+
   // Borders & Dividers
   static const Color borderDark         = Color(0xFF30363D);
+  static const Color borderDarkSubtle   = Color(0xFF283347);
   static const Color borderLight        = Color(0xFFE2E8F0);
 
   // Typography Colors

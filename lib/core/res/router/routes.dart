@@ -10,6 +10,7 @@ abstract class Routes {
   static const String categories         = '/categories';
   static const String productsByCategory = '/products-by-category';
   static const String productDetails     = '/product-details';
+  static const String productReviews     = '/product-reviews';
   static const String cart               = '/cart';
   static const String profile            = '/profile';
   static const String changePassword     = '/change-password';

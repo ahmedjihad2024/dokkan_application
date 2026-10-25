@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../features/home/data/models/product_model.dart';
 import '../../../features/home/presentation/home_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../../features/product_details/presentation/product_details_screen.dart';
+import '../../../features/reviews/presentation/reviews_screen.dart';
 import '../../../features/splash/presentation/splash_screen.dart';
 import 'routes.dart';
 
@@ -16,6 +19,23 @@ class RouteGenerator {
 
       case Routes.home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+
+      case Routes.productDetails:
+        final product = settings.arguments as ProductModel?;
+        return MaterialPageRoute(
+          builder: (_) => ProductDetailsScreen(product: product),
+        );
+
+      case Routes.productReviews:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => ReviewsScreen(
+            productName:
+                args?['productName'] as String? ?? 'Heritage Chronograph Steel Watch',
+            averageRating: (args?['rating'] as num?)?.toDouble() ?? 4.9,
+            totalReviews: args?['reviewsCount'] as int? ?? 128,
+          ),
+        );
 
       default:
         return _unDefinedRoute(settings.name);

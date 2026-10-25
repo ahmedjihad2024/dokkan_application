@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import '../../../../core/extensions/navigation_extension.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
+import '../../../../core/res/router/routes.dart';
 import '../../../../core/widgets/feedback/app_error_widget.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import '../../../../core/widgets/refresh/customized_smart_refresh.dart';
@@ -105,7 +107,7 @@ class _HomeTabState extends State<HomeTab> {
             CuratedArrivalsSection(
               products: widget.state.products,
               onProductTap: (product) {
-                CustomSnackBar.showSuccess(context, 'Selected ${product.name}');
+                context.pushNamed(Routes.productDetails, arguments: product);
               },
               onFavoriteToggle: widget.cubit.toggleFavorite,
               onAddToCart: (product) {
