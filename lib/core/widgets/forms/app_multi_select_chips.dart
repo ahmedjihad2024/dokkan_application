@@ -1,6 +1,5 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../extensions/theme_extensions.dart';
 import '../../res/color_manager.dart';
@@ -35,7 +34,7 @@ class AppMultiSelectChips<T> extends StatelessWidget {
             children: [
               Text(
                 label!,
-                style: GoogleFonts.inter(
+                style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                   color: context.textPrimaryColor,
@@ -45,7 +44,7 @@ class AppMultiSelectChips<T> extends StatelessWidget {
                 SizedBox(width: 4.w),
                 Text(
                   '*',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                     color: ColorM.danger,
@@ -93,10 +92,14 @@ class AppMultiSelectChips<T> extends StatelessWidget {
                     ],
                     Text(
                       itemLabel(item),
-                      style: GoogleFonts.inter(
+                      style: TextStyle(
                         fontSize: 13.sp,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected ? ColorM.white : context.textPrimaryColor,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        color: isSelected
+                            ? ColorM.white
+                            : context.textPrimaryColor,
                       ),
                     ),
                   ],

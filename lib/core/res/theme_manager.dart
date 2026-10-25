@@ -1,6 +1,5 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'color_manager.dart';
 import 'fonts_manager.dart';
@@ -28,7 +27,7 @@ class ThemeManager {
         centerTitle: true,
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: ColorM.textPrimaryLight),
-        titleTextStyle: GoogleFonts.inter(
+        titleTextStyle: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeightM.semiBold,
           color: ColorM.textPrimaryLight,
@@ -52,7 +51,7 @@ class ThemeManager {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SizeM.buttonBorderRadius.r),
           ),
-          textStyle: GoogleFonts.inter(
+          textStyle: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeightM.semiBold,
           ),
@@ -67,7 +66,7 @@ class ThemeManager {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SizeM.buttonBorderRadius.r),
           ),
-          textStyle: GoogleFonts.inter(
+          textStyle: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeightM.semiBold,
           ),
@@ -77,7 +76,7 @@ class ThemeManager {
         filled: true,
         fillColor: ColorM.surfaceLightElevated,
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-        hintStyle: GoogleFonts.inter(
+        hintStyle: TextStyle(
           fontSize: 14.sp,
           color: ColorM.textMutedLight,
           fontWeight: FontWeightM.regular,
@@ -129,7 +128,7 @@ class ThemeManager {
         centerTitle: true,
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: ColorM.textPrimaryDark),
-        titleTextStyle: GoogleFonts.inter(
+        titleTextStyle: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeightM.semiBold,
           color: ColorM.textPrimaryDark,
@@ -153,7 +152,7 @@ class ThemeManager {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SizeM.buttonBorderRadius.r),
           ),
-          textStyle: GoogleFonts.inter(
+          textStyle: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeightM.semiBold,
           ),
@@ -168,7 +167,7 @@ class ThemeManager {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SizeM.buttonBorderRadius.r),
           ),
-          textStyle: GoogleFonts.inter(
+          textStyle: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeightM.semiBold,
           ),
@@ -178,7 +177,7 @@ class ThemeManager {
         filled: true,
         fillColor: ColorM.surfaceDarkElevated,
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-        hintStyle: GoogleFonts.inter(
+        hintStyle: TextStyle(
           fontSize: 14.sp,
           color: ColorM.textMutedDark,
           fontWeight: FontWeightM.regular,
@@ -210,62 +209,62 @@ class ThemeManager {
 
   static TextTheme _buildTextTheme(Color color) {
     return TextTheme(
-      headlineLarge: GoogleFonts.inter(
+      headlineLarge: TextStyle(
         fontSize: 28.sp,
         fontWeight: FontWeightM.bold,
         color: color,
       ),
-      headlineMedium: GoogleFonts.inter(
+      headlineMedium: TextStyle(
         fontSize: 24.sp,
         fontWeight: FontWeightM.bold,
         color: color,
       ),
-      headlineSmall: GoogleFonts.inter(
+      headlineSmall: TextStyle(
         fontSize: 20.sp,
         fontWeight: FontWeightM.semiBold,
         color: color,
       ),
-      titleLarge: GoogleFonts.inter(
+      titleLarge: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeightM.semiBold,
         color: color,
       ),
-      titleMedium: GoogleFonts.inter(
+      titleMedium: TextStyle(
         fontSize: 16.sp,
         fontWeight: FontWeightM.medium,
         color: color,
       ),
-      titleSmall: GoogleFonts.inter(
+      titleSmall: TextStyle(
         fontSize: 14.sp,
         fontWeight: FontWeightM.medium,
         color: color,
       ),
-      bodyLarge: GoogleFonts.inter(
+      bodyLarge: TextStyle(
         fontSize: 16.sp,
         fontWeight: FontWeightM.regular,
         color: color,
       ),
-      bodyMedium: GoogleFonts.inter(
+      bodyMedium: TextStyle(
         fontSize: 14.sp,
         fontWeight: FontWeightM.regular,
         color: color,
       ),
-      bodySmall: GoogleFonts.inter(
+      bodySmall: TextStyle(
         fontSize: 12.sp,
         fontWeight: FontWeightM.regular,
         color: color,
       ),
-      labelLarge: GoogleFonts.inter(
+      labelLarge: TextStyle(
         fontSize: 14.sp,
         fontWeight: FontWeightM.semiBold,
         color: color,
       ),
-      labelMedium: GoogleFonts.inter(
+      labelMedium: TextStyle(
         fontSize: 12.sp,
         fontWeight: FontWeightM.medium,
         color: color,
       ),
-      labelSmall: GoogleFonts.inter(
+      labelSmall: TextStyle(
         fontSize: 10.sp,
         fontWeight: FontWeightM.medium,
         color: color,

@@ -1,7 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../extensions/theme_extensions.dart';
 import '../../res/color_manager.dart';
@@ -9,7 +8,7 @@ import '../../res/gen/assets.gen.dart';
 import '../../res/sizes_manager.dart';
 
 /// Unified Form Field for the entire Dokkan Atelier App.
-/// 
+///
 /// Handles:
 /// - Standard single-line inputs (Text, Number, Email, Phone)
 /// - Passwords with built-in SVG eye toggle ([isPassword]: true)
@@ -86,24 +85,30 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     final effectiveMaxLines = widget.isPassword
         ? 1
-        : (widget.isMultiline ? (widget.maxLines ?? 5) : (widget.maxLines ?? 1));
+        : (widget.isMultiline
+              ? (widget.maxLines ?? 5)
+              : (widget.maxLines ?? 1));
     final effectiveMinLines = widget.isPassword
         ? 1
-        : (widget.isMultiline ? (widget.minLines ?? 3) : (widget.minLines ?? 1));
+        : (widget.isMultiline
+              ? (widget.minLines ?? 3)
+              : (widget.minLines ?? 1));
 
-    final effectiveKeyboardType = widget.keyboardType ??
+    final effectiveKeyboardType =
+        widget.keyboardType ??
         (widget.isMultiline
             ? TextInputType.multiline
             : (widget.isPassword
-                ? TextInputType.visiblePassword
-                : TextInputType.text));
+                  ? TextInputType.visiblePassword
+                  : TextInputType.text));
 
-    final effectiveAction = widget.textInputAction ??
+    final effectiveAction =
+        widget.textInputAction ??
         (widget.isMultiline
             ? TextInputAction.newline
             : (widget.isPassword
-                ? TextInputAction.done
-                : TextInputAction.done));
+                  ? TextInputAction.done
+                  : TextInputAction.done));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +120,7 @@ class _AppTextFieldState extends State<AppTextField> {
             children: [
               Text(
                 widget.label!,
-                style: GoogleFonts.inter(
+                style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                   color: context.textPrimaryColor,
@@ -125,7 +130,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 SizedBox(width: 4.w),
                 Text(
                   '*',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                     color: ColorM.danger,
@@ -154,7 +159,7 @@ class _AppTextFieldState extends State<AppTextField> {
           enabled: widget.enabled,
           textDirection: widget.textDirection,
           inputFormatters: widget.inputFormatters,
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.w400,
             color: context.textPrimaryColor,
@@ -162,10 +167,12 @@ class _AppTextFieldState extends State<AppTextField> {
           ),
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: GoogleFonts.inter(
+            hintStyle: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
-              color: context.isDark ? ColorM.textMutedDark : ColorM.textMutedLight,
+              color: context.isDark
+                  ? ColorM.textMutedDark
+                  : ColorM.textMutedLight,
             ),
             filled: true,
             fillColor: widget.fillColor ?? context.surfaceElevatedColor,
@@ -179,7 +186,10 @@ class _AppTextFieldState extends State<AppTextField> {
                 ? BoxConstraints(minWidth: 44.w, minHeight: 44.w)
                 : null,
             suffixIcon: _buildSuffixIcon(context),
-            suffixIconConstraints: BoxConstraints(minWidth: 44.w, minHeight: 44.w),
+            suffixIconConstraints: BoxConstraints(
+              minWidth: 44.w,
+              minHeight: 44.w,
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: effectiveMaxLines > 1 ? 14.h : 15.h,

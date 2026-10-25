@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
+import '../../../features/home/presentation/home_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../../features/splash/presentation/splash_screen.dart';
 import 'routes.dart';
@@ -12,6 +13,9 @@ class RouteGenerator {
 
       case Routes.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingScreen());
+
+      case Routes.home:
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
 
       default:
         return _unDefinedRoute(settings.name);

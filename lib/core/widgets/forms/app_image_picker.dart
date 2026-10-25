@@ -1,6 +1,5 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../extensions/theme_extensions.dart';
 import '../../res/color_manager.dart';
@@ -72,19 +71,23 @@ class AppImagePickerBox extends StatelessWidget {
                               width: 20.w,
                               height: 20.w,
                               colorFilter: ColorFilter.mode(
-                                context.isDark ? ColorM.textMutedDark : ColorM.textMutedLight,
+                                context.isDark
+                                    ? ColorM.textMutedDark
+                                    : ColorM.textMutedLight,
                                 BlendMode.srcIn,
                               ),
                             ),
                       SizedBox(height: 4.h),
                       Text(
                         isCover ? 'Cover' : 'Add',
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                           fontSize: 11.sp,
                           fontWeight: FontWeight.w500,
                           color: isCover
                               ? ColorM.primary
-                              : (context.isDark ? ColorM.textMutedDark : ColorM.textMutedLight),
+                              : (context.isDark
+                                    ? ColorM.textMutedDark
+                                    : ColorM.textMutedLight),
                         ),
                       ),
                     ],
@@ -107,7 +110,7 @@ class AppImagePickerBox extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '✓ COVER',
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w700,
                       color: ColorM.white,

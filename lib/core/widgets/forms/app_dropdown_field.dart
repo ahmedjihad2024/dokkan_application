@@ -1,6 +1,5 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../extensions/theme_extensions.dart';
 import '../../res/color_manager.dart';
@@ -38,7 +37,7 @@ class AppDropdownField<T> extends StatelessWidget {
             children: [
               Text(
                 label!,
-                style: GoogleFonts.inter(
+                style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                   color: context.textPrimaryColor,
@@ -48,7 +47,7 @@ class AppDropdownField<T> extends StatelessWidget {
                 SizedBox(width: 4.w),
                 Text(
                   '*',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                     color: ColorM.danger,
@@ -64,7 +63,9 @@ class AppDropdownField<T> extends StatelessWidget {
           items: items,
           onChanged: onChanged,
           validator: validator,
-          dropdownColor: context.isDark ? ColorM.surfaceDarkElevated : ColorM.white,
+          dropdownColor: context.isDark
+              ? ColorM.surfaceDarkElevated
+              : ColorM.white,
           icon: Assets.svg.iconChevronDown.svg(
             width: 18.w,
             height: 18.w,
@@ -73,21 +74,26 @@ class AppDropdownField<T> extends StatelessWidget {
               BlendMode.srcIn,
             ),
           ),
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.w400,
             color: context.textPrimaryColor,
           ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: GoogleFonts.inter(
+            hintStyle: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
-              color: context.isDark ? ColorM.textMutedDark : ColorM.textMutedLight,
+              color: context.isDark
+                  ? ColorM.textMutedDark
+                  : ColorM.textMutedLight,
             ),
             filled: true,
             fillColor: context.surfaceElevatedColor,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+              vertical: 15.h,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
               borderSide: BorderSide(color: context.borderColor, width: 1),

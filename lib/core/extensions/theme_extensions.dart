@@ -15,4 +15,6 @@ extension ThemeExtension on BuildContext {
   Color get borderColor => isDark ? ColorM.borderDark : ColorM.borderLight;
   Color get textPrimaryColor => isDark ? ColorM.textPrimaryDark : ColorM.textPrimaryLight;
   Color get textSecondaryColor => isDark ? ColorM.textSecondaryDark : ColorM.textSecondaryLight;
+
+  TextStyle get labelSmall => Theme.of(this).textTheme.labelSmall ?? const TextStyle();
 }

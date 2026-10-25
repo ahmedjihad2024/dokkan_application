@@ -1,7 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../extensions/theme_extensions.dart';
 import '../../res/color_manager.dart';
@@ -88,7 +87,7 @@ class _AppOtpFieldState extends State<AppOtpField> {
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(1),
             ],
-            style: GoogleFonts.inter(
+            style: TextStyle(
               fontSize: 22.sp,
               fontWeight: FontWeight.w700,
               color: widget.hasError ? ColorM.danger : context.textPrimaryColor,
@@ -96,7 +95,9 @@ class _AppOtpFieldState extends State<AppOtpField> {
             decoration: InputDecoration(
               filled: true,
               fillColor: widget.hasError
-                  ? (context.isDark ? ColorM.dangerContainerDark : ColorM.dangerContainerLight)
+                  ? (context.isDark
+                        ? ColorM.dangerContainerDark
+                        : ColorM.dangerContainerLight)
                   : context.surfaceElevatedColor,
               contentPadding: EdgeInsets.zero,
               border: OutlineInputBorder(
