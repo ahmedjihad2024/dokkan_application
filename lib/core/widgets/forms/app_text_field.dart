@@ -9,7 +9,7 @@ import '../../res/gen/assets.gen.dart';
 import '../../res/sizes_manager.dart';
 
 /// Unified Form Field for the entire Dokkan Atelier App.
-/// 
+///
 /// Handles:
 /// - Standard single-line inputs (Text, Number, Email, Phone)
 /// - Passwords with built-in SVG eye toggle ([isPassword]: true)
@@ -86,24 +86,30 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     final effectiveMaxLines = widget.isPassword
         ? 1
-        : (widget.isMultiline ? (widget.maxLines ?? 5) : (widget.maxLines ?? 1));
+        : (widget.isMultiline
+              ? (widget.maxLines ?? 5)
+              : (widget.maxLines ?? 1));
     final effectiveMinLines = widget.isPassword
         ? 1
-        : (widget.isMultiline ? (widget.minLines ?? 3) : (widget.minLines ?? 1));
+        : (widget.isMultiline
+              ? (widget.minLines ?? 3)
+              : (widget.minLines ?? 1));
 
-    final effectiveKeyboardType = widget.keyboardType ??
+    final effectiveKeyboardType =
+        widget.keyboardType ??
         (widget.isMultiline
             ? TextInputType.multiline
             : (widget.isPassword
-                ? TextInputType.visiblePassword
-                : TextInputType.text));
+                  ? TextInputType.visiblePassword
+                  : TextInputType.text));
 
-    final effectiveAction = widget.textInputAction ??
+    final effectiveAction =
+        widget.textInputAction ??
         (widget.isMultiline
             ? TextInputAction.newline
             : (widget.isPassword
-                ? TextInputAction.done
-                : TextInputAction.done));
+                  ? TextInputAction.done
+                  : TextInputAction.done));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +171,9 @@ class _AppTextFieldState extends State<AppTextField> {
             hintStyle: GoogleFonts.inter(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
-              color: context.isDark ? ColorM.textMutedDark : ColorM.textMutedLight,
+              color: context.isDark
+                  ? ColorM.textMutedDark
+                  : ColorM.textMutedLight,
             ),
             filled: true,
             fillColor: widget.fillColor ?? context.surfaceElevatedColor,
@@ -179,7 +187,10 @@ class _AppTextFieldState extends State<AppTextField> {
                 ? BoxConstraints(minWidth: 44.w, minHeight: 44.w)
                 : null,
             suffixIcon: _buildSuffixIcon(context),
-            suffixIconConstraints: BoxConstraints(minWidth: 44.w, minHeight: 44.w),
+            suffixIconConstraints: BoxConstraints(
+              minWidth: 44.w,
+              minHeight: 44.w,
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: effectiveMaxLines > 1 ? 14.h : 15.h,
@@ -220,6 +231,7 @@ class _AppTextFieldState extends State<AppTextField> {
     // If password, render interactive SVG eye toggle
     if (widget.isPassword) {
       return IconButton(
+        tooltip: _obscureText ? 'Show password' : 'Hide password',
         icon: _obscureText
             ? Assets.svg.iconEye.svg(
                 width: 20.w,
@@ -232,8 +244,8 @@ class _AppTextFieldState extends State<AppTextField> {
             : Assets.svg.iconEyeOff.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter: const ColorFilter.mode(
-                  ColorM.primary,
+                colorFilter: ColorFilter.mode(
+                  context.isDark ? ColorM.primaryLight : ColorM.primary,
                   BlendMode.srcIn,
                 ),
               ),
