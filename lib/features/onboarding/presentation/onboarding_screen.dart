@@ -67,7 +67,7 @@ class OnboardingScreen extends StatelessWidget {
               PrimaryButton(
                 title: 'Explore Collections',
                 onPressed: () {
-                  context.pushReplacementNamed(Routes.home);
+                  context.pushReplacementNamed(Routes.login);
                 },
               ),
               SizedBox(height: 16.h),

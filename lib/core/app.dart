@@ -9,7 +9,8 @@ import 'theme/theme_cubit.dart';
 
 // Global keys matching clean architecture pattern from otlob
 // ignore: non_constant_identifier_names
-final GlobalKey<ScaffoldMessengerState> SCAFFOLD_MESSENGER_KEY = GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<ScaffoldMessengerState> SCAFFOLD_MESSENGER_KEY =
+    GlobalKey<ScaffoldMessengerState>();
 // ignore: non_constant_identifier_names
 final GlobalKey<NavigatorState> NAVIGATOR_KEY = GlobalKey<NavigatorState>();
 

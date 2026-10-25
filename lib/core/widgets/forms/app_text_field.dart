@@ -230,6 +230,7 @@ class _AppTextFieldState extends State<AppTextField> {
     // If password, render interactive SVG eye toggle
     if (widget.isPassword) {
       return IconButton(
+        tooltip: _obscureText ? 'Show password' : 'Hide password',
         icon: _obscureText
             ? Assets.svg.iconEye.svg(
                 width: 20.w,
@@ -242,8 +243,8 @@ class _AppTextFieldState extends State<AppTextField> {
             : Assets.svg.iconEyeOff.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter: const ColorFilter.mode(
-                  ColorM.primary,
+                colorFilter: ColorFilter.mode(
+                  context.isDark ? ColorM.primaryLight : ColorM.primary,
                   BlendMode.srcIn,
                 ),
               ),

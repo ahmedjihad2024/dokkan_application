@@ -6,6 +6,13 @@ import '../../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../../features/product_details/presentation/product_details_screen.dart';
 import '../../../features/reviews/presentation/reviews_screen.dart';
 import '../../../features/splash/presentation/splash_screen.dart';
+
+// 🟢 NEW: استيراد شاشة تسجيل الدخول
+import '../../../features/authentication/presentation/login_screen.dart';
+
+// 🟢 NEW: استيراد شاشة إنشاء الحساب
+import '../../../features/authentication/presentation/signup_screen.dart';
+
 import 'routes.dart';
 
 class RouteGenerator {
@@ -36,6 +43,13 @@ class RouteGenerator {
             totalReviews: args?['reviewsCount'] as int? ?? 128,
           ),
         );
+      // 🟢 NEW: فتح شاشة تسجيل الدخول
+      case Routes.login:
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
+
+      // 🟢 NEW: فتح شاشة إنشاء الحساب
+      case Routes.register:
+        return MaterialPageRoute(builder: (_) => const SignupScreen());
 
       default:
         return _unDefinedRoute(settings.name);
