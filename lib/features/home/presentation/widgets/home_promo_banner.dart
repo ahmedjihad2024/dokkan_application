@@ -23,56 +23,51 @@ class HomePromoBanner extends StatelessWidget {
 
     final isDark = context.isDark;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          height: 145.h,
-          child: PageView.builder(
-            itemCount: banners.length,
-            onPageChanged: onPageChanged,
-            itemBuilder: (context, index) {
-              final banner = banners[index];
-              return Container(
-                margin:
-                    EdgeInsets.symmetric(horizontal: 2.w) +
-                    EdgeInsets.symmetric(horizontal: 20.w),
-                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(
-                    color: isDark ? ColorM.borderDark : Colors.transparent,
-                    width: 1,
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: isDark
-                        ? const [
-                            ColorM.bannerGradientDarkStart,
-                            ColorM.bannerGradientDarkEnd,
-                          ]
-                        : const [
-                            ColorM.bannerGradientLightStart,
-                            ColorM.bannerGradientLightEnd,
-                          ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.12),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+    return SizedBox(
+      height: 140.h,
+      child: PageView.builder(
+        itemCount: banners.length,
+        onPageChanged: onPageChanged,
+        itemBuilder: (context, index) {
+          final banner = banners[index];
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.fromLTRB(18.w, 16.h, 16.w, 14.h),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.r),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? const [
+                        ColorM.bannerGradientDarkStart,
+                        ColorM.bannerGradientDarkEnd,
+                      ]
+                    : const [
+                        ColorM.bannerGradientLightStart,
+                        ColorM.bannerGradientLightEnd,
+                      ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.16),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
                 ),
-                child: Row(
-                  children: [
-                    // Text details
-                    Expanded(
-                      flex: 6,
-                      child: Column(
+              ],
+            ),
+            child: Row(
+              children: [
+                // Left details: Badge, Headline, Subtitle, and Page Indicator Dots
+                Expanded(
+                  flex: 6,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           // Season Atelier Badge matching Figma 37:342
                           Container(
@@ -81,7 +76,7 @@ class HomePromoBanner extends StatelessWidget {
                               vertical: 3.h,
                             ),
                             decoration: BoxDecoration(
-                              color: ColorM.primary,
+                              color: ColorM.primaryDark,
                               borderRadius: BorderRadius.circular(6.r),
                             ),
                             child: Text(
@@ -94,7 +89,7 @@ class HomePromoBanner extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 6.h),
                           // Headline matching Figma 37:344
                           Text(
                             banner.title,
@@ -107,7 +102,7 @@ class HomePromoBanner extends StatelessWidget {
                               letterSpacing: -0.2,
                             ),
                           ),
-                          SizedBox(height: 4.h),
+                          SizedBox(height: 3.h),
                           // Description matching Figma 37:345
                           Text(
                             banner.subtitle,
@@ -117,62 +112,60 @@ class HomePromoBanner extends StatelessWidget {
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w400,
                               color: ColorM.textMutedLight,
-                              height: 1.3,
+                              height: 1.35,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    SizedBox(width: 8.w),
-                    // Visual Emoji / Accessory representation matching Figma 37:346
-                    Expanded(
-                      flex: 3,
-                      child: Center(
-                        child: Container(
-                          width: 72.w,
-                          height: 72.w,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.08),
-                          ),
-                          child: Text(
-                            banner.visualEmoji,
-                            style: TextStyle(fontSize: 44.sp),
-                          ),
-                        ),
+                      // Page Indicator Dots inside the banner matching Figma 37:347
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(banners.length, (dotIndex) {
+                          final isCurrent = dotIndex == activeIndex;
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeOutCubic,
+                            margin: EdgeInsets.only(
+                              right: dotIndex < banners.length - 1 ? 6.w : 0,
+                            ),
+                            width: isCurrent ? 18.w : 6.w,
+                            height: 6.h,
+                            decoration: BoxDecoration(
+                              color: isCurrent
+                                  ? ColorM.primaryDark
+                                  : ColorM.bannerDotInactive,
+                              borderRadius: BorderRadius.circular(3.r),
+                            ),
+                          );
+                        }),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 10.h),
-        // Indicator Dots matching Figma 37:347
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(banners.length, (index) {
-            final isActive = index == activeIndex;
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOut,
-              margin: EdgeInsets.symmetric(horizontal: 3.w),
-              width: isActive ? 18.w : 6.w,
-              height: 6.h,
-              decoration: BoxDecoration(
-                color: isActive
-                    ? ColorM.primary
-                    : (isDark
-                          ? ColorM.textMutedDark
-                          : ColorM.textSecondaryLight),
-                borderRadius: BorderRadius.circular(3.r),
-              ),
-            );
-          }),
-        ),
-      ],
+                SizedBox(width: 8.w),
+                // 3D Visual Accessory representation matching Figma 37:346
+                SizedBox(
+                  width: 80.w,
+                  height: 80.w,
+                  child: Center(
+                    child: banner.imageAsset != null
+                        ? Image.asset(
+                            banner.imageAsset!,
+                            width: 76.w,
+                            height: 76.w,
+                            fit: BoxFit.contain,
+                          )
+                        : Text(
+                            banner.visualEmoji,
+                            style: TextStyle(fontSize: 48.sp),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

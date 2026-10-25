@@ -29,10 +29,11 @@ abstract class ColorM {
   static const Color surfaceLightSubtle = Color(0xFFF8FAFC); // Subtle card/image container background
 
   // Banner & Specialized Gradients
-  static const Color bannerGradientDarkStart  = Color(0xFF161B22);
-  static const Color bannerGradientDarkEnd    = Color(0xFF1F242C);
+  static const Color bannerGradientDarkStart  = Color(0xFF1E293B);
+  static const Color bannerGradientDarkEnd    = Color(0xFF0F172A);
   static const Color bannerGradientLightStart = Color(0xFF0F172A);
   static const Color bannerGradientLightEnd   = Color(0xFF1E1B18);
+  static const Color bannerDotInactive        = Color(0xFF64748B);
 
   static const Color productGradientDarkStart  = Color(0xFF1E293B);
   static const Color productGradientDarkEnd    = Color(0xFF0F172A);

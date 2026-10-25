@@ -1,3 +1,4 @@
+import '../../../../core/res/gen/assets.gen.dart';
 import '../models/category_model.dart';
 import '../models/product_model.dart';
 import '../models/promo_banner_model.dart';
@@ -11,13 +12,14 @@ abstract class HomeRepository {
 class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<List<PromoBannerModel>> getPromoBanners() async {
-    return const [
+    return [
       PromoBannerModel(
         id: 'banner_1',
         badgeText: 'SEASON ATELIER',
         title: 'Italian Saffiano Leather',
         subtitle: 'Up to 40% off bespoke travel bags & wallets',
         visualEmoji: '👜',
+        imageAsset: Assets.images.bannerBag.path,
       ),
       PromoBannerModel(
         id: 'banner_2',
@@ -25,6 +27,7 @@ class HomeRepositoryImpl implements HomeRepository {
         title: 'Bespoke Chronographs',
         subtitle: 'Swiss-movement artisan timepieces for connoisseurs',
         visualEmoji: '⌚',
+        imageAsset: Assets.images.bannerWatch.path,
       ),
       PromoBannerModel(
         id: 'banner_3',
@@ -32,6 +35,7 @@ class HomeRepositoryImpl implements HomeRepository {
         title: 'Handcrafted Heritage',
         subtitle: 'Custom silver & 18k gold handcrafted jewelry',
         visualEmoji: '💍',
+        imageAsset: Assets.images.bannerRing.path,
       ),
     ];
   }

@@ -25,12 +25,31 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/banner_bag.png
+  AssetGenImage get bannerBag =>
+      const AssetGenImage('assets/images/banner_bag.png');
+
+  /// File path: assets/images/banner_ring.png
+  AssetGenImage get bannerRing =>
+      const AssetGenImage('assets/images/banner_ring.png');
+
+  /// File path: assets/images/banner_watch.png
+  AssetGenImage get bannerWatch =>
+      const AssetGenImage('assets/images/banner_watch.png');
+
   /// File path: assets/images/product_watch.png
   AssetGenImage get productWatch =>
       const AssetGenImage('assets/images/product_watch.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [appIcon, appLogo, productWatch];
+  List<AssetGenImage> get values => [
+    appIcon,
+    appLogo,
+    bannerBag,
+    bannerRing,
+    bannerWatch,
+    productWatch,
+  ];
 }
 
 class $AssetsSvgGen {
