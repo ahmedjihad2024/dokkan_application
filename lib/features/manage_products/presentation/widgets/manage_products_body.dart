@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/res/router/routes.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import '../../../../core/widgets/refresh/customized_smart_refresh.dart';
 import '../../data/models/manage_product_item.dart';
@@ -72,7 +73,7 @@ class _ManageProductsBodyState extends State<ManageProductsBody> {
     if (widget.onAddProductPressed != null) {
       widget.onAddProductPressed!();
     } else {
-      CustomSnackBar.showSuccess(context, 'Add New Product tapped');
+      Navigator.pushNamed(context, Routes.addProduct);
     }
   }
 

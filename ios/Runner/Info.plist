@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Dokkan needs access to your photo library to select product photos.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Dokkan needs access to your camera to take product photos.</string>
 </dict>
 </plist>

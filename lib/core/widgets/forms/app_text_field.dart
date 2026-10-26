@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -40,6 +40,12 @@ class AppTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final Color? fillColor;
   final Color? borderColor;
+  final TextStyle? labelStyle;
+  final TextStyle? textStyle;
+  final TextStyle? hintStyle;
+  final EdgeInsetsGeometry? contentPadding;
+  final double? borderRadius;
+  final double? labelSpacing;
 
   const AppTextField({
     super.key,
@@ -66,6 +72,12 @@ class AppTextField extends StatefulWidget {
     this.inputFormatters,
     this.fillColor,
     this.borderColor,
+    this.labelStyle,
+    this.textStyle,
+    this.hintStyle,
+    this.contentPadding,
+    this.borderRadius,
+    this.labelSpacing,
   });
 
   @override
@@ -110,20 +122,31 @@ class _AppTextFieldState extends State<AppTextField> {
                   ? TextInputAction.done
                   : TextInputAction.done));
 
+    final effectiveBorderRadius = BorderRadius.circular(
+      (widget.borderRadius ?? SizeM.inputBorderRadius).r,
+    );
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: widget.textDirection == TextDirection.rtl
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         // Optional Label Row with Red Asterisk if Required
         if (widget.label != null) ...[
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                widget.label!,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: context.textPrimaryColor,
+              Flexible(
+                child: Text(
+                  widget.label!,
+                  overflow: TextOverflow.ellipsis,
+                  style: widget.labelStyle ??
+                      TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: context.textPrimaryColor,
+                      ),
                 ),
               ),
               if (widget.isRequired) ...[
@@ -139,7 +162,7 @@ class _AppTextFieldState extends State<AppTextField> {
               ],
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: widget.labelSpacing ?? 8.h),
         ],
 
         // Input Box
@@ -159,20 +182,27 @@ class _AppTextFieldState extends State<AppTextField> {
           enabled: widget.enabled,
           textDirection: widget.textDirection,
           inputFormatters: widget.inputFormatters,
-          style: TextStyle(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w400,
-            color: context.textPrimaryColor,
-            height: effectiveMaxLines > 1 ? 1.45 : null,
-          ),
+          style: widget.textStyle ??
+              TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w400,
+                color: context.textPrimaryColor,
+                height: effectiveMaxLines > 1 ? 1.45 : null,
+              ),
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w400,
-              color: context.isDark
-                  ? ColorM.textMutedDark
-                  : ColorM.textMutedLight,
+            hintStyle: widget.hintStyle ??
+                TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: context.isDark
+                      ? ColorM.textMutedDark
+                      : ColorM.textMutedLight,
+                ),
+            errorStyle: TextStyle(
+              fontSize: 11.sp,
+              color: ColorM.danger,
+              fontWeight: FontWeight.w500,
             ),
             filled: true,
             fillColor: widget.fillColor ?? context.surfaceElevatedColor,
@@ -190,34 +220,35 @@ class _AppTextFieldState extends State<AppTextField> {
               minWidth: 44.w,
               minHeight: 44.w,
             ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: effectiveMaxLines > 1 ? 14.h : 15.h,
-            ),
+            contentPadding: widget.contentPadding ??
+                EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: effectiveMaxLines > 1 ? 14.h : 15.h,
+                ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
+              borderRadius: effectiveBorderRadius,
               borderSide: BorderSide(
                 color: widget.borderColor ?? context.borderColor,
                 width: 1,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
+              borderRadius: effectiveBorderRadius,
               borderSide: BorderSide(
                 color: widget.borderColor ?? context.borderColor,
                 width: 1,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
+              borderRadius: effectiveBorderRadius,
               borderSide: const BorderSide(color: ColorM.primary, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
+              borderRadius: effectiveBorderRadius,
               borderSide: const BorderSide(color: ColorM.danger, width: 1.2),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
+              borderRadius: effectiveBorderRadius,
               borderSide: const BorderSide(color: ColorM.danger, width: 1.5),
             ),
           ),
