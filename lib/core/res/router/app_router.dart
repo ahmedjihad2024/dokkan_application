@@ -12,6 +12,7 @@ import '../../../features/authentication/presentation/login_screen.dart';
 
 // 🟢 NEW: استيراد شاشة إنشاء الحساب
 import '../../../features/authentication/presentation/signup_screen.dart';
+import '../../../features/manage_products/presentation/manage_products_screen.dart';
 
 import 'routes.dart';
 
@@ -50,6 +51,9 @@ class RouteGenerator {
       // 🟢 NEW: فتح شاشة إنشاء الحساب
       case Routes.register:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
+
+      case Routes.manageProducts:
+        return MaterialPageRoute(builder: (_) => const ManageProductsScreen());
 
       default:
         return _unDefinedRoute(settings.name);
