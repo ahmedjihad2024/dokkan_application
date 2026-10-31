@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CartTab extends StatelessWidget {
-  const CartTab({super.key});
+class CartScreen extends StatelessWidget {
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const SizedBox.expand();
   }
 }
+

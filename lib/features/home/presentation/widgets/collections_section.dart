@@ -48,7 +48,7 @@ class CollectionsSection extends StatelessWidget {
                 onTap: onSeeAllPressed,
                 behavior: HitTestBehavior.opaque,
                 child: Text(
-                  'See all \u2192',
+                  'See all →',
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,

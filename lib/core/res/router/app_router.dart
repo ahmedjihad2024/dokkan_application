@@ -8,7 +8,7 @@ import '../../../features/authentication/presentation/login_screen.dart';
 import '../../../features/authentication/presentation/signup_screen.dart';
 import '../../../features/authentication/presentation/verify_email_address_screen.dart';
 import '../../../features/home/data/models/product_model.dart';
-import '../../../features/home/presentation/home_screen.dart';
+import '../../../features/main_layout/presentation/main_layout_screen.dart';
 import '../../../features/manage_products/presentation/manage_products_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../../features/product_details/presentation/product_details_screen.dart';
@@ -26,7 +26,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const OnboardingScreen());
 
       case Routes.home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => const MainLayoutScreen());
 
       case Routes.productDetails:
         final product = settings.arguments as ProductModel?;

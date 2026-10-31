@@ -1,9 +1,9 @@
 import '../../../../core/enums/request_state.dart';
-import '../../data/models/category_model.dart';
-import '../../data/models/product_model.dart';
-import '../../data/models/promo_banner_model.dart';
+import '../../../home/data/models/category_model.dart';
+import '../../../home/data/models/product_model.dart';
+import '../../../home/data/models/promo_banner_model.dart';
 
-class HomeState {
+class LayoutState {
   final ReqState status;
   final List<PromoBannerModel> banners;
   final List<CategoryModel> categories;
@@ -14,7 +14,7 @@ class HomeState {
   final int currentNavIndex;
   final String? errorMessage;
 
-  const HomeState({
+  const LayoutState({
     this.status = ReqState.idle,
     this.banners = const [],
     this.categories = const [],
@@ -26,8 +26,7 @@ class HomeState {
     this.errorMessage,
   });
 
-
-  HomeState copyWith({
+  LayoutState copyWith({
     ReqState? status,
     List<PromoBannerModel>? banners,
     List<CategoryModel>? categories,
@@ -38,7 +37,7 @@ class HomeState {
     int? currentNavIndex,
     String? errorMessage,
   }) {
-    return HomeState(
+    return LayoutState(
       status: status ?? this.status,
       banners: banners ?? this.banners,
       categories: categories ?? this.categories,
@@ -51,3 +50,4 @@ class HomeState {
     );
   }
 }
+

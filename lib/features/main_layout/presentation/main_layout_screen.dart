@@ -2,33 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/extensions/theme_extensions.dart';
-import 'cubit/home_cubit.dart';
-import 'cubit/home_state.dart';
-import 'tabs/cart_tab.dart';
-import 'tabs/home_tab.dart';
-import 'tabs/profile_tab.dart';
+import '../../../features/cart/presentation/cart_screen.dart';
+import '../../../features/home/presentation/home_tab.dart';
+import '../../../features/profile/presentation/profile_screen.dart';
+import 'cubit/layout_cubit.dart';
+import 'cubit/layout_state.dart';
 import 'widgets/dokkan_bottom_nav_bar.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class MainLayoutScreen extends StatelessWidget {
+  const MainLayoutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HomeCubit(),
-      child: const _HomeScreenContent(),
+      create: (_) => LayoutCubit(),
+      child: const _MainLayoutContent(),
     );
   }
 }
 
-class _HomeScreenContent extends StatefulWidget {
-  const _HomeScreenContent();
+class _MainLayoutContent extends StatefulWidget {
+  const _MainLayoutContent();
 
   @override
-  State<_HomeScreenContent> createState() => _HomeScreenContentState();
+  State<_MainLayoutContent> createState() => _MainLayoutContentState();
 }
 
-class _HomeScreenContentState extends State<_HomeScreenContent> {
+class _MainLayoutContentState extends State<_MainLayoutContent> {
   late final PageController _pageController;
 
   @override
@@ -44,7 +44,7 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
   }
 
   void _onTabSelected(int index) {
-    context.read<HomeCubit>().setNavIndex(index);
+    context.read<LayoutCubit>().setNavIndex(index);
     if (_pageController.hasClients) {
       _pageController.jumpToPage(index);
     }
@@ -52,9 +52,9 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
+    return BlocBuilder<LayoutCubit, LayoutState>(
       builder: (context, state) {
-        final cubit = context.read<HomeCubit>();
+        final cubit = context.read<LayoutCubit>();
         return Scaffold(
           backgroundColor: context.scaffoldBackgroundColor,
           bottomNavigationBar: DokkanBottomNavBar(
@@ -71,8 +71,8 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
               },
               children: [
                 HomeTab(state: state, cubit: cubit),
-                const CartTab(),
-                const ProfileTab(),
+                const CartScreen(),
+                const ProfileScreen(),
               ],
             ),
           ),

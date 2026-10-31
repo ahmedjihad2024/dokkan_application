@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../../../core/extensions/navigation_extension.dart';
-import '../../../../core/extensions/theme_extensions.dart';
-import '../../../../core/res/color_manager.dart';
-import '../../../../core/res/router/routes.dart';
-import '../../../../core/widgets/feedback/app_error_widget.dart';
-import '../../../../core/widgets/feedback/custom_snackbar.dart';
-import '../../../../core/widgets/refresh/customized_smart_refresh.dart';
-import '../../../../core/widgets/state/req_state_widget.dart';
-import '../cubit/home_cubit.dart';
-import '../cubit/home_state.dart';
-import '../widgets/collections_section.dart';
-import '../widgets/curated_arrivals_section.dart';
-import '../widgets/home_header.dart';
-import '../widgets/home_promo_banner.dart';
+import '../../../core/extensions/navigation_extension.dart';
+import '../../../core/extensions/theme_extensions.dart';
+import '../../../core/res/color_manager.dart';
+import '../../../core/res/router/routes.dart';
+import '../../../core/widgets/feedback/app_error_widget.dart';
+import '../../../core/widgets/feedback/custom_snackbar.dart';
+import '../../../core/widgets/refresh/customized_smart_refresh.dart';
+import '../../../core/widgets/state/req_state_widget.dart';
+import '../../main_layout/presentation/cubit/layout_cubit.dart';
+import '../../main_layout/presentation/cubit/layout_state.dart';
+import 'widgets/collections_section.dart';
+import 'widgets/curated_arrivals_section.dart';
+import 'widgets/home_header.dart';
+import 'widgets/home_promo_banner.dart';
 
 class HomeTab extends StatefulWidget {
-  final HomeState state;
-  final HomeCubit cubit;
+  final LayoutState state;
+  final LayoutCubit cubit;
 
   const HomeTab({super.key, required this.state, required this.cubit});
 
@@ -125,3 +125,4 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 }
+

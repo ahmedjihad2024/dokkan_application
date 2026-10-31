@@ -60,7 +60,7 @@ class CuratedArrivalsSection extends StatelessWidget {
         SizedBox(
           height: 265.h,
           child: ListView.separated(
-            key: Key("Curated Arrivals"),
+            key: const Key("Curated Arrivals"),
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding.w),
             scrollDirection: Axis.horizontal,
