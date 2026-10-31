@@ -110,9 +110,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               // Email form
               ForgotPasswordForm(
                 onSubmit: (email) {
-                  Navigator.pushNamed(
-                    context,
-                    Routes.verifyEmailAddress,
+                  context.pushNamed(
+                    Routes.recoveryCode,
                     arguments: email,
                   );
                 },

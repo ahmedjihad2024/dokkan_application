@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
 import '../../../core/res/color_manager.dart';
 import '../../../core/res/router/routes.dart';
@@ -82,7 +83,7 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
       return;
     }
 
-    Navigator.pushNamed(context, Routes.createNewPassword);
+    context.pushNamed(Routes.createNewPassword, arguments: widget.email);
   }
 
   String get _formattedTime {
@@ -108,7 +109,8 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
     return Scaffold(
       backgroundColor: context.scaffoldBackgroundColor,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +128,13 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                     ),
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.pushReplacementNamed(Routes.forgotPassword);
+                        }
+                      },
                       icon: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 17.sp,
@@ -146,7 +154,7 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                 ],
               ),
 
-              SizedBox(height: 40.h),
+              SizedBox(height: 36.h),
 
               // Main heading
               Text(
@@ -162,8 +170,7 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
 
               // Description
               Text(
-                'Please enter the 6-digit recovery code '
-                'to continue resetting your password.',
+                'Please enter the 6-digit recovery code to continue resetting your password.',
                 style: TextStyle(
                   fontSize: 14.sp,
                   height: 1.6,
@@ -242,9 +249,8 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                 ),
               ),
 
-              SizedBox(height: 100.h),
+              SizedBox(height: 36.h),
 
-              SizedBox(height: 40.h),
               // Verify button
               PrimaryButton(
                 title: 'Verify Code',

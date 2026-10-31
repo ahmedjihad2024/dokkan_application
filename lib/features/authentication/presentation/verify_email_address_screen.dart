@@ -12,8 +12,13 @@ import '../../../core/widgets/forms/app_otp_field.dart';
 
 class VerifyEmailAddressScreen extends StatefulWidget {
   final String email;
+  final bool isPasswordRecovery;
 
-  const VerifyEmailAddressScreen({super.key, required this.email});
+  const VerifyEmailAddressScreen({
+    super.key,
+    required this.email,
+    this.isPasswordRecovery = false,
+  });
 
   @override
   State<VerifyEmailAddressScreen> createState() =>
@@ -84,7 +89,17 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
 
     setState(() => _hasError = false);
 
-    Navigator.pushNamed(context, Routes.recoveryCode);
+    if (widget.isPasswordRecovery) {
+      context.pushNamed(Routes.createNewPassword, arguments: widget.email);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email verified successfully! Please sign in.'),
+          backgroundColor: Color(0xFF00B889),
+        ),
+      );
+      context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+    }
   }
 
   @override
@@ -110,7 +125,13 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                   Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => context.pop(),
+                      onTap: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.pushReplacementNamed(Routes.login);
+                        }
+                      },
                       borderRadius: BorderRadius.circular(19.r),
                       child: Container(
                         width: 38.w,
@@ -168,17 +189,18 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                 ),
               ),
 
-              SizedBox(height: 4.h),
-
-              // Email address
-              Text(
-                widget.email,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: context.textPrimaryColor,
+              if (widget.email.isNotEmpty) ...[
+                SizedBox(height: 4.h),
+                // Email address
+                Text(
+                  widget.email,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: context.textPrimaryColor,
+                  ),
                 ),
-              ),
+              ],
 
               SizedBox(height: 24.h),
 

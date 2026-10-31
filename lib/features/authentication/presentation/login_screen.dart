@@ -151,9 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   context.pushReplacementNamed(Routes.home);
                 },
                 onForgotPassword: () {
-                  setState(() {
-                    _infoMessage = 'Reset link will be sent to your registered email.';
-                  });
+                  context.pushNamed(Routes.forgotPassword);
                 },
               ),
 

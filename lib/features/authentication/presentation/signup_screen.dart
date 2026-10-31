@@ -148,10 +148,10 @@ class _SignupScreenState extends State<SignupScreen> {
               // Sign Up Form
               SignupForm(
                 onContinue: (firstName, lastName, email, password) {
-                  setState(() {
-                    _infoMessage =
-                        'Welcome, $firstName! Verification screen is coming soon.';
-                  });
+                  context.pushNamed(
+                    Routes.verifyEmailAddress,
+                    arguments: email,
+                  );
                 },
               ),
 

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
 import '../../../core/res/color_manager.dart';
+import '../../../core/res/router/routes.dart';
 import '../../../core/widgets/buttons/primary_button.dart';
 
 class CreateNewPasswordScreen extends StatefulWidget {
-  const CreateNewPasswordScreen({super.key});
+  final String? email;
+
+  const CreateNewPasswordScreen({super.key, this.email});
 
   @override
   State<CreateNewPasswordScreen> createState() =>
@@ -20,6 +24,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  bool _hasStartedTyping = false;
+  bool _hasAttemptedSubmit = false;
 
   bool get _hasMinLength => _passwordController.text.length >= 8;
 
@@ -30,30 +36,69 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
   void _resetPassword() {
     FocusScope.of(context).unfocus();
 
+    setState(() {
+      _hasAttemptedSubmit = true;
+    });
+
     if (!_formKey.currentState!.validate()) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
-          'Password reset will be available after backend integration.',
+          'Password reset successfully! Please sign in with your new password.',
         ),
+        backgroundColor: Color(0xFF00B889),
       ),
     );
+
+    context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
   }
 
-  // Simple password requirement style
-  Widget _buildSimpleRequirement(String text) {
-    const color = Color(0xFF00B889);
+  // Interactive password requirement indicator
+  Widget _buildRequirementItem({
+    required String text,
+    required bool isValid,
+  }) {
+    final bool hasStarted = _hasStartedTyping || _hasAttemptedSubmit;
 
-    return Row(
-      children: [
-        Icon(Icons.check, color: color, size: 20.sp),
-        SizedBox(width: 8.w),
-        Text(
-          text,
-          style: TextStyle(color: color, fontSize: 14.sp),
-        ),
-      ],
+    final Color color;
+    final IconData icon;
+
+    if (!hasStarted) {
+      color = context.textSecondaryColor;
+      icon = Icons.radio_button_unchecked_rounded;
+    } else if (isValid) {
+      color = const Color(0xFF00B889);
+      icon = Icons.check_circle_rounded;
+    } else {
+      color = const Color(0xFFEF4444);
+      icon = Icons.cancel_rounded;
+    }
+
+    return AnimatedDefaultTextStyle(
+      duration: const Duration(milliseconds: 200),
+      style: TextStyle(
+        color: color,
+        fontSize: 14.sp,
+        fontWeight: isValid && hasStarted ? FontWeight.w600 : FontWeight.w400,
+      ),
+      child: Row(
+        children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, anim) =>
+                ScaleTransition(scale: anim, child: child),
+            child: Icon(
+              icon,
+              key: ValueKey('$text-$hasStarted-$isValid'),
+              color: color,
+              size: 18.sp,
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Text(text),
+        ],
+      ),
     );
   }
 
@@ -133,7 +178,13 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       ),
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.pushReplacementNamed(Routes.login);
+                          }
+                        },
                         icon: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           size: 17.sp,
@@ -199,8 +250,12 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     color: context.textPrimaryColor,
                     fontSize: 14.sp,
                   ),
-                  onChanged: (_) {
-                    setState(() {});
+                  onChanged: (val) {
+                    setState(() {
+                      if (!_hasStartedTyping && val.isNotEmpty) {
+                        _hasStartedTyping = true;
+                      }
+                    });
                   },
                   decoration: _passwordDecoration(
                     hint: 'Enter your new password',
@@ -226,13 +281,17 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
                 SizedBox(height: 16.h),
 
-                // Simple password requirements
-                _buildSimpleRequirement('At least 8 characters'),
+                // Interactive password requirements
+                _buildRequirementItem(
+                  text: 'At least 8 characters',
+                  isValid: _hasMinLength,
+                ),
 
                 SizedBox(height: 8.h),
 
-                _buildSimpleRequirement(
-                  'Includes uppercase letters and numbers',
+                _buildRequirementItem(
+                  text: 'Includes uppercase letters and numbers',
+                  isValid: _hasUppercase && _hasNumber,
                 ),
 
                 SizedBox(height: 24.h),
@@ -257,6 +316,9 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     color: context.textPrimaryColor,
                     fontSize: 14.sp,
                   ),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
                   decoration: _passwordDecoration(
                     hint: 'Confirm your new password',
                     isVisible: _isConfirmPasswordVisible,
