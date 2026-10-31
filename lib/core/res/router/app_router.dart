@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../features/authentication/presentation/create_new_password_screen.dart';
+import '../../../features/authentication/presentation/enter_recovery_code_screen.dart';
+import '../../../features/authentication/presentation/verify_email_address_screen.dart';
+import '../../../features/authentication/presentation/forget_password_screen.dart';
+
 import '../../../features/home/data/models/product_model.dart';
 import '../../../features/home/presentation/home_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
@@ -13,6 +18,7 @@ import '../../../features/authentication/presentation/login_screen.dart';
 // 🟢 NEW: استيراد شاشة إنشاء الحساب
 import '../../../features/authentication/presentation/signup_screen.dart';
 import '../../../features/manage_products/presentation/manage_products_screen.dart';
+
 import '../../../features/add_product/presentation/add_product_screen.dart';
 
 import 'routes.dart';
@@ -40,7 +46,8 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => ReviewsScreen(
             productName:
-                args?['productName'] as String? ?? 'Heritage Chronograph Steel Watch',
+                args?['productName'] as String? ??
+                'Heritage Chronograph Steel Watch',
             averageRating: (args?['rating'] as num?)?.toDouble() ?? 4.9,
             totalReviews: args?['reviewsCount'] as int? ?? 128,
           ),
@@ -48,6 +55,9 @@ class RouteGenerator {
       // 🟢 NEW: فتح شاشة تسجيل الدخول
       case Routes.login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
+      //Register the Forgot Password screen
+      case Routes.forgotPassword:
+        return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
 
       // 🟢 NEW: فتح شاشة إنشاء الحساب
       case Routes.register:
@@ -58,6 +68,23 @@ class RouteGenerator {
 
       case Routes.addProduct:
         return MaterialPageRoute(builder: (_) => const AddProductScreen());
+
+      case Routes.verifyEmailAddress:
+        final email = settings.arguments as String? ?? '';
+
+        return MaterialPageRoute(
+          builder: (_) => VerifyEmailAddressScreen(email: email),
+        );
+
+      case Routes.recoveryCode:
+        return MaterialPageRoute(
+          builder: (_) => const EnterRecoveryCodeScreen(),
+        );
+
+      case Routes.createNewPassword:
+        return MaterialPageRoute(
+          builder: (_) => const CreateNewPasswordScreen(),
+        );
 
       default:
         return _unDefinedRoute(settings.name);

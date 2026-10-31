@@ -13,7 +13,7 @@ class ThemeCubit extends Cubit<ThemeMode> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final isDark =
-          prefs.getBool(_themePrefKey) ?? false; // Default to dark (#0D1117)
+          prefs.getBool(_themePrefKey) ?? true; // Default to dark (#0D1117)
       emit(isDark ? ThemeMode.dark : ThemeMode.light);
     } catch (_) {
       emit(ThemeMode.dark);
