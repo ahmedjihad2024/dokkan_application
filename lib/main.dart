@@ -5,7 +5,7 @@ import 'core/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Set edge-to-edge transparent system overlay
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

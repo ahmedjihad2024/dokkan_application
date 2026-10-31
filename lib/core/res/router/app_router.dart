@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:dokkan/features/categories/presentation/categories_screen.dart';
+import 'package:flutter/material.dart';
 
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../../features/splash/presentation/splash_screen.dart';
@@ -12,6 +13,9 @@ class RouteGenerator {
 
       case Routes.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingScreen());
+
+      case Routes.categories:
+        return MaterialPageRoute(builder: (_) => const CategoriesScreen());
 
       default:
         return _unDefinedRoute(settings.name);

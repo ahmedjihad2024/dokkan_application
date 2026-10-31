@@ -1,4 +1,7 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:dokkan/features/categories/presentation/categories_screen.dart';
+import 'package:dokkan/features/categories/presentation/products_by_category_screen.dart';
+import 'package:dokkan/features/contact_us/presentation/contact_us_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -9,7 +12,8 @@ import 'theme/theme_cubit.dart';
 
 // Global keys matching clean architecture pattern from otlob
 // ignore: non_constant_identifier_names
-final GlobalKey<ScaffoldMessengerState> SCAFFOLD_MESSENGER_KEY = GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<ScaffoldMessengerState> SCAFFOLD_MESSENGER_KEY =
+    GlobalKey<ScaffoldMessengerState>();
 // ignore: non_constant_identifier_names
 final GlobalKey<NavigatorState> NAVIGATOR_KEY = GlobalKey<NavigatorState>();
 
@@ -37,7 +41,7 @@ class DokkanApp extends StatelessWidget {
                 darkTheme: ThemeManager.darkTheme(context),
                 themeMode: themeMode,
                 // Normal navigation as specified
-                initialRoute: Routes.splash,
+                home: const ContactUsScreen(),
                 onGenerateRoute: RouteGenerator.getRoute,
               );
             },

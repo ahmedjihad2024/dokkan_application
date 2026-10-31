@@ -1,11 +1,11 @@
-﻿name: dokkan
+name: dokkan
 description: "Dokkan Atelier - Curated Luxury Accessories"
 publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.13.5
+  sdk: ^3.12.0
 
 dependencies:
   flutter:
@@ -13,19 +13,20 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   flutter_screenutil: ^5.9.3
-  google_fonts: ^9.0.0
+  google_fonts: ^6.2.1
   flutter_svg: ^2.3.0
   flutter_animate: ^4.5.2
   flutter_bloc: ^9.1.1
   shared_preferences: ^2.5.6
   flutter_gen: ^5.15.0
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_gen_runner: ^5.15.0
-  build_runner: ^2.16.2
+  build_runner: ^2.15.1
   flutter_launcher_icons: ^0.14.4
 
 flutter_launcher_icons:
