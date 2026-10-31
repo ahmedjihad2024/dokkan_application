@@ -1,8 +1,8 @@
+import 'package:dokkan/features/cart/empty_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/extensions/theme_extensions.dart';
-import '../../../features/cart/presentation/cart_screen.dart';
 import '../../../features/home/presentation/home_tab.dart';
 import '../../../features/profile/presentation/profile_screen.dart';
 import 'cubit/layout_cubit.dart';
