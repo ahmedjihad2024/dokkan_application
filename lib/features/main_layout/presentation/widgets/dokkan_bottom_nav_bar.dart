@@ -7,13 +7,13 @@ import '../../../../core/res/gen/assets.gen.dart';
 
 class DokkanBottomNavBar extends StatelessWidget {
   final int currentIndex;
-  final int cartCount;
+  final int? cartCount;
   final ValueChanged<int> onTabSelected;
 
   const DokkanBottomNavBar({
     super.key,
     required this.currentIndex,
-    required this.cartCount,
+    this.cartCount,
     required this.onTabSelected,
   });
 
@@ -143,4 +143,3 @@ class _NavBarItem extends StatelessWidget {
     );
   }
 }
-
