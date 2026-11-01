@@ -37,7 +37,7 @@ class DokkanApp extends StatelessWidget {
                 theme: ThemeManager.lightTheme(context),
                 darkTheme: ThemeManager.darkTheme(context),
                 themeMode: themeMode,
-                initialRoute: Routes.home,
+                initialRoute: Routes.splash,
                 onGenerateInitialRoutes: (initialRoute) => [
                   RouteGenerator.getRoute(RouteSettings(name: initialRoute)),
                 ],

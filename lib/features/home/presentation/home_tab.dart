@@ -26,7 +26,7 @@ class HomeTab extends StatefulWidget {
   State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
@@ -101,6 +101,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ReqStateWidget(
       state: _status,
       errorMessage: _errorMessage,
@@ -201,4 +202,7 @@ class _HomeTabState extends State<HomeTab> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

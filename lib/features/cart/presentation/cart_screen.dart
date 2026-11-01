@@ -21,7 +21,7 @@ class CartScreen extends StatefulWidget {
   State<CartScreen> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _CartScreenState extends State<CartScreen> with AutomaticKeepAliveClientMixin {
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
@@ -124,6 +124,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isEmpty = _items.isEmpty;
 
     return Scaffold(
@@ -243,4 +244,7 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
