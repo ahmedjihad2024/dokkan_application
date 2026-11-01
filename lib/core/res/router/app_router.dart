@@ -21,6 +21,10 @@ import '../../../features/order_status/presentation/payment_failed_screen.dart';
 import '../../../features/order_status/presentation/payment_success_screen.dart';
 import '../../../features/product_details/presentation/product_details_screen.dart';
 import '../../../features/products_by_category/presentation/products_by_category_screen.dart';
+import '../../../features/profile/presentation/screens/about_us_screen.dart';
+import '../../../features/profile/presentation/screens/change_pass_screen.dart';
+import '../../../features/profile/presentation/screens/privacy_policy_screen.dart';
+import '../../../features/profile/presentation/screens/profile_screen.dart';
 import '../../../features/reviews/presentation/reviews_screen.dart';
 import '../../../features/splash/presentation/splash_screen.dart';
 import 'routes.dart';
@@ -89,10 +93,21 @@ class RouteGenerator {
       case Routes.resetPassword:
         final email = _extractEmail(settings.arguments);
         return MaterialPageRoute(
-          builder: (_) => CreateNewPasswordScreen(
-            email: email.isEmpty ? null : email,
-          ),
+          builder: (_) =>
+              CreateNewPasswordScreen(email: email.isEmpty ? null : email),
         );
+
+      case Routes.profile:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+
+      case Routes.aboutUs:
+        return MaterialPageRoute(builder: (_) => const AboutUsScreen());
+
+      case Routes.privacyPolicy:
+        return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
+
+      case Routes.changePassword:
+        return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
 
       case Routes.manageProducts:
         return MaterialPageRoute(builder: (_) => const ManageProductsScreen());
@@ -107,9 +122,8 @@ class RouteGenerator {
       case Routes.productsByCategory:
         final categoryTitle = settings.arguments as String?;
         return MaterialPageRoute(
-          builder: (_) => ProductsByCategoryScreen(
-            categoryTitle: categoryTitle,
-          ),
+          builder: (_) =>
+              ProductsByCategoryScreen(categoryTitle: categoryTitle),
         );
 
       // ─── Unified Checkout Flow (Carousel: Address -> Payment -> Review)
