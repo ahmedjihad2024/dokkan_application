@@ -8,7 +8,7 @@ import '../../data/models/category_model.dart';
 class CollectionsSection extends StatelessWidget {
   final List<CategoryModel> categories;
   final String selectedCategoryId;
-  final ValueChanged<String> onCategorySelected;
+  final void Function(CategoryModel model) onCategorySelected;
   final VoidCallback? onSeeAllPressed;
   final double horizontalPadding;
 
@@ -74,7 +74,7 @@ class CollectionsSection extends StatelessWidget {
               final isSelected = category.id == selectedCategoryId;
 
               return InkWell(
-                onTap: () => onCategorySelected(category.id),
+                onTap: () => onCategorySelected(category),
                 borderRadius: BorderRadius.circular(20.r),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),

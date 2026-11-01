@@ -94,10 +94,12 @@ class _HomeTabState extends State<HomeTab> {
             // Collections category filter pills (scrolls edge-to-edge)
             CollectionsSection(
               categories: widget.state.categories,
-              selectedCategoryId: widget.state.selectedCategoryId,
-              onCategorySelected: widget.cubit.selectCategory,
+              selectedCategoryId: '',
+              onCategorySelected: (model) {
+                context.pushNamed(Routes.productsByCategory, arguments: model.name);
+              },
               onSeeAllPressed: () {
-                // todo: nav to a collections view
+                context.pushNamed(Routes.categories);
               },
             ),
 
@@ -125,4 +127,3 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 }
-

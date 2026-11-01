@@ -71,4 +71,8 @@ abstract class ColorM {
   static const Color white              = Color(0xFFFFFFFF);
   static const Color black              = Color(0xFF000000);
   static const Color transparent        = Colors.transparent;
+
+  static const Color cardBackground     = Color(0xFFE2E8F0);
+  static const Color cardborder          = Color(0xFFEEEEEE);
+
 }

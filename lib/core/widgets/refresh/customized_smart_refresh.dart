@@ -79,7 +79,7 @@ class CustomizedSmartRefresh extends StatelessWidget {
           );
         },
         textStyle: context.labelSmall.copyWith(
-          color: ColorM.gray900.withValues(alpha: .5),
+          color: context.textPrimaryColor.withValues(alpha: .5),
           fontWeight: FontWeightM.medium,
         ),
         loadingText: Translation.loading.tr,

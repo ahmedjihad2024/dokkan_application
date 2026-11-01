@@ -7,6 +7,9 @@ import '../../../features/authentication/presentation/forget_password_screen.dar
 import '../../../features/authentication/presentation/login_screen.dart';
 import '../../../features/authentication/presentation/signup_screen.dart';
 import '../../../features/authentication/presentation/verify_email_address_screen.dart';
+import '../../../features/categories/presentation/categories_screen.dart';
+import '../../../features/products_by_category/presentation/products_by_category_screen.dart';
+import '../../../features/contact_us/presentation/contact_us_screen.dart';
 import '../../../features/home/data/models/product_model.dart';
 import '../../../features/main_layout/presentation/main_layout_screen.dart';
 import '../../../features/manage_products/presentation/manage_products_screen.dart';
@@ -90,6 +93,22 @@ class RouteGenerator {
 
       case Routes.addProduct:
         return MaterialPageRoute(builder: (_) => const AddProductScreen());
+
+      // ─── Categories & Products ─────────────────────────────────
+      case Routes.categories:
+        return MaterialPageRoute(builder: (_) => const CategoriesScreen());
+
+      case Routes.productsByCategory:
+        final categoryTitle = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => ProductsByCategoryScreen(
+            categoryTitle: categoryTitle,
+          ),
+        );
+
+      // ─── Contact Us ────────────────────────────────────────────
+      case Routes.contactUs:
+        return MaterialPageRoute(builder: (_) => const ContactUsScreen());
 
       default:
         return _unDefinedRoute(settings.name);
