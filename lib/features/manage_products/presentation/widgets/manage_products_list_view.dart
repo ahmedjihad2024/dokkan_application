@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/refresh/customized_smart_refresh.dart';
@@ -38,7 +39,15 @@ class ManageProductsListView extends StatelessWidget {
           ? ListView(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
               children: [
-                ManageProductsEmptyState(onAddProduct: onAddProduct),
+                ManageProductsEmptyState(onAddProduct: onAddProduct)
+                    .animate()
+                    .fadeIn(duration: 450.ms, delay: 100.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 450.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
               ],
             )
           : ListView.builder(
@@ -51,7 +60,24 @@ class ManageProductsListView extends StatelessWidget {
                   item: item,
                   onEdit: () => onEdit(item),
                   onDelete: () => onDelete(item),
-                );
+                )
+                    .animate(delay: (80 + (index * 55)).ms)
+                    .fadeIn(
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    )
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    )
+                    .scale(
+                      begin: const Offset(0.98, 0.98),
+                      end: const Offset(1, 1),
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    );
               },
             ),
     );

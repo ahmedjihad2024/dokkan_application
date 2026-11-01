@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 
 import '../../../core/extensions/theme_extensions.dart';
 import '../../../core/res/sizes_manager.dart';
@@ -72,7 +71,7 @@ class _DirectAtelierInquiryWidgetState
               color: context.textPrimaryColor,
             ),
           ),
-          Gap(12.h),
+          12.verticalSpace,
 
           // Working Subject Dropdown
           Container(
@@ -115,7 +114,7 @@ class _DirectAtelierInquiryWidgetState
               ),
             ),
           ),
-          Gap(12.h),
+          12.verticalSpace,
 
           // Message field
           TextField(
@@ -131,7 +130,7 @@ class _DirectAtelierInquiryWidgetState
               ),
             ),
           ),
-          Gap(12.h),
+          12.verticalSpace,
 
           // Send button
           SizedBox(

@@ -135,10 +135,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 },
                 onFavoriteToggle: _onFavoriteToggle,
                 onAddToCart: (product) {
-                  CustomSnackBar.showSuccess(
-                    context,
-                    '${product.name} added to cart',
-                  );
+                
                 },
               ),
             ),

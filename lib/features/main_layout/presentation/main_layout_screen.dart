@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/extensions/theme_extensions.dart';
 import '../../../features/home/presentation/home_tab.dart';
-import '../../../features/profile/presentation/profile_screen.dart';
 import '../../cart/presentation/cart_screen.dart';
+import '../../profile/presentation/screens/profile_screen.dart';
 import 'cubit/layout_cubit.dart';
 import 'cubit/layout_state.dart';
 import 'widgets/dokkan_bottom_nav_bar.dart';

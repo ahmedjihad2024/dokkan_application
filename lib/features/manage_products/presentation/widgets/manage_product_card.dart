@@ -31,9 +31,9 @@ class ManageProductCard extends StatelessWidget {
       child: Row(
         children: [
           ManageProductThumbnail(item: item),
-          SizedBox(width: 10.w),
+          10.horizontalSpace,
           Expanded(child: ManageProductInfo(item: item)),
-          SizedBox(width: 8.w),
+          8.horizontalSpace,
           ManageProductActions(
             onEdit: onEdit,
             onDelete: onDelete,

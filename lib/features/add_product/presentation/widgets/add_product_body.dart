@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/enums/request_state.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import '../cubit/add_product_cubit.dart';
@@ -58,21 +60,30 @@ class _AddProductBodyState extends State<AddProductBody> {
     }
 
     final isValid = _formKey.currentState?.validate() ?? false;
-
     if (!isValid) {
-      CustomSnackBar.showWarning(
+      CustomSnackBar.showError(
         context,
-        'Please fill in all required product fields',
+        'Please review errors in the form before publishing',
         isTop: true,
       );
       return;
     }
 
+    if (state.selectedCategories.isEmpty) {
+      CustomSnackBar.showWarning(
+        context,
+        'Please select at least one product category',
+        isTop: true,
+      );
+      return;
+    }
+
+    // Process publishing product
     await cubit.submitProduct();
     if (mounted) {
       CustomSnackBar.showSuccess(
         context,
-        'Product published successfully',
+        'Product published to catalog successfully!',
         isTop: true,
       );
       if (widget.onProductPublished != null) {
@@ -85,28 +96,18 @@ class _AddProductBodyState extends State<AddProductBody> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
-    final primaryAccent =
-        isDark ? const Color(0xFFD47A4A) : const Color(0xFFB85C36);
+    final primaryAccent = context.colorScheme.primary;
 
     return BlocConsumer<AddProductCubit, AddProductState>(
-      listenWhen: (previous, current) =>
-          previous.errorMessage != current.errorMessage &&
-          current.errorMessage != null,
       listener: (context, state) {
-        if (state.errorMessage != null) {
-          CustomSnackBar.showWarning(
-            context,
-            state.errorMessage!,
-            isTop: true,
-          );
+        if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+          CustomSnackBar.showError(context, state.errorMessage!, isTop: true);
         }
       },
       builder: (context, state) {
         final cubit = context.read<AddProductCubit>();
 
         return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
           child: Form(
             key: _formKey,
@@ -166,8 +167,16 @@ class _AddProductBodyState extends State<AddProductBody> {
                   },
                   onRemoveGalleryImage: (index) =>
                       cubit.removeGalleryImage(index),
-                ),
-                SizedBox(height: 12.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 60.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                12.verticalSpace,
 
                 // Product Name (English) matching Figma 37:781 / 37:852
                 AddProductFormField(
@@ -181,8 +190,16 @@ class _AddProductBodyState extends State<AddProductBody> {
                     }
                     return null;
                   },
-                ),
-                SizedBox(height: 12.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 100.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                12.verticalSpace,
 
                 // Product Name (Arabic) matching Figma 37:785 / 37:856
                 AddProductFormField(
@@ -197,8 +214,16 @@ class _AddProductBodyState extends State<AddProductBody> {
                     }
                     return null;
                   },
-                ),
-                SizedBox(height: 12.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 140.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                12.verticalSpace,
 
                 // Description (English) matching Figma 37:789 / 37:860
                 AddProductFormField(
@@ -214,8 +239,16 @@ class _AddProductBodyState extends State<AddProductBody> {
                     }
                     return null;
                   },
-                ),
-                SizedBox(height: 12.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 180.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                12.verticalSpace,
 
                 // Description (Arabic) matching Figma 37:793 / 37:864
                 AddProductFormField(
@@ -232,8 +265,16 @@ class _AddProductBodyState extends State<AddProductBody> {
                     }
                     return null;
                   },
-                ),
-                SizedBox(height: 12.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 220.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                12.verticalSpace,
 
                 // Row: Price & Discount matching Figma 37:797 / 37:868
                 Row(
@@ -263,7 +304,7 @@ class _AddProductBodyState extends State<AddProductBody> {
                         },
                       ),
                     ),
-                    SizedBox(width: 12.w),
+                    12.horizontalSpace,
                     Expanded(
                       child: AddProductFormField(
                         label: 'Discount Rate (%)',
@@ -291,8 +332,16 @@ class _AddProductBodyState extends State<AddProductBody> {
                       ),
                     ),
                   ],
-                ),
-                SizedBox(height: 12.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 260.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                12.verticalSpace,
 
                 // Row: Stock & Weight matching Figma 37:806 / 37:877
                 Row(
@@ -320,7 +369,7 @@ class _AddProductBodyState extends State<AddProductBody> {
                         },
                       ),
                     ),
-                    SizedBox(width: 12.w),
+                    12.horizontalSpace,
                     Expanded(
                       child: AddProductFormField(
                         label: 'Weight & Finish',
@@ -336,22 +385,52 @@ class _AddProductBodyState extends State<AddProductBody> {
                       ),
                     ),
                   ],
-                ),
-                SizedBox(height: 14.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 300.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                14.verticalSpace,
 
                 // Categories Multi-Select Chips matching Figma 37:815 / 37:886
                 AddProductCategoryChips(
                   selectedCategories: state.selectedCategories,
                   onCategoryToggled: cubit.toggleCategory,
-                ),
-                SizedBox(height: 20.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 340.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                20.verticalSpace,
 
                 // Submit & Publish Button matching Figma 37:826 / 37:897
                 AddProductSubmitButton(
-                  isLoading: false,
+                  isLoading: state.status.isLoading,
                   onSubmit: _handleSubmit,
-                ),
-                SizedBox(height: 24.h),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 380.ms)
+                    .slideY(
+                      begin: 0.08,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    )
+                    .scale(
+                      begin: const Offset(0.98, 0.98),
+                      end: const Offset(1, 1),
+                      duration: 400.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
+                24.verticalSpace,
               ],
             ),
           ),

@@ -84,7 +84,7 @@ class CuratedArrivalsSection extends StatelessWidget {
                 onFavoriteToggle: () => onFavoriteToggle?.call(product.id),
                 onAddToCart: () => onAddToCart?.call(product),
               )
-                  .animate(delay: (200 + (index * 80)).ms)
+                  .animate(delay: (150 + ((index % 3) * 50)).ms)
                   .fadeIn(
                     duration: 450.ms,
                     curve: Curves.easeOutCubic,

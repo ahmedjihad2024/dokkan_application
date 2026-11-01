@@ -161,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        context.pushReplacementNamed(Routes.register);
+                        context.pushNamed(Routes.register);
                       },
                       child: Text(
                         'Register',

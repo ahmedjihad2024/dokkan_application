@@ -38,8 +38,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   onTap: () {
                     if (context.canPop()) {
                       context.pop();
-                    } else {
-                      context.pushReplacementNamed(Routes.login);
                     }
                   },
                   borderRadius: BorderRadius.circular(19.r),
