@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
@@ -11,6 +12,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,9 +32,18 @@ class HomeHeader extends StatelessWidget {
                   letterSpacing: 1.5,
                   color: ColorM.primary,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 350.ms)
+                  .slideX(
+                    begin: -0.08,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
+
               SizedBox(height: 4.h),
-              // User Greeting
+
+              // User Greeting with One-Time Luxury Golden Shimmer
               Text(
                 'Good morning, $userName',
                 style: TextStyle(
@@ -41,8 +52,25 @@ class HomeHeader extends StatelessWidget {
                   color: context.textPrimaryColor,
                   letterSpacing: -0.2,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 450.ms, delay: 100.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .shimmer(
+                    delay: 450.ms,
+                    duration: 1600.ms,
+                    curve: Curves.fastEaseInToSlowEaseOut,
+                    color: isDark
+                        ? const Color.fromARGB(255, 0, 255, 187)
+                        : const Color.fromARGB(255, 1, 153, 112),
+                  ),
+
               SizedBox(height: 4.h),
+
               // Tagline / Subtitle
               Text(
                 "Discover today's curated accessories",
@@ -51,7 +79,14 @@ class HomeHeader extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                   color: context.textSecondaryColor,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 200.ms)
+                  .slideY(
+                    begin: 0.1,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
             ],
           ),
         ),

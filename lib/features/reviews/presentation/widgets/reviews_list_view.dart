@@ -1,30 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../product_details/data/models/product_review_model.dart';
 import 'review_item_card.dart';
 
 class ReviewsListView extends StatelessWidget {
   final List<ProductReviewModel> reviews;
-  final ScrollPhysics? physics;
-  final ScrollController? controller;
 
   const ReviewsListView({
     super.key,
     required this.reviews,
-    this.physics,
-    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      controller: controller,
-      physics: physics ?? const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+    return SliverList.builder(
       itemCount: reviews.length,
       itemBuilder: (context, index) {
-        return ReviewItemCard(review: reviews[index]);
+        // Cap staggered delay to first visible items to ensure smooth lazy loading for hundreds of comments
+        final delay = index < 8 ? (index * 50).ms : Duration.zero;
+
+        return ReviewItemCard(review: reviews[index])
+            .animate(delay: delay)
+            .fadeIn(
+              duration: 350.ms,
+              curve: Curves.easeOutCubic,
+            )
+            .slideY(
+              begin: 0.06,
+              end: 0,
+              duration: 350.ms,
+              curve: Curves.easeOutCubic,
+            );
       },
     );
   }

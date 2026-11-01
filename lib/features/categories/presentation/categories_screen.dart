@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/enums/request_state.dart';
@@ -58,55 +59,70 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         title: const Text('Categories'),
       ),
       body: ReqStateWidget(
-          state: ReqState.success,
-          errorMessage: '',
+        state: ReqState.success,
+        errorMessage: '',
+        onRetry: () {},
+        onLoading: (_) => const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(ColorM.primary),
+          ),
+        ),
+        onFailure: (context, error) => AppErrorWidget(
+          message: error ?? '',
           onRetry: () {},
-          onLoading: (_) => const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(ColorM.primary),
+        ),
+        onEmpty: (context) => Center(
+          child: Text(
+            'No collections available',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: context.textSecondaryColor,
             ),
           ),
-          onFailure: (context, error) => AppErrorWidget(
-            message: error ?? '',
-            onRetry: () {},
-          ),
-          onEmpty: (context) => Center(
-            child: Text(
-              'No collections available',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: context.textSecondaryColor,
-              ),
+        ),
+        onSuccess: (context) => CustomizedSmartRefresh(
+          controller: _refreshController,
+          onRefresh: _handleRefresh,
+          onLoading: _handleLoadMore,
+          enableRefresh: true,
+          enableLoading: true,
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
             ),
-          ),
-          onSuccess: (context) => CustomizedSmartRefresh(
-            controller: _refreshController,
-            onRefresh: _handleRefresh,
-            onLoading: _handleLoadMore,
-            enableRefresh: true,
-            enableLoading: true,
-            child: ListView(
-              padding: EdgeInsets.only(
-                top: 8.h,
-                left: SizeM.pagePaddingLarge.w,
-                right: SizeM.pagePaddingLarge.w,
-                bottom: 24.h,
-              ),
-              children: [
-                // Subtitle
-                Padding(
-                  padding: EdgeInsets.only(bottom: 14.h),
+            slivers: [
+              // Subtitle
+              SliverPadding(
+                padding: EdgeInsets.only(
+                  top: 8.h,
+                  left: SizeM.pagePaddingLarge.w,
+                  right: SizeM.pagePaddingLarge.w,
+                  bottom: 14.h,
+                ),
+                sliver: SliverToBoxAdapter(
                   child: Text(
                     '6 Collections • 218 Handcrafted Pieces',
                     style: TextStyle(
                       color: context.textSecondaryColor,
                       fontSize: 13.sp,
                     ),
-                  ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 400.ms)
+                      .slideY(
+                        begin: 0.1,
+                        end: 0,
+                        curve: Curves.easeOutCubic,
+                      ),
                 ),
+              ),
 
-                // Categories grid
-                CategoriesGrid(
+              // Categories grid with animated cards
+              SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SizeM.pagePaddingLarge.w,
+                ),
+                sliver: CategoriesGrid(
                   onCategoryTap: (categoryTitle) {
                     context.pushNamed(
                       Routes.productsByCategory,
@@ -114,10 +130,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     );
                   },
                 ),
-              ],
-            ),
+              ),
+
+              // Bottom padding sliver
+              SliverToBoxAdapter(
+                child: SizedBox(height: 24.h),
+              ),
+            ],
           ),
         ),
+      ),
     );
   }
 }

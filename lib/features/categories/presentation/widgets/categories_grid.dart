@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/res/sizes_manager.dart';
@@ -54,27 +55,43 @@ class CategoriesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: collections.length,
+    return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: SizeM.elementSpacing.w,
         mainAxisSpacing: SizeM.elementSpacing.h,
         childAspectRatio: 0.8,
       ),
-      itemBuilder: (context, index) {
-        final item = collections[index];
-        return CollectionCard(
-          title: item.title,
-          subtitle: item.sub,
-          itemCount: item.count,
-          icon: item.icon,
-          onTap: () => onCategoryTap?.call(item.title),
-        );
-      },
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final item = collections[index];
+          return CollectionCard(
+            title: item.title,
+            subtitle: item.sub,
+            itemCount: item.count,
+            icon: item.icon,
+            onTap: () => onCategoryTap?.call(item.title),
+          )
+              .animate(delay: (index * 60).ms)
+              .fadeIn(
+                duration: 400.ms,
+                curve: Curves.easeOutCubic,
+              )
+              .slideY(
+                begin: 0.12,
+                end: 0,
+                duration: 400.ms,
+                curve: Curves.easeOutCubic,
+              )
+              .scale(
+                begin: const Offset(0.95, 0.95),
+                end: const Offset(1, 1),
+                duration: 400.ms,
+                curve: Curves.easeOutCubic,
+              );
+        },
+        childCount: collections.length,
+      ),
     );
   }
 }
-

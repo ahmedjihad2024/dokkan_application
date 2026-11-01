@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
@@ -98,7 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           color: context.textSecondaryColor,
                         ),
                       ),
-                    ),
+                    ).animate().fadeIn(duration: 350.ms),
                     24.horizontalSpace,
                   ],
                 ],
@@ -120,6 +121,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   final image = isDark ? item.imageDark : item.imageLight;
 
                   return SingleChildScrollView(
+                    key: ValueKey('page_$index'),
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     physics: const ClampingScrollPhysics(),
                     child: Column(
@@ -156,7 +158,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               fit: BoxFit.contain,
                             ),
                           ),
-                        ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 450.ms, curve: Curves.easeOut)
+                            .scale(
+                              begin: const Offset(0.94, 0.94),
+                              end: const Offset(1, 1),
+                              duration: 450.ms,
+                              curve: Curves.easeOutCubic,
+                            ),
 
                         // Figma Spacing to Dots: 28px
                         SizedBox(height: 28.h),
@@ -184,7 +194,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             );
                           }),
-                        ),
+                        ).animate().fadeIn(duration: 350.ms, delay: 100.ms),
 
                         // Figma Spacing to Title: 28px
                         SizedBox(height: 28.h),
@@ -199,7 +209,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             color: context.textPrimaryColor,
                             letterSpacing: -0.3,
                           ),
-                        ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms, delay: 150.ms)
+                            .slideY(
+                              begin: 0.15,
+                              end: 0,
+                              duration: 400.ms,
+                              curve: Curves.easeOutCubic,
+                            ),
 
                         // Figma Spacing to Description: 12px
                         SizedBox(height: 12.h),
@@ -217,7 +235,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               height: 22 / 14,
                             ),
                           ),
-                        ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms, delay: 250.ms)
+                            .slideY(
+                              begin: 0.15,
+                              end: 0,
+                              duration: 400.ms,
+                              curve: Curves.easeOutCubic,
+                            ),
                       ],
                     ),
                   );
@@ -260,7 +286,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 450.ms, delay: 200.ms)
+                .slideY(
+                  begin: 0.2,
+                  end: 0,
+                  duration: 450.ms,
+                  curve: Curves.easeOutCubic,
+                ),
 
             SizedBox(height: 24.h),
           ],

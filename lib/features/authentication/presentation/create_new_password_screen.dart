@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
@@ -202,7 +203,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       ),
                     ),
                   ],
-                ),
+                ).animate().fadeIn(duration: 350.ms),
 
                 SizedBox(height: 40.h),
 
@@ -214,7 +215,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     fontWeight: FontWeight.bold,
                     color: context.textPrimaryColor,
                   ),
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
 
                 SizedBox(height: 12.h),
 
@@ -226,7 +234,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     height: 1.6,
                     color: context.textSecondaryColor,
                   ),
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 60.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
 
                 SizedBox(height: 32.h),
 
@@ -238,7 +253,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     fontWeight: FontWeight.w600,
                     color: context.textPrimaryColor,
                   ),
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 100.ms)
+                    .slideY(
+                      begin: 0.06,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
 
                 SizedBox(height: 10.h),
 
@@ -277,7 +299,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
                     return null;
                   },
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 120.ms)
+                    .slideY(
+                      begin: 0.06,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
 
                 SizedBox(height: 16.h),
 
@@ -285,14 +314,18 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                 _buildRequirementItem(
                   text: 'At least 8 characters',
                   isValid: _hasMinLength,
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 140.ms),
 
                 SizedBox(height: 8.h),
 
                 _buildRequirementItem(
                   text: 'Includes uppercase letters and numbers',
                   isValid: _hasUppercase && _hasNumber,
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 160.ms),
 
                 SizedBox(height: 24.h),
 
@@ -304,7 +337,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     fontWeight: FontWeight.w600,
                     color: context.textPrimaryColor,
                   ),
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 180.ms)
+                    .slideY(
+                      begin: 0.06,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
 
                 SizedBox(height: 10.h),
 
@@ -339,7 +379,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
                     return null;
                   },
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 200.ms)
+                    .slideY(
+                      begin: 0.06,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
 
                 SizedBox(height: 40.h),
 
@@ -352,7 +399,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       ? ColorM.primary
                       : const Color(0xFF0F172A),
                   textColor: Colors.white,
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 450.ms, delay: 220.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
 
                 SizedBox(height: 24.h),
               ],

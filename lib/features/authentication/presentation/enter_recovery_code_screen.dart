@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
@@ -152,7 +153,7 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                     ),
                   ),
                 ],
-              ),
+              ).animate().fadeIn(duration: 350.ms),
 
               SizedBox(height: 36.h),
 
@@ -164,7 +165,14 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                   fontWeight: FontWeight.bold,
                   color: primaryTextColor,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 12.h),
 
@@ -176,7 +184,14 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                   height: 1.6,
                   color: secondaryTextColor,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 60.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               if (widget.email.isNotEmpty) ...[
                 SizedBox(height: 8.h),
@@ -187,7 +202,14 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                     fontWeight: FontWeight.w600,
                     color: primaryTextColor,
                   ),
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 90.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
               ],
 
               SizedBox(height: 36.h),
@@ -200,7 +222,14 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                     _recoveryCode = value;
                   });
                 },
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 450.ms, delay: 120.ms)
+                  .slideY(
+                    begin: 0.06,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 24.h),
 
@@ -235,7 +264,7 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                     ),
                   ],
                 ),
-              ),
+              ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
 
               SizedBox(height: 6.h),
 
@@ -247,7 +276,7 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                       : 'You can request a new code now.',
                   style: TextStyle(fontSize: 12.sp, color: secondaryTextColor),
                 ),
-              ),
+              ).animate().fadeIn(duration: 400.ms, delay: 180.ms),
 
               SizedBox(height: 36.h),
 
@@ -260,7 +289,14 @@ class _EnterRecoveryCodeScreenState extends State<EnterRecoveryCodeScreen> {
                     ? ColorM.primary
                     : const Color(0xFF0F172A),
                 textColor: Colors.white,
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 450.ms, delay: 200.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 12.h),
             ],

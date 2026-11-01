@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
-import '../../../core/res/color_manager.dart';
 import '../../../core/res/gen/assets.gen.dart';
 import '../../../core/res/router/routes.dart';
-import '../../../core/theme/theme_cubit.dart';
 import 'widgets/forgot_password_form.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -64,20 +62,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                     ),
                   ),
-
-                  // Theme toggle button
-                  IconButton(
-                    onPressed: () {
-                      context.read<ThemeCubit>().toggleTheme();
-                    },
-                    icon: Icon(
-                      context.isDark ? Icons.light_mode : Icons.dark_mode,
-                      color: context.textPrimaryColor,
-                    ),
-                    tooltip: 'Toggle theme',
-                  ),
                 ],
-              ),
+              ).animate().fadeIn(duration: 350.ms),
 
               SizedBox(height: 32.h),
 
@@ -90,7 +76,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   color: context.textPrimaryColor,
                   letterSpacing: -0.5,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 8.h),
 
@@ -103,7 +96,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   color: context.textSecondaryColor,
                   height: 1.5,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 60.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 32.h),
 
@@ -115,26 +115,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     arguments: email,
                   );
                 },
-              ),
-
-              SizedBox(height: 20.h),
-
-              // Back to login
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    context.pushReplacementNamed(Routes.login);
-                  },
-                  child: Text(
-                    'Back to Login',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: ColorM.primaryDark,
-                    ),
+              )
+                  .animate()
+                  .fadeIn(duration: 450.ms, delay: 120.ms)
+                  .slideY(
+                    begin: 0.06,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
                   ),
-                ),
-              ),
             ],
           ),
         ),

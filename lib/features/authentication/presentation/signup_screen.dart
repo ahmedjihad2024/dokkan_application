@@ -1,5 +1,6 @@
 import 'package:animated_visibility/animated_visibility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
@@ -61,7 +62,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
-              ),
+              ).animate().fadeIn(duration: 350.ms),
 
               SizedBox(height: 28.h),
 
@@ -74,8 +75,17 @@ class _SignupScreenState extends State<SignupScreen> {
                   color: context.textPrimaryColor,
                   letterSpacing: -0.5,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
+
               SizedBox(height: 8.h),
+
               // Subtitle matching Figma (size 14sp Regular)
               Text(
                 'Join Dokkan to explore exclusive collections',
@@ -84,7 +94,14 @@ class _SignupScreenState extends State<SignupScreen> {
                   fontWeight: FontWeight.w400,
                   color: context.textSecondaryColor,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 60.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 24.h),
 
@@ -153,7 +170,14 @@ class _SignupScreenState extends State<SignupScreen> {
                     arguments: email,
                   );
                 },
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 450.ms, delay: 120.ms)
+                  .slideY(
+                    begin: 0.06,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 28.h),
 
@@ -184,7 +208,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ],
                 ),
-              ),
+              ).animate().fadeIn(duration: 400.ms, delay: 200.ms),
+
               SizedBox(height: 20.h),
             ],
           ),

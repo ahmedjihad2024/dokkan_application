@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
@@ -94,54 +95,100 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ProductDetailsAppBar(
               isFavorite: _isFavorite,
               onFavoriteToggle: _toggleFavorite,
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 350.ms)
+                .slideY(begin: -0.05, end: 0, curve: Curves.easeOutCubic),
 
-            // Scrollable Content
+            // Scrollable Content using CustomScrollView & Slivers
             Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 4.h),
-
-                    // Hero Image & Thumbnail selector matching Figma 37:515 - 37:525
-                    ProductImageGallery(
-                      imageUrl: _product.imageUrl,
-                      discountTag: _product.discountTag ?? '-25%',
-                      emoji: _product.emoji,
-                    ),
-
-                    SizedBox(height: 16.h),
-
-                    // Title, Code, Price, Chips & Description matching Figma 37:526 - 37:540
-                    ProductInfoHeader(
-                      title: _product.name,
-                      subtitle:
-                          'Product Code: DOK-9842 • 2-Year Official Warranty',
-                      currentPrice: _product.currentPrice,
-                      originalPrice: _product.originalPrice ?? 199.00,
-                      materialText: 'Espresso Leather',
-                      weightText: 'Weight: 142g',
-                      stockText: '● In Stock ($_maxStock left)',
-                      description:
-                          'Handcrafted Italian calfskin strap with 316L surgical steel and scratch-resistant sapphire crystal glass. 50m water resistant.',
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    // Customer Reviews Section matching Figma 37:541 - 37:555
-                    ProductReviewsSection(
-                      productName: _product.name,
-                      rating: _product.rating,
-                      reviewsCount: _product.reviewsCount,
-                      reviews: ProductReviewModel.defaultReviews(),
-                    ),
-
-                    SizedBox(height: 24.h),
-                  ],
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
                 ),
+                slivers: [
+                  // Hero Image & Thumbnail selector matching Figma 37:515 - 37:525
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: 4.h,
+                      left: 24.w,
+                      right: 24.w,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: ProductImageGallery(
+                        imageUrl: _product.imageUrl,
+                        discountTag: _product.discountTag ?? '-25%',
+                        emoji: _product.emoji,
+                      )
+                          .animate()
+                          .fadeIn(duration: 450.ms)
+                          .scale(
+                            begin: const Offset(0.96, 0.96),
+                            end: const Offset(1, 1),
+                            curve: Curves.easeOutCubic,
+                          ),
+                    ),
+                  ),
+
+                  // Title, Code, Price, Chips & Description matching Figma 37:526 - 37:540
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: 16.h,
+                      left: 24.w,
+                      right: 24.w,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: ProductInfoHeader(
+                        title: _product.name,
+                        subtitle:
+                            'Product Code: DOK-9842 • 2-Year Official Warranty',
+                        currentPrice: _product.currentPrice,
+                        originalPrice: _product.originalPrice ?? 199.00,
+                        materialText: 'Espresso Leather',
+                        weightText: 'Weight: 142g',
+                        stockText: '● In Stock ($_maxStock left)',
+                        description:
+                            'Handcrafted Italian calfskin strap with 316L surgical steel and scratch-resistant sapphire crystal glass. 50m water resistant.',
+                      )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 100.ms)
+                          .slideY(
+                            begin: 0.08,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          ),
+                    ),
+                  ),
+
+                  // Customer Reviews Section matching Figma 37:541 - 37:555
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: 20.h,
+                      left: 24.w,
+                      right: 24.w,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: ProductReviewsSection(
+                        productName: _product.name,
+                        rating: _product.rating,
+                        reviewsCount: _product.reviewsCount,
+                        reviews: ProductReviewModel.defaultReviews(),
+                      )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 180.ms)
+                          .slideY(
+                            begin: 0.08,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          ),
+                    ),
+                  ),
+
+                  // Bottom padding
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: 24.h),
+                  ),
+                ],
               ),
             ),
           ],
@@ -155,7 +202,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         onIncrement: _incrementQuantity,
         onDecrement: _decrementQuantity,
         onAddToCart: _handleAddToCart,
-      ),
+      )
+          .animate()
+          .fadeIn(duration: 400.ms, delay: 120.ms)
+          .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
     );
   }
 }

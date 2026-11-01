@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
@@ -41,7 +42,14 @@ class EmptyCartView extends StatelessWidget {
                 color: ColorM.primary,
                 size: 32,
               ),
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 400.ms)
+                .scale(
+                  begin: const Offset(0.85, 0.85),
+                  end: const Offset(1, 1),
+                  curve: Curves.easeOutBack,
+                ),
             Gap(16.h),
 
             // Title (Figma: 18sp Bold)
@@ -53,7 +61,14 @@ class EmptyCartView extends StatelessWidget {
                 fontSize: 18.sp,
                 fontWeight: FontWeightM.bold,
               ),
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 80.ms)
+                .slideY(
+                  begin: 0.12,
+                  end: 0,
+                  curve: Curves.easeOutCubic,
+                ),
             Gap(10.h),
 
             // Description (Figma: 13sp Regular, maxWidth 280)
@@ -68,7 +83,14 @@ class EmptyCartView extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 140.ms)
+                .slideY(
+                  begin: 0.12,
+                  end: 0,
+                  curve: Curves.easeOutCubic,
+                ),
             Gap(20.h),
 
             // Explore Collections Button (Figma: 200x48, radius: 12)
@@ -93,7 +115,14 @@ class EmptyCartView extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 200.ms)
+                .slideY(
+                  begin: 0.15,
+                  end: 0,
+                  curve: Curves.easeOutCubic,
+                ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
@@ -162,7 +163,7 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                     ),
                   ),
                 ],
-              ),
+              ).animate().fadeIn(duration: 350.ms),
 
               SizedBox(height: 28.h),
 
@@ -175,7 +176,14 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                   color: context.textPrimaryColor,
                   letterSpacing: -0.5,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 8.h),
 
@@ -187,7 +195,14 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                   color: context.textSecondaryColor,
                   height: 1.5,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 60.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               if (widget.email.isNotEmpty) ...[
                 SizedBox(height: 4.h),
@@ -199,7 +214,14 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                     fontWeight: FontWeight.w600,
                     color: context.textPrimaryColor,
                   ),
-                ),
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 90.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    ),
               ],
 
               SizedBox(height: 24.h),
@@ -214,7 +236,14 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                     _hasError = false;
                   });
                 },
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 450.ms, delay: 120.ms)
+                  .slideY(
+                    begin: 0.06,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
 
               SizedBox(height: 16.h),
 
@@ -234,7 +263,7 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                     ),
                   ),
                 ),
-              ),
+              ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
 
               SizedBox(height: 8.h),
 
@@ -249,7 +278,7 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                       color: context.textSecondaryColor,
                     ),
                   ),
-                ),
+                ).animate().fadeIn(duration: 400.ms, delay: 180.ms),
 
               SizedBox(height: 24.h),
 
@@ -262,7 +291,14 @@ class _VerifyEmailAddressScreenState extends State<VerifyEmailAddressScreen> {
                     ? ColorM.primary
                     : const Color(0xFF0F172A),
                 textColor: Colors.white,
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 450.ms, delay: 200.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    curve: Curves.easeOutCubic,
+                  ),
             ],
           ),
         ),

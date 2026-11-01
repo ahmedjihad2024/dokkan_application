@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -21,7 +22,8 @@ class CartScreen extends StatefulWidget {
   State<CartScreen> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> with AutomaticKeepAliveClientMixin {
+class _CartScreenState extends State<CartScreen>
+    with AutomaticKeepAliveClientMixin {
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
@@ -154,7 +156,10 @@ class _CartScreenState extends State<CartScreen> with AutomaticKeepAliveClientMi
                           fontSize: 20.sp,
                           fontWeight: FontWeightM.bold,
                         ),
-                      ),
+                      )
+                          .animate()
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: -0.06, end: 0, curve: Curves.easeOutCubic),
                       if (!isEmpty) ...[
                         Gap(2.h),
                         Text(
@@ -163,7 +168,9 @@ class _CartScreenState extends State<CartScreen> with AutomaticKeepAliveClientMi
                             color: context.textSecondaryColor,
                             fontSize: 12.sp,
                           ),
-                        ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms, delay: 60.ms),
                       ],
                     ],
                   ),
@@ -190,7 +197,9 @@ class _CartScreenState extends State<CartScreen> with AutomaticKeepAliveClientMi
                         ),
                       ),
                     ),
-                  ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 350.ms, delay: 80.ms),
               ],
             ),
           ),
@@ -210,33 +219,66 @@ class _CartScreenState extends State<CartScreen> with AutomaticKeepAliveClientMi
                         child: EmptyCartView(onExplore: _onExploreCollections),
                       ),
                     )
-                  : ListView(
+                  : ListView.builder(
                       padding: EdgeInsets.only(
                         left: SizeM.pagePaddingLarge.w,
                         right: SizeM.pagePaddingLarge.w,
                         bottom: 24.h,
                       ),
-                      children: [
-                        // Cart Item Cards (Figma: spacing 12)
-                        ...List.generate(_items.length, (index) {
+                      itemCount: _items.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == _items.length) {
+                          // Order Summary Card
                           return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: CartItemCard(
-                              item: _items[index],
-                              onIncrement: () => _increment(index),
-                              onDecrement: () => _decrement(index),
-                              onRemove: () => _remove(index),
-                            ),
+                            padding: EdgeInsets.only(top: 4.h),
+                            child: CartOrderSummary(
+                              totalCount: _totalCount,
+                              subtotal: _subtotal,
+                            )
+                                .animate(
+                                  delay: (100 + (_items.length * 70)).ms,
+                                )
+                                .fadeIn(
+                                  duration: 450.ms,
+                                  curve: Curves.easeOutCubic,
+                                )
+                                .slideY(
+                                  begin: 0.1,
+                                  end: 0,
+                                  duration: 450.ms,
+                                  curve: Curves.easeOutCubic,
+                                ),
                           );
-                        }),
-                        Gap(4.h),
+                        }
 
-                        // Order Summary Card
-                        CartOrderSummary(
-                          totalCount: _totalCount,
-                          subtotal: _subtotal,
-                        ),
-                      ],
+                        // Cart Item Card with staggered entrance
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: CartItemCard(
+                            item: _items[index],
+                            onIncrement: () => _increment(index),
+                            onDecrement: () => _decrement(index),
+                            onRemove: () => _remove(index),
+                          )
+                              .animate(delay: (80 + (index * 70)).ms)
+                              .fadeIn(
+                                duration: 420.ms,
+                                curve: Curves.easeOutCubic,
+                              )
+                              .slideY(
+                                begin: 0.1,
+                                end: 0,
+                                duration: 420.ms,
+                                curve: Curves.easeOutCubic,
+                              )
+                              .scale(
+                                begin: const Offset(0.97, 0.97),
+                                end: const Offset(1, 1),
+                                duration: 420.ms,
+                                curve: Curves.easeOutCubic,
+                              ),
+                        );
+                      },
                     ),
             ),
           ),

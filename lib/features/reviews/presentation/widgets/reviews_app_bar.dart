@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/navigation_extension.dart';
@@ -104,7 +105,10 @@ class ReviewsAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ],
-        ),
+        )
+            .animate()
+            .fadeIn(duration: 350.ms)
+            .slideY(begin: -0.05, end: 0, curve: Curves.easeOutCubic),
       ),
     );
   }

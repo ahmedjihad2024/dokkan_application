@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
@@ -58,9 +59,18 @@ class CollectionsSection extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        )
+            .animate()
+            .fadeIn(duration: 400.ms, delay: 120.ms)
+            .slideX(
+              begin: -0.06,
+              end: 0,
+              curve: Curves.easeOutCubic,
+            ),
+
         SizedBox(height: 12.h),
-        // Horizontal Filter Chips scrolling edge-to-edge with content padding
+
+        // Horizontal Filter Chips scrolling edge-to-edge with staggered chip animation
         SizedBox(
           height: 36.h,
           child: ListView.separated(
@@ -107,7 +117,24 @@ class CollectionsSection extends StatelessWidget {
                     ),
                   ),
                 ),
-              );
+              )
+                  .animate(delay: (150 + (index * 60)).ms)
+                  .fadeIn(
+                    duration: 400.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .slideX(
+                    begin: 0.2,
+                    end: 0,
+                    duration: 400.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .scale(
+                    begin: const Offset(0.9, 0.9),
+                    end: const Offset(1, 1),
+                    duration: 400.ms,
+                    curve: Curves.easeOutCubic,
+                  );
             },
           ),
         ),

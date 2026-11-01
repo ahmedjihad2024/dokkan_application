@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
@@ -53,10 +54,18 @@ class CuratedArrivalsSection extends StatelessWidget {
               color: context.textPrimaryColor,
             ),
           ),
-        ),
+        )
+            .animate()
+            .fadeIn(duration: 400.ms, delay: 200.ms)
+            .slideX(
+              begin: -0.06,
+              end: 0,
+              curve: Curves.easeOutCubic,
+            ),
+
         SizedBox(height: 14.h),
 
-        // Horizontal Product List scrolling edge-to-edge with content padding
+        // Horizontal Product List scrolling edge-to-edge with staggered card animation
         SizedBox(
           height: 265.h,
           child: ListView.separated(
@@ -74,7 +83,24 @@ class CuratedArrivalsSection extends StatelessWidget {
                 onTap: () => onProductTap?.call(product),
                 onFavoriteToggle: () => onFavoriteToggle?.call(product.id),
                 onAddToCart: () => onAddToCart?.call(product),
-              );
+              )
+                  .animate(delay: (200 + (index * 80)).ms)
+                  .fadeIn(
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .slideX(
+                    begin: 0.15,
+                    end: 0,
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .scale(
+                    begin: const Offset(0.95, 0.95),
+                    end: const Offset(1, 1),
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  );
             },
           ),
         ),
