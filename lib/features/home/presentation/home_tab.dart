@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../core/enums/request_state.dart';
 import '../../../core/extensions/navigation_extension.dart';
@@ -122,64 +121,81 @@ class _HomeTabState extends State<HomeTab> {
         ),
       ),
       onSuccess: (context) => CustomizedSmartRefresh(
-        refreshStyle: RefreshStyle.Front,
         controller: _refreshController,
         onRefresh: _handleRefresh,
         enableRefresh: true,
         enableLoading: false,
-        child: ListView(
-          padding: EdgeInsets.only(bottom: 24.h),
-          children: [
-            SizedBox(height: 12.h),
-
-            // Header (Dokkan Atelier + Alexander greeting + Theme Switcher)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: const HomeHeader(userName: 'Alexander'),
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            // Header (Dokkan Atelier + Alexander greeting)
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 20.h),
+              sliver: const SliverToBoxAdapter(
+                child: HomeHeader(userName: 'Alexander'),
+              ),
             ),
-
-            SizedBox(height: 20.h),
 
             // Hero Banner (Season Atelier Leather promo carousel)
-            HomePromoBanner(
-              banners: _banners,
-              activeIndex: _activeBannerIndex,
-              onPageChanged: (index) {
-                setState(() => _activeBannerIndex = index);
-              },
+            SliverToBoxAdapter(
+              child: HomePromoBanner(
+                banners: _banners,
+                activeIndex: _activeBannerIndex,
+                onPageChanged: (index) {
+                  setState(() => _activeBannerIndex = index);
+                },
+              ),
             ),
-
-            SizedBox(height: 22.h),
 
             // Collections category filter pills (scrolls edge-to-edge)
-            CollectionsSection(
-              categories: _categories,
-              selectedCategoryId: '',
-              onCategorySelected: (model) {
-                context.pushNamed(Routes.productsByCategory, arguments: model.name);
-              },
-              onSeeAllPressed: () {
-                context.pushNamed(Routes.categories);
-              },
+            SliverPadding(
+              padding: EdgeInsets.only(top: 22.h),
+              sliver: SliverToBoxAdapter(
+                child: CollectionsSection(
+                  categories: _categories,
+                  selectedCategoryId: '',
+                  onCategorySelected: (model) {
+                    context.pushNamed(
+                      Routes.productsByCategory,
+                      arguments: model.name,
+                    );
+                  },
+                  onSeeAllPressed: () {
+                    context.pushNamed(Routes.categories);
+                  },
+                ),
+              ),
             ),
-
-            SizedBox(height: 22.h),
 
             // Curated Arrivals product cards
-            CuratedArrivalsSection(
-              products: _products,
-              onProductTap: (product) {
-                context.pushNamed(Routes.productDetails, arguments: product);
-              },
-              onFavoriteToggle: _onFavoriteToggle,
-              onAddToCart: (product) {
-                CustomSnackBar.showSuccess(
-                  context,
-                  '${product.name} added to cart',
-                );
-              },
+            SliverPadding(
+              padding: EdgeInsets.only(top: 22.h),
+              sliver: SliverToBoxAdapter(
+                child: CuratedArrivalsSection(
+                  products: _products,
+                  onProductTap: (product) {
+                    context.pushNamed(
+                      Routes.productDetails,
+                      arguments: product,
+                    );
+                  },
+                  onFavoriteToggle: _onFavoriteToggle,
+                  onAddToCart: (product) {
+                    CustomSnackBar.showSuccess(
+                      context,
+                      '${product.name} added to cart',
+                    );
+                  },
+                ),
+              ),
             ),
-            SizedBox(height: 20.h),
+
+            // Bottom spacing sliver
+            SliverToBoxAdapter(
+              child: SizedBox(height: 24.h),
+            ),
           ],
         ),
       ),
