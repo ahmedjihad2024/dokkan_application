@@ -2,9 +2,9 @@ import 'package:animated_visibility/animated_visibility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/extensions/theme_extensions.dart';
-import '../../../../core/res/color_manager.dart';
-import '../../../../core/widgets/forms/app_text_field.dart';
+import '../../../../../core/extensions/theme_extensions.dart';
+import '../../../../../core/res/color_manager.dart';
+import '../../../../../core/widgets/forms/app_text_field.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key, required this.onContinue});

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:dokkan/core/di/dependency_injection.dart';
+import 'package:dokkan/core/services/storage_services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/config/constants.dart';
@@ -24,11 +26,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startNavigationTimer() {
-    _timer = Timer(const Duration(seconds: Constants.splashDelaySeconds), () {
-      if (mounted) {
-        context.pushReplacementNamed(Routes.onboarding);
-      }
-    });
+    _timer = Timer(
+      const Duration(seconds: Constants.splashDelaySeconds),
+      () async {
+        if (sl<StorageService>().isSkippedOnBoarding) {
+          if (await sl<StorageService>().isUserRegistered) {
+            if (mounted) context.pushReplacementNamed(Routes.home);
+          } else {
+            if (mounted) context.pushReplacementNamed(Routes.login);
+          }
+        } else {
+          if (mounted) context.pushReplacementNamed(Routes.onboarding);
+        }
+      },
+    );
   }
 
   @override
@@ -58,10 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
 class Logo extends StatelessWidget {
   final bool isDark;
 
-  const Logo({
-    super.key,
-    required this.isDark,
-  });
+  const Logo({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {

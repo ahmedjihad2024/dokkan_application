@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../core/extensions/navigation_extension.dart';
-import '../../../core/extensions/theme_extensions.dart';
-import '../../../core/res/color_manager.dart';
-import '../../../core/res/gen/assets.gen.dart';
-import '../../../core/res/router/routes.dart';
+import '../../../../core/extensions/navigation_extension.dart';
+import '../../../../core/extensions/theme_extensions.dart';
+import '../../../../core/res/color_manager.dart';
+import '../../../../core/res/gen/assets.gen.dart';
+import '../../../../core/res/router/routes.dart';
 import 'widgets/signup_form.dart';
 
 class SignupScreen extends StatefulWidget {

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../di/dependency_injection.dart';
 import '../../../features/add_product/presentation/add_product_screen.dart';
-import '../../../features/authentication/presentation/create_new_password_screen.dart';
-import '../../../features/authentication/presentation/enter_recovery_code_screen.dart';
-import '../../../features/authentication/presentation/forget_password_screen.dart';
-import '../../../features/authentication/presentation/login_screen.dart';
-import '../../../features/authentication/presentation/signup_screen.dart';
-import '../../../features/authentication/presentation/verify_email_address_screen.dart';
+import '../../../features/authentication/presentation/cubit/auth_cubit.dart';
+import '../../../features/authentication/presentation/screens/create_new_password_screen.dart';
+import '../../../features/authentication/presentation/screens/enter_recovery_code_screen.dart';
+import '../../../features/authentication/presentation/screens/forget_password_screen.dart';
+import '../../../features/authentication/presentation/screens/login_screen.dart';
+import '../../../features/authentication/presentation/screens/signup_screen.dart';
+import '../../../features/authentication/presentation/screens/verify_email_address_screen.dart';
 import '../../../features/categories/presentation/categories_screen.dart';
 import '../../../features/checkout/data/models/address_model.dart';
 import '../../../features/checkout/presentation/checkout_screen.dart';
@@ -61,7 +64,12 @@ class RouteGenerator {
 
       // ─── Authentication Flow ───────────────────────────────────
       case Routes.login:
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AuthCubit>(),
+            child: const LoginScreen(),
+          ),
+        );
 
       case Routes.register:
         return MaterialPageRoute(builder: (_) => const SignupScreen());

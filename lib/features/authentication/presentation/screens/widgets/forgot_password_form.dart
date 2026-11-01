@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/extensions/theme_extensions.dart';
-import '../../../../core/widgets/buttons/primary_button.dart';
-import '../../../../core/widgets/forms/app_text_field.dart';
+import '../../../../../core/extensions/theme_extensions.dart';
+import '../../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../../core/widgets/forms/app_text_field.dart';
 
 class ForgotPasswordForm extends StatefulWidget {
   const ForgotPasswordForm({super.key, required this.onSubmit});
