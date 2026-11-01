@@ -22,4 +22,14 @@ abstract class Routes {
   static const String aboutUs = '/about-us';
   static const String contactUs = '/contact-us';
   static const String privacyPolicy = '/privacy-policy';
+
+  // ─── Checkout & Payment Flow ──────────────────────────────
+  static const String checkout = '/checkout';
+  static const String checkoutSelectAddress = '/checkout/select-address';
+  static const String checkoutAddEditAddress = '/checkout/add-edit-address';
+  static const String checkoutPaymentMethod = '/checkout/payment-method';
+  static const String checkoutOrderSummary = '/checkout/order-summary';
+  static const String checkoutPaymentRedirect = '/checkout/payment-redirect';
+  static const String checkoutPaymentSuccess = '/checkout/payment-success';
+  static const String checkoutPaymentFailed = '/checkout/payment-failed';
 }

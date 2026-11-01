@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/fonts_manager.dart';
-import '../../../../core/res/sizes_manager.dart';
 
 class CartOrderSummary extends StatelessWidget {
-  final int totalCount;
   final double subtotal;
+  final int totalCount;
+  final VoidCallback? onCheckout;
 
   const CartOrderSummary({
     super.key,
-    required this.totalCount,
     required this.subtotal,
+    required this.totalCount,
+    this.onCheckout,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: context.surfaceColor,
-        borderRadius: BorderRadius.circular(SizeM.cardBorderRadius.r),
-        border: Border.all(color: context.borderColor),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: context.borderColor,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'Order Summary',
@@ -38,28 +40,26 @@ class CartOrderSummary extends StatelessWidget {
               fontWeight: FontWeightM.semiBold,
             ),
           ),
-          Gap(12.h),
+          12.verticalSpace,
 
           // Subtotal Row
-          _row(
+          CartOrderSummaryRow(
             label: 'Subtotal ($totalCount item${totalCount == 1 ? '' : 's'})',
             value: '\$${subtotal.toStringAsFixed(2)}',
             valueColor: context.textPrimaryColor,
-            context: context,
           ),
-          Gap(10.h),
+          10.verticalSpace,
 
           // Shipping Row
-          _row(
+          const CartOrderSummaryRow(
             label: 'Standard Insured Shipping',
             value: 'FREE',
             valueColor: ColorM.success,
-            context: context,
           ),
-          Gap(12.h),
+          12.verticalSpace,
 
           Divider(height: 1, color: context.borderColor),
-          Gap(12.h),
+          12.verticalSpace,
 
           // Estimated Total Row
           Row(
@@ -84,7 +84,7 @@ class CartOrderSummary extends StatelessWidget {
               ),
             ],
           ),
-          Gap(12.h),
+          12.verticalSpace,
 
           // Security Note
           Row(
@@ -98,7 +98,7 @@ class CartOrderSummary extends StatelessWidget {
                   ),
                 ),
               ),
-              Gap(6.w),
+              6.horizontalSpace,
               Icon(
                 Icons.lock_outline,
                 size: 12.sp,
@@ -106,17 +106,73 @@ class CartOrderSummary extends StatelessWidget {
               ),
             ],
           ),
+
+          // Fixed bottom Checkout Button
+          if (onCheckout != null) ...[
+            16.verticalSpace,
+            SizedBox(
+              width: double.infinity,
+              height: 50.h,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.isDark
+                      ? ColorM.primaryDark
+                      : ColorM.textPrimaryLight,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: onCheckout,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Proceed to Checkout',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeightM.semiBold,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '\$${subtotal.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeightM.bold,
+                          ),
+                        ),
+                        6.horizontalSpace,
+                        Icon(Icons.arrow_forward_rounded, size: 16.sp),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
+}
 
-  Widget _row({
-    required String label,
-    required String value,
-    required Color valueColor,
-    required BuildContext context,
-  }) {
+class CartOrderSummaryRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color valueColor;
+
+  const CartOrderSummaryRow({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -140,4 +196,3 @@ class CartOrderSummary extends StatelessWidget {
     );
   }
 }
-

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/gen/assets.gen.dart';
-import '../../../../core/theme/theme_cubit.dart';
 import '../../../../core/widgets/buttons/app_icon_button.dart';
 
 class AddProductAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -17,8 +15,6 @@ class AddProductAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
-
     return SafeArea(
       bottom: false,
       child: Container(
@@ -43,8 +39,7 @@ class AddProductAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               onPressed: onBack ?? () => Navigator.maybePop(context),
             ),
-            SizedBox(width: 14.w),
-            // Title matching Figma 37:765 / 37:836
+            14.horizontalSpace,
             Expanded(
               child: Text(
                 'Add New Product',

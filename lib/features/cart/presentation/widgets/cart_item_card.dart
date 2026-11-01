@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
@@ -64,7 +63,7 @@ class CartItemCard extends StatelessWidget {
                     ),
                   ),
           ),
-          Gap(12.w),
+          12.horizontalSpace,
 
           // Details column
           Expanded(
@@ -82,7 +81,7 @@ class CartItemCard extends StatelessWidget {
                     color: context.textPrimaryColor,
                   ),
                 ),
-                Gap(4.h),
+                4.verticalSpace,
                 Text(
                   item.variant,
                   style: TextStyle(
@@ -90,7 +89,7 @@ class CartItemCard extends StatelessWidget {
                     color: context.textSecondaryColor,
                   ),
                 ),
-                Gap(10.h),
+                10.verticalSpace,
                 Text(
                   '\$${(item.price * item.quantity).toStringAsFixed(2)}',
                   style: TextStyle(
@@ -102,7 +101,7 @@ class CartItemCard extends StatelessWidget {
               ],
             ),
           ),
-          Gap(8.w),
+          8.horizontalSpace,
 
           // Actions: Remove button & Stepper
           Column(
@@ -128,7 +127,7 @@ class CartItemCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Gap(12.h),
+              12.verticalSpace,
 
               // Quantity Stepper (Figma: 88x30, radius: 8)
               Container(
@@ -140,7 +139,7 @@ class CartItemCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _stepperButton(
+                    CartStepperButton(
                       icon: Icons.remove,
                       onTap: onDecrement,
                     ),
@@ -156,7 +155,7 @@ class CartItemCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _stepperButton(
+                    CartStepperButton(
                       icon: Icons.add,
                       onTap: onIncrement,
                     ),
@@ -169,11 +168,20 @@ class CartItemCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _stepperButton({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
+class CartStepperButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const CartStepperButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8.r),

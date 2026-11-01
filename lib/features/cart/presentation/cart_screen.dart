@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 
+import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
 import '../../../core/res/color_manager.dart';
 import '../../../core/res/fonts_manager.dart';
+import '../../../core/res/router/routes.dart';
 import '../../../core/res/sizes_manager.dart';
 import '../../../core/widgets/refresh/customized_smart_refresh.dart';
 import '../../main_layout/presentation/cubit/layout_cubit.dart';
@@ -124,6 +125,10 @@ class _CartScreenState extends State<CartScreen>
     } catch (_) {}
   }
 
+  void _handleCheckout() {
+    context.pushNamed(Routes.checkoutSelectAddress);
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -161,7 +166,7 @@ class _CartScreenState extends State<CartScreen>
                           .fadeIn(duration: 400.ms)
                           .slideX(begin: -0.06, end: 0, curve: Curves.easeOutCubic),
                       if (!isEmpty) ...[
-                        Gap(2.h),
+                        2.verticalSpace,
                         Text(
                           '$_totalCount handcrafted item${_totalCount == 1 ? '' : 's'}',
                           style: TextStyle(
@@ -228,12 +233,13 @@ class _CartScreenState extends State<CartScreen>
                       itemCount: _items.length + 1,
                       itemBuilder: (context, index) {
                         if (index == _items.length) {
-                          // Order Summary Card
+                          // Order Summary Card with Checkout Button
                           return Padding(
                             padding: EdgeInsets.only(top: 4.h),
                             child: CartOrderSummary(
                               totalCount: _totalCount,
                               subtotal: _subtotal,
+                              onCheckout: _handleCheckout,
                             )
                                 .animate(
                                   delay: (100 + (_items.length * 70)).ms,

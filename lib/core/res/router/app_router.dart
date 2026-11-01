@@ -8,13 +8,19 @@ import '../../../features/authentication/presentation/login_screen.dart';
 import '../../../features/authentication/presentation/signup_screen.dart';
 import '../../../features/authentication/presentation/verify_email_address_screen.dart';
 import '../../../features/categories/presentation/categories_screen.dart';
-import '../../../features/products_by_category/presentation/products_by_category_screen.dart';
+import '../../../features/checkout/data/models/address_model.dart';
+import '../../../features/checkout/presentation/checkout_screen.dart';
+import '../../../features/checkout/presentation/screens/add_edit_address_screen.dart';
+import '../../../features/checkout/presentation/screens/payment_redirect_screen.dart';
 import '../../../features/contact_us/presentation/contact_us_screen.dart';
 import '../../../features/home/data/models/product_model.dart';
 import '../../../features/main_layout/presentation/main_layout_screen.dart';
 import '../../../features/manage_products/presentation/manage_products_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../../features/order_status/presentation/payment_failed_screen.dart';
+import '../../../features/order_status/presentation/payment_success_screen.dart';
 import '../../../features/product_details/presentation/product_details_screen.dart';
+import '../../../features/products_by_category/presentation/products_by_category_screen.dart';
 import '../../../features/reviews/presentation/reviews_screen.dart';
 import '../../../features/splash/presentation/splash_screen.dart';
 import 'routes.dart';
@@ -104,6 +110,47 @@ class RouteGenerator {
           builder: (_) => ProductsByCategoryScreen(
             categoryTitle: categoryTitle,
           ),
+        );
+
+      // ─── Unified Checkout Flow (Carousel: Address -> Payment -> Review)
+      case Routes.checkout:
+      case Routes.checkoutSelectAddress:
+        return MaterialPageRoute(
+          builder: (_) => const CheckoutScreen(initialStep: 0),
+        );
+
+      case Routes.checkoutPaymentMethod:
+        return MaterialPageRoute(
+          builder: (_) => const CheckoutScreen(initialStep: 1),
+        );
+
+      case Routes.checkoutOrderSummary:
+        return MaterialPageRoute(
+          builder: (_) => const CheckoutScreen(initialStep: 2),
+        );
+
+      case Routes.checkoutAddEditAddress:
+        final initialAddress = settings.arguments as AddressModel?;
+        return MaterialPageRoute(
+          builder: (_) => AddEditAddressScreen(initialAddress: initialAddress),
+        );
+
+      case Routes.checkoutPaymentRedirect:
+        final orderData = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => PaymentRedirectScreen(orderData: orderData),
+        );
+
+      case Routes.checkoutPaymentSuccess:
+        final orderData = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => PaymentSuccessScreen(orderData: orderData),
+        );
+
+      case Routes.checkoutPaymentFailed:
+        final reason = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => PaymentFailedScreen(failureReason: reason),
         );
 
       // ─── Contact Us ────────────────────────────────────────────

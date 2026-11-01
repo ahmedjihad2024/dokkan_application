@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
@@ -50,7 +49,7 @@ class EmptyCartView extends StatelessWidget {
                   end: const Offset(1, 1),
                   curve: Curves.easeOutBack,
                 ),
-            Gap(16.h),
+            16.verticalSpace,
 
             // Title (Figma: 18sp Bold)
             Text(
@@ -69,7 +68,7 @@ class EmptyCartView extends StatelessWidget {
                   end: 0,
                   curve: Curves.easeOutCubic,
                 ),
-            Gap(10.h),
+            10.verticalSpace,
 
             // Description (Figma: 13sp Regular, maxWidth 280)
             Container(
@@ -91,7 +90,7 @@ class EmptyCartView extends StatelessWidget {
                   end: 0,
                   curve: Curves.easeOutCubic,
                 ),
-            Gap(20.h),
+            20.verticalSpace,
 
             // Explore Collections Button (Figma: 200x48, radius: 12)
             SizedBox(
@@ -108,7 +107,7 @@ class EmptyCartView extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Explore Collections \u2192',
+                  'Explore Collections',
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeightM.semiBold,
@@ -119,7 +118,7 @@ class EmptyCartView extends StatelessWidget {
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 200.ms)
                 .slideY(
-                  begin: 0.15,
+                  begin: 0.12,
                   end: 0,
                   curve: Curves.easeOutCubic,
                 ),
