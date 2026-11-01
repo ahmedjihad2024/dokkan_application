@@ -30,38 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Circular Back Button matching Figma 37:1922 / 37:1952 (38x38, radius 19)
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      context.pushReplacementNamed(Routes.onboarding);
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(19.r),
-                  child: Container(
-                    width: 38.w,
-                    height: 38.w,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: context.surfaceSubtleColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: context.borderColor, width: 1),
-                    ),
-                    child: Assets.svg.iconBack.svg(
-                      width: 16.w,
-                      height: 16.w,
-                      colorFilter: ColorFilter.mode(
-                        context.textPrimaryColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
 
               SizedBox(height: 28.h),
 
