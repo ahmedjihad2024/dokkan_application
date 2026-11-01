@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get Flutter packages
+        run: flutter pub get
+
+      - name: Run code generation (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+        continue-on-error: true
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+        continue-on-error: true
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          if-no-files-found: ignore
+
+      - name: Read app version
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | tr -d '\r')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION%+*}-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release APK (split per ABI)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: flutter build apk --release --split-per-abi
+
+      - name: Build universal release APK
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: flutter build apk --release
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release ${{ steps.version.outputs.tag }}
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-x86_64-release.apk
+
+      - name: Keep only the latest 2 releases
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release list --limit 100 --json tagName,createdAt \
+            --jq 'sort_by(.createdAt) | reverse | .[2:] | .[].tagName' \
+            | while read -r tag; do
+                echo "Deleting old release and tag: $tag"
+                gh release delete "$tag" --yes --cleanup-tag
+              done
+
+      - name: Get contributor emails
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        id: contributors
+        shell: bash
+        run: |
+          # Extract unique commit author emails from git history
+          # Filter out invalid email addresses, dummy emails, bots, and GitHub noreply emails
+          EMAILS=$(git log --format='%ae' \
+            | tr '[:upper:]' '[:lower:]' \
+            | grep -E '^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$' \
+            | grep -v -E '(noreply|you@email.com|actions@github.com|users.noreply)' \
+            | sort -u \
+            | paste -sd, -)
+
+          # Combine with MAIL_TO secret if provided
+          RECIPIENTS="$EMAILS"
+          if [ -n "${{ secrets.MAIL_TO }}" ]; then
+            if [ -n "$RECIPIENTS" ]; then
+              RECIPIENTS="${RECIPIENTS},${{ secrets.MAIL_TO }}"
+            else
+              RECIPIENTS="${{ secrets.MAIL_TO }}"
+            fi
+          fi
+
+          echo "recipients=${RECIPIENTS}" >> "$GITHUB_OUTPUT"
+          echo "Discovered contributor recipients: ${RECIPIENTS}"
+
+      - name: Send release email
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.contributors.outputs.recipients != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: Dokkan Release Bot <${{ secrets.MAIL_USERNAME }}>
+          to: ${{ steps.contributors.outputs.recipients }}
+          subject: "Dokkan Release ${{ steps.version.outputs.tag }}"
+          html_body: |
+            <h2>A new Dokkan release is available</h2>
+            <p><b>Tag:</b> ${{ steps.version.outputs.tag }}<br>
+            <b>Version:</b> ${{ steps.version.outputs.version }}<br>
+            <b>Commit:</b> ${{ github.sha }}</p>
+            <p>
+              <a href="${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag }}">
+                Open the release page and download the APK
+              </a>
+            </p>
+            <p>Available APKs on the release page:</p>
+            <ul>
+              <li>app-release.apk (universal)</li>
+              <li>app-arm64-v8a-release.apk</li>
+              <li>app-armeabi-v7a-release.apk</li>
+              <li>app-x86_64-release.apk</li>
+            </ul>
+
