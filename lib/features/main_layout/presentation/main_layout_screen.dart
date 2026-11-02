@@ -1,3 +1,5 @@
+import 'package:dokkan/core/di/dependency_injection.dart';
+import 'package:dokkan/features/home/presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,8 +42,11 @@ class _MainLayoutContent extends StatelessWidget {
               controller: cubit.pageController,
               physics: const BouncingScrollPhysics(),
               onPageChanged: cubit.setNavIndex,
-              children: const [
-                HomeTab(),
+              children: [
+                BlocProvider(
+                  create: (context) => sl<HomeCubit>()..init(),
+                  child: HomeTab(),
+                ),
                 CartScreen(),
                 ProfileScreen(),
               ],

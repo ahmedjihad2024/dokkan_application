@@ -4,19 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
-import '../../data/models/category_model.dart';
+import '../../../../core/shared/domain/model/category_entity.dart';
 
 class CollectionsSection extends StatelessWidget {
-  final List<CategoryModel> categories;
-  final String selectedCategoryId;
-  final void Function(CategoryModel model) onCategorySelected;
+  final List<CategoryEntity> categories;
+  final void Function(CategoryEntity model) onCategorySelected;
   final VoidCallback? onSeeAllPressed;
   final double horizontalPadding;
 
   const CollectionsSection({
     super.key,
     required this.categories,
-    required this.selectedCategoryId,
     required this.onCategorySelected,
     this.onSeeAllPressed,
     this.horizontalPadding = 20.0,
@@ -24,7 +22,6 @@ class CollectionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +78,6 @@ class CollectionsSection extends StatelessWidget {
             separatorBuilder: (_, _) => SizedBox(width: 8.w),
             itemBuilder: (context, index) {
               final category = categories[index];
-              final isSelected = category.id == selectedCategoryId;
 
               return InkWell(
                 onTap: () => onCategorySelected(category),
@@ -93,14 +89,10 @@ class CollectionsSection extends StatelessWidget {
                     vertical: 7.h,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? (isDark ? ColorM.primary : ColorM.textPrimaryLight)
-                        : context.surfaceElevatedColor,
+                    color: context.surfaceElevatedColor,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
-                      color: isSelected
-                          ? Colors.transparent
-                          : context.borderColor,
+                      color: context.borderColor,
                       width: 1,
                     ),
                   ),
@@ -110,9 +102,7 @@ class CollectionsSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
-                        color: isSelected
-                            ? ColorM.white
-                            : context.textSecondaryColor,
+                        color:context.textSecondaryColor,
                       ),
                     ),
                   ),

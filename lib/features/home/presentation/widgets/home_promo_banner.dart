@@ -4,44 +4,48 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
-import '../../data/models/promo_banner_model.dart';
+import '../../../../core/widgets/images/custom_cached_image.dart';
+import '../../domain/model/offer_entity.dart';
 
-class HomePromoBanner extends StatelessWidget {
-  final List<PromoBannerModel> banners;
-  final int activeIndex;
-  final ValueChanged<int> onPageChanged;
+class HomePromoBanner extends StatefulWidget {
+  final List<OfferEntity> offers;
 
   const HomePromoBanner({
     super.key,
-    required this.banners,
-    required this.activeIndex,
-    required this.onPageChanged,
+    required this.offers,
   });
 
   @override
+  State<HomePromoBanner> createState() => _HomePromoBannerState();
+}
+
+class _HomePromoBannerState extends State<HomePromoBanner> {
+  int _activeIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
-    if (banners.isEmpty) return const SizedBox.shrink();
+    if (widget.offers.isEmpty) return const SizedBox.shrink();
 
     final isDark = context.isDark;
 
     return CarouselSlider.builder(
-      itemCount: banners.length,
+      itemCount: widget.offers.length,
       options: CarouselOptions(
         height: 140.h,
         viewportFraction: 1.0,
-        initialPage: activeIndex,
-        enableInfiniteScroll: banners.length > 1,
-        autoPlay: banners.length > 1,
+        initialPage: 0,
+        enableInfiniteScroll: widget.offers.length > 1,
+        autoPlay: widget.offers.length > 1,
         autoPlayInterval: const Duration(seconds: 4),
         autoPlayAnimationDuration: const Duration(milliseconds: 700),
         autoPlayCurve: Curves.easeInOutCubic,
         enlargeCenterPage: false,
-        onPageChanged: (index, reason) {
-          onPageChanged(index);
+        onPageChanged: (index, _) {
+          setState(() => _activeIndex = index);
         },
       ),
       itemBuilder: (context, index, realIndex) {
-        final banner = banners[index];
+        final offer = widget.offers[index];
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 20.w),
           padding: EdgeInsets.fromLTRB(18.w, 16.h, 16.w, 14.h),
@@ -81,7 +85,7 @@ class HomePromoBanner extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Season Atelier Badge matching Figma 37:342
+                        // Special Offer Badge
                         Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 8.w,
@@ -92,7 +96,7 @@ class HomePromoBanner extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Text(
-                            banner.badgeText,
+                            'SPECIAL OFFER',
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w700,
@@ -102,9 +106,9 @@ class HomePromoBanner extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 6.h),
-                        // Headline matching Figma 37:344
+                        // Offer Name / Title
                         Text(
-                          banner.title,
+                          offer.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -115,9 +119,10 @@ class HomePromoBanner extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 3.h),
-                        // Description matching Figma 37:345
+                        // Offer Description / Subtitle
                         Text(
-                          banner.subtitle,
+                          offer.description ??
+                              'Curated Dokkan atelier special offer',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -129,46 +134,53 @@ class HomePromoBanner extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // Page Indicator Dots inside the banner matching Figma 37:347
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(banners.length, (dotIndex) {
-                        final isCurrent = dotIndex == activeIndex;
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeOutCubic,
-                          margin: EdgeInsets.only(
-                            right: dotIndex < banners.length - 1 ? 6.w : 0,
-                          ),
-                          width: isCurrent ? 18.w : 6.w,
-                          height: 6.h,
-                          decoration: BoxDecoration(
-                            color: isCurrent
-                                ? ColorM.primaryDark
-                                : ColorM.bannerDotInactive,
-                            borderRadius: BorderRadius.circular(3.r),
-                          ),
-                        );
-                      }),
-                    ),
+                    // Page Indicator Dots
+                    if (widget.offers.length > 1)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children:
+                            List.generate(widget.offers.length, (dotIndex) {
+                          final isCurrent = dotIndex == _activeIndex;
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeOutCubic,
+                            margin: EdgeInsets.only(
+                              right:
+                                  dotIndex < widget.offers.length - 1 ? 6.w : 0,
+                            ),
+                            width: isCurrent ? 18.w : 6.w,
+                            height: 6.h,
+                            decoration: BoxDecoration(
+                              color: isCurrent
+                                  ? ColorM.primaryDark
+                                  : ColorM.bannerDotInactive,
+                              borderRadius: BorderRadius.circular(3.r),
+                            ),
+                          );
+                        }),
+                      ),
                   ],
                 ),
               ),
               SizedBox(width: 8.w),
-              // 3D Visual Accessory representation matching Figma 37:346
+              // Offer Cover Image
               SizedBox(
                 width: 80.w,
                 height: 80.w,
                 child: Center(
-                  child: banner.imageAsset != null
-                      ? Image.asset(
-                          banner.imageAsset!,
+                  child: offer.coverUrl.isNotEmpty
+                      ? CustomCachedImage(
+                          imageUrl: offer.coverUrl,
                           width: 76.w,
                           height: 76.w,
                           fit: BoxFit.contain,
+                          errorWidget: Text(
+                            '✨',
+                            style: TextStyle(fontSize: 48.sp),
+                          ),
                         )
                       : Text(
-                          banner.visualEmoji,
+                          '✨',
                           style: TextStyle(fontSize: 48.sp),
                         ),
                 ),

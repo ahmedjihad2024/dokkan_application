@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../di/dependency_injection.dart';
@@ -16,7 +16,8 @@ import '../../../features/checkout/presentation/checkout_screen.dart';
 import '../../../features/checkout/presentation/screens/add_edit_address_screen.dart';
 import '../../../features/checkout/presentation/screens/payment_redirect_screen.dart';
 import '../../../features/contact_us/presentation/contact_us_screen.dart';
-import '../../../features/home/data/models/product_model.dart';
+import '../../shared/domain/model/product_entity.dart';
+
 import '../../../features/main_layout/presentation/main_layout_screen.dart';
 import '../../../features/manage_products/presentation/manage_products_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
@@ -45,7 +46,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const MainLayoutScreen());
 
       case Routes.productDetails:
-        final product = settings.arguments as ProductModel?;
+        final product = settings.arguments as ProductEntity?;
+
+
+
+
+
         return MaterialPageRoute(
           builder: (_) => ProductDetailsScreen(product: product),
         );

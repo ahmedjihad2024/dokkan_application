@@ -6,7 +6,6 @@ import 'package:dokkan/features/authentication/data/request/login_request.dart';
 import 'package:dokkan/features/authentication/data/request/register_request.dart';
 import 'package:dokkan/features/authentication/data/request/resend_otp_request.dart';
 import 'package:dokkan/features/authentication/data/request/verify_email_request.dart';
-import 'package:dokkan/features/authentication/domain/model/auth_token_model.dart';
 import 'package:dokkan/features/authentication/domain/usecase/login_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/register_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/resend_otp_usecase.dart';

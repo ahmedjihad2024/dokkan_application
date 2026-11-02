@@ -3,8 +3,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
-import '../../home/data/models/product_model.dart';
 import '../data/models/product_review_model.dart';
 import 'widgets/product_bottom_bar.dart';
 import 'widgets/product_details_app_bar.dart';
@@ -13,7 +13,7 @@ import 'widgets/product_info_header.dart';
 import 'widgets/product_reviews_section.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  final ProductModel? product;
+  final ProductEntity? product;
 
   const ProductDetailsScreen({super.key, this.product});
 
@@ -22,8 +22,8 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  late ProductModel _product;
-  late bool _isFavorite;
+  late ProductEntity _product;
+  bool _isFavorite = false;
   int _quantity = 1;
   final int _maxStock = 8;
 
@@ -31,28 +31,27 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void initState() {
     super.initState();
     _product = widget.product ?? _createDefaultWatchProduct();
-    _isFavorite = _product.isFavorite;
   }
 
-  static ProductModel _createDefaultWatchProduct() {
-    return const ProductModel(
+  static ProductEntity _createDefaultWatchProduct() {
+    return const ProductEntity(
       id: 'watch_dok_9842',
+      productCode: 'DOK-9842',
       name: 'Heritage Chronograph Steel Watch',
-      categoryId: 'watches',
-      currentPrice: 149.00,
-      originalPrice: 199.00,
+      description:
+          'Handcrafted Italian calfskin strap with 316L surgical steel and scratch-resistant sapphire crystal glass. 50m water resistant.',
+      price: 199.00,
+      stock: 8,
       rating: 4.9,
       reviewsCount: 128,
-      emoji: '⌚',
-      discountTag: '-25%',
-      isFavorite: false,
+      discountPercentage: 25,
+      categories: ['watches'],
     );
   }
 
   void _toggleFavorite() {
     setState(() {
       _isFavorite = !_isFavorite;
-      _product = _product.copyWith(isFavorite: _isFavorite);
     });
     CustomSnackBar.showSuccess(
       context,
@@ -83,7 +82,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final totalPrice = _product.currentPrice * _quantity;
+    final totalPrice = _product.finalPrice * _quantity;
 
     return Scaffold(
       backgroundColor: context.scaffoldBackgroundColor,
@@ -116,9 +115,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                     sliver: SliverToBoxAdapter(
                       child: ProductImageGallery(
-                        imageUrl: _product.imageUrl,
-                        discountTag: _product.discountTag ?? '-25%',
-                        emoji: _product.emoji,
+                        imageUrl: _product.coverPictureUrl,
+                        discountTag: _product.hasDiscount
+                            ? '-${_product.discountPercentage}%'
+                            : null,
+                        emoji: '⌚',
                       )
                           .animate()
                           .fadeIn(duration: 450.ms)
@@ -141,13 +142,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       child: ProductInfoHeader(
                         title: _product.name,
                         subtitle:
-                            'Product Code: DOK-9842 • 2-Year Official Warranty',
-                        currentPrice: _product.currentPrice,
-                        originalPrice: _product.originalPrice ?? 199.00,
-                        materialText: 'Espresso Leather',
-                        weightText: 'Weight: 142g',
-                        stockText: '● In Stock ($_maxStock left)',
-                        description:
+                            'Product Code: ${_product.productCode ?? 'DOK-9842'} • 2-Year Official Warranty',
+                        currentPrice: _product.finalPrice,
+                        originalPrice: _product.price,
+                        materialText: _product.color ?? 'Espresso Leather',
+                        weightText: _product.weight != null
+                            ? 'Weight: ${_product.weight}g'
+                            : 'Weight: 142g',
+                        stockText: '● In Stock (${_product.stock} left)',
+                        description: _product.description ??
                             'Handcrafted Italian calfskin strap with 316L surgical steel and scratch-resistant sapphire crystal glass. 50m water resistant.',
                       )
                           .animate()

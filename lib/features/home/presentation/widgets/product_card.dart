@@ -4,11 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/gen/assets.gen.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
 import '../../../../core/widgets/images/custom_cached_image.dart';
-import '../../data/models/product_model.dart';
 
 class ProductCard extends StatelessWidget {
-  final ProductModel product;
+  final ProductEntity product;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteToggle;
   final VoidCallback? onAddToCart;
@@ -41,213 +41,208 @@ class ProductCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Product Image / Emoji Visual Container matching Figma 37:368
-              Container(
-                height: 140.h,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: isDark
-                        ? const [ColorM.surfaceDarkElevated, ColorM.surfaceDark]
-                        : const [
-                            ColorM.surfaceLightSubtle,
-                            ColorM.surfaceLightElevated,
-                          ],
+              // Product Image Visual Container
+              Expanded(
+                flex: 6,
+                child: Container(
+                  // height: 140.h,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: isDark
+                          ? const [ColorM.surfaceDarkElevated, ColorM.surfaceDark]
+                          : const [
+                              ColorM.surfaceLightSubtle,
+                              ColorM.surfaceLightElevated,
+                            ],
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    // Center Visual / Product Image
-                    if (product.imageUrl != null &&
-                        product.imageUrl!.isNotEmpty)
-                      Positioned.fill(
-                        child: CustomCachedImage(
-                          imageUrl: product.imageUrl!,
-                          width: double.infinity,
-                          height: 140.h,
-                          fit: BoxFit.cover,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16.r),
-                            topRight: Radius.circular(16.r),
+                  child: Stack(
+                    children: [
+                      // Center Visual / Product Image
+                      if (product.coverPictureUrl != null &&
+                          product.coverPictureUrl!.isNotEmpty)
+                        Positioned.fill(
+                          child: CustomCachedImage(
+                            imageUrl: product.coverPictureUrl!,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16.r),
+                              topRight: Radius.circular(16.r),
+                            ),
+                            errorWidget: const Center(
+                              child: Text(
+                                '✨',
+                                style: TextStyle(fontSize: 48),
+                              ),
+                            ),
                           ),
-                          errorWidget: Center(
+                        )
+                      else
+                        const Center(
+                          child: Text(
+                            '✨',
+                            style: TextStyle(fontSize: 48),
+                          ),
+                        ),
+                
+                      // Discount Tag (Top-Left)
+                      if (product.hasDiscount)
+                        Positioned(
+                          top: 8.h,
+                          left: 8.w,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.w,
+                              vertical: 2.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorM.danger,
+                              borderRadius: BorderRadius.circular(6.r),
+                            ),
                             child: Text(
-                              product.emoji,
-                              style: TextStyle(fontSize: 48.sp),
+                              '-${product.discountPercentage}%',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w700,
+                                color: ColorM.white,
+                              ),
                             ),
                           ),
                         ),
-                      )
-                    else
-                      Center(
-                        child: Text(
-                          product.emoji,
-                          style: TextStyle(fontSize: 48.sp),
-                        ),
-                      ),
-                    // Discount Tag (Top-Left) matching Figma 37:369
-                    if (product.discountTag != null)
+                
+                      // Wishlist / Heart Button (Top-Right)
                       Positioned(
                         top: 8.h,
-                        left: 8.w,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 6.w,
-                            vertical: 2.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorM.danger,
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                          child: Text(
-                            product.discountTag!,
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w700,
-                              color: ColorM.white,
+                        right: 8.w,
+                        child: GestureDetector(
+                          onTap: onFavoriteToggle,
+                          behavior: HitTestBehavior.translucent,
+                          child: Container(
+                            width: 28.w,
+                            height: 28.w,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: context.surfaceColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: context.borderColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: Assets.svg.iconHeart.svg(
+                              width: 14.w,
+                              height: 14.w,
+                              colorFilter: ColorFilter.mode(
+                                context.textSecondaryColor,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    // Wishlist / Heart Button (Top-Right) matching Figma 37:371
-                    Positioned(
-                      top: 8.h,
-                      right: 8.w,
-                      child: GestureDetector(
-                        onTap: onFavoriteToggle,
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          width: 28.w,
-                          height: 28.w,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: context.surfaceColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: context.borderColor,
-                              width: 1,
-                            ),
-                          ),
-                          child: product.isFavorite
-                              ? Assets.svg.iconHeartFilled.svg(
-                                  width: 14.w,
-                                  height: 14.w,
-                                  colorFilter: const ColorFilter.mode(
-                                    ColorM.danger,
-                                    BlendMode.srcIn,
-                                  ),
-                                )
-                              : Assets.svg.iconHeart.svg(
-                                  width: 14.w,
-                                  height: 14.w,
-                                  colorFilter: ColorFilter.mode(
-                                    context.textSecondaryColor,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 
               // Product Info section
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(12.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Rating Row matching Figma 37:374
-                      Row(
-                        children: [
-                          Text(
-                            '\u2605 ${product.rating.toStringAsFixed(1)} (${product.reviewsCount})',
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w600,
-                              color: ColorM.ratingGold,
-                            ),
+              Padding(
+                padding: EdgeInsets.all(12.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Rating Row
+                    Row(
+                      children: [
+                        Text(
+                          '\u2605 ${product.rating.toStringAsFixed(1)} (${product.reviewsCount})',
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: ColorM.ratingGold,
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 4.h),
-                      // Product Title matching Figma 37:375
-                      Text(
-                        product.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w600,
-                          color: context.textPrimaryColor,
                         ),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+              
+                    // Product Title
+                    Text(
+                      product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: context.textPrimaryColor,
                       ),
-                      SizedBox(height: 2.h),
-                      const Spacer(),
-                      // Price and Quick Add Button Row matching Figma 37:376 - 37:379
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          // Price column
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
+                    ),
+                    SizedBox(height: 2.h),
+                    // const Spacer(),
+              
+                    // Price and Quick Add Button Row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // Price column
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '\$${product.finalPrice.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: context.textPrimaryColor,
+                                ),
+                              ),
+                              if (product.hasDiscount) ...[
+                                SizedBox(height: 2.h),
                                 Text(
-                                  '\$${product.currentPrice.toStringAsFixed(2)}',
+                                  '\$${product.price.toStringAsFixed(2)}',
                                   style: TextStyle(
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: context.textPrimaryColor,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: context.textSecondaryColor,
+                                    decoration: TextDecoration.lineThrough,
                                   ),
                                 ),
-                                if (product.originalPrice != null) ...[
-                                  SizedBox(height: 2.h),
-                                  Text(
-                                    '\$${product.originalPrice!.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: context.textSecondaryColor,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                                ],
                               ],
+                            ],
+                          ),
+                        ),
+                        // Quick Add "+" button
+                        GestureDetector(
+                          onTap: onAddToCart,
+                          behavior: HitTestBehavior.opaque,
+                          child: Container(
+                            width: 32.w,
+                            height: 32.w,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? ColorM.primary
+                                  : ColorM.textPrimaryLight,
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 18,
                             ),
                           ),
-                          // Quick Add "+" button matching Figma 37:378
-                          GestureDetector(
-                            onTap: onAddToCart,
-                            behavior: HitTestBehavior.opaque,
-                            child: Container(
-                              width: 32.w,
-                              height: 32.w,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? ColorM.primary
-                                    : ColorM.textPrimaryLight,
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 3.h),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 3.h),
+                  ],
                 ),
               ),
             ],

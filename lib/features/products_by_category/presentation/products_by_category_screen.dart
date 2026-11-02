@@ -8,15 +8,15 @@ import '../../../core/extensions/theme_extensions.dart';
 import '../../../core/res/color_manager.dart';
 import '../../../core/res/router/routes.dart';
 import '../../../core/res/sizes_manager.dart';
+import '../../../core/shared/domain/model/product_entity.dart';
 import '../../../core/widgets/feedback/app_error_widget.dart';
 import '../../../core/widgets/refresh/customized_smart_refresh.dart';
 import '../../../core/widgets/state/req_state_widget.dart';
-import '../../home/data/models/product_model.dart';
 import 'widgets/products_by_category_grid.dart';
 
 class ProductsByCategoryScreen extends StatefulWidget {
   final String? categoryTitle;
-  final List<ProductModel>? initialProducts;
+  final List<ProductEntity>? initialProducts;
 
   const ProductsByCategoryScreen({
     super.key,
@@ -34,7 +34,7 @@ class _ProductsByCategoryScreenState extends State<ProductsByCategoryScreen> {
     initialRefresh: false,
   );
 
-  late List<ProductModel> _products;
+  late List<ProductEntity> _products;
 
   @override
   void initState() {
@@ -60,86 +60,48 @@ class _ProductsByCategoryScreenState extends State<ProductsByCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.categoryTitle ?? 'Luxury Timepieces';
+    final title = widget.categoryTitle ?? 'Products';
 
     return Scaffold(
+      backgroundColor: context.scaffoldBackgroundColor,
       appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.all(8.r),
-          child: IconButton(
-            style: IconButton.styleFrom(
-              backgroundColor: context.surfaceColor,
-              shape: const CircleBorder(),
-            ),
-            onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back),
+        backgroundColor: context.surfaceColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20.sp,
+            color: context.textPrimaryColor,
+          ),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: context.textPrimaryColor,
           ),
         ),
-        title: Text(title),
+        centerTitle: true,
       ),
       body: ReqStateWidget(
         state: ReqState.success,
-        errorMessage: '',
-        onRetry: () {},
-        onLoading: (_) => const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(ColorM.primary),
-          ),
-        ),
-        onFailure: (context, error) => AppErrorWidget(
-          message: error ?? '',
-          onRetry: () {},
-        ),
-        onEmpty: (context) => Center(
-          child: Text(
-            'No pieces currently available in this category',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: context.textSecondaryColor,
-            ),
-          ),
-        ),
+        errorMessage: 'Failed to load products',
+        onRetry: _handleRefresh,
         onSuccess: (context) => CustomizedSmartRefresh(
           controller: _refreshController,
-          onRefresh: _handleRefresh,
-          onLoading: _handleLoadMore,
           enableRefresh: true,
           enableLoading: true,
+          onRefresh: _handleRefresh,
+          onLoading: _handleLoadMore,
           child: CustomScrollView(
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
+            physics: const BouncingScrollPhysics(),
             slivers: [
-              // Subtitle — verified models count
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  top: 8.h,
-                  left: SizeM.pagePaddingLarge.w,
-                  right: SizeM.pagePaddingLarge.w,
-                  bottom: 14.h,
-                ),
-                sliver: SliverToBoxAdapter(
-                  child: Text(
-                    '${_products.length} verified models in stock',
-                    style: TextStyle(
-                      color: context.textSecondaryColor,
-                      fontSize: 13.sp,
-                    ),
-                  )
-                      .animate()
-                      .fadeIn(duration: 400.ms)
-                      .slideY(
-                        begin: 0.1,
-                        end: 0,
-                        curve: Curves.easeOutCubic,
-                      ),
-                ),
-              ),
-
-              // Products grid with animated cards
               SliverPadding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: SizeM.pagePaddingLarge.w,
+                  horizontal: SizeM.pagePadding.w,
+                  vertical: 16.h,
                 ),
                 sliver: ProductsByCategoryGrid(
                   products: _products,
@@ -151,11 +113,6 @@ class _ProductsByCategoryScreenState extends State<ProductsByCategoryScreen> {
                   },
                 ),
               ),
-
-              // Bottom padding sliver
-              SliverToBoxAdapter(
-                child: SizedBox(height: 24.h),
-              ),
             ],
           ),
         ),
@@ -163,130 +120,115 @@ class _ProductsByCategoryScreenState extends State<ProductsByCategoryScreen> {
     );
   }
 
-  static List<ProductModel> _getDefaultProducts() {
+  static List<ProductEntity> _getDefaultProducts() {
     return const [
-      ProductModel(
+      ProductEntity(
         id: 'watch_1',
         name: 'Heritage Chronograph',
-        categoryId: 'watches',
-        currentPrice: 385.00,
-        originalPrice: 450.00,
+        price: 450.00,
+        stock: 10,
         rating: 4.9,
         reviewsCount: 84,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 15,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=600&q=80',
-        discountTag: '-15%',
-        isFavorite: false,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_2',
         name: 'Milanese Gold Mesh',
-        categoryId: 'watches',
-        currentPrice: 185.00,
-        originalPrice: 210.00,
+        price: 210.00,
+        stock: 15,
         rating: 4.9,
         reviewsCount: 42,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 12,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
-        discountTag: '-12%',
-        isFavorite: true,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_3',
         name: 'Royal Skeleton Automatic',
-        categoryId: 'watches',
-        currentPrice: 620.00,
-        originalPrice: 750.00,
+        price: 750.00,
+        stock: 6,
         rating: 5.0,
         reviewsCount: 88,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 17,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80',
-        discountTag: '-17%',
-        isFavorite: false,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_4',
         name: 'Classic Bauhaus Minimalist',
-        categoryId: 'watches',
-        currentPrice: 145.00,
-        originalPrice: 165.00,
+        price: 165.00,
+        stock: 20,
         rating: 4.8,
         reviewsCount: 34,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 0,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80',
-        isFavorite: false,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_5',
         name: 'Submariner Ceramic Diver',
-        categoryId: 'watches',
-        currentPrice: 495.00,
-        originalPrice: 550.00,
+        price: 550.00,
+        stock: 8,
         rating: 4.9,
         reviewsCount: 112,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 10,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80',
-        discountTag: '-10%',
-        isFavorite: false,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_6',
         name: 'Grand Tourbillon Artisan',
-        categoryId: 'watches',
-        currentPrice: 890.00,
-        originalPrice: 1100.00,
+        price: 1100.00,
+        stock: 3,
         rating: 5.0,
         reviewsCount: 29,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 20,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=600&q=80',
-        discountTag: '-20%',
-        isFavorite: false,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_7',
         name: 'Vintage Flieger 42mm',
-        categoryId: 'watches',
-        currentPrice: 265.00,
-        originalPrice: 295.00,
+        price: 295.00,
+        stock: 12,
         rating: 4.7,
         reviewsCount: 51,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 0,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80',
-        isFavorite: false,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_8',
         name: 'Moonphase Rose Gold',
-        categoryId: 'watches',
-        currentPrice: 540.00,
-        originalPrice: 620.00,
+        price: 620.00,
+        stock: 5,
         rating: 4.9,
         reviewsCount: 67,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 13,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=600&q=80',
-        discountTag: '-13%',
-        isFavorite: false,
+        categories: ['watches'],
       ),
-      ProductModel(
+      ProductEntity(
         id: 'watch_9',
         name: 'Monaco Racing Chronograph',
-        categoryId: 'watches',
-        currentPrice: 340.00,
-        originalPrice: 390.00,
+        price: 390.00,
+        stock: 9,
         rating: 4.8,
         reviewsCount: 39,
-        emoji: '⌚',
-        imageUrl:
+        discountPercentage: 0,
+        coverPictureUrl:
             'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=600&q=80',
-        isFavorite: false,
+        categories: ['watches'],
       ),
     ];
   }

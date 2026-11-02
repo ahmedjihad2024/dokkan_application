@@ -3,14 +3,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
-import '../../data/models/product_model.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
 import 'product_card.dart';
 
 class CuratedArrivalsSection extends StatelessWidget {
-  final List<ProductModel> products;
-  final ValueChanged<ProductModel>? onProductTap;
+  final List<ProductEntity> products;
+  final ValueChanged<ProductEntity>? onProductTap;
   final ValueChanged<String>? onFavoriteToggle;
-  final ValueChanged<ProductModel>? onAddToCart;
+  final ValueChanged<ProductEntity>? onAddToCart;
   final double horizontalPadding;
 
   const CuratedArrivalsSection({
@@ -99,13 +99,11 @@ class CuratedArrivalsSection extends StatelessWidget {
                     begin: const Offset(0.95, 0.95),
                     end: const Offset(1, 1),
                     duration: 450.ms,
-                    curve: Curves.easeOutCubic,
+                    curve: Curves.fastLinearToSlowEaseIn,
                   );
             },
           ),
         ),
-
-        SizedBox(height: 18.h),
       ],
     );
   }

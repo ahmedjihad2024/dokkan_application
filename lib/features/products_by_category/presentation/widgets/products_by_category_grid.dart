@@ -3,12 +3,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/res/sizes_manager.dart';
-import '../../../home/data/models/product_model.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
 import '../../../home/presentation/widgets/product_card.dart';
 
 class ProductsByCategoryGrid extends StatelessWidget {
-  final List<ProductModel> products;
-  final ValueChanged<ProductModel>? onProductTap;
+  final List<ProductEntity> products;
+  final ValueChanged<ProductEntity>? onProductTap;
 
   const ProductsByCategoryGrid({
     super.key,

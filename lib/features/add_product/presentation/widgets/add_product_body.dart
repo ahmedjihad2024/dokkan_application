@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../core/enums/request_state.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import '../cubit/add_product_cubit.dart';
