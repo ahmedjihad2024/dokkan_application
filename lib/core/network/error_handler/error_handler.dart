@@ -57,7 +57,7 @@ Failure _handleBadResponse(Response? response) {
 
   final message = _extractMessage(response?.data);
   if (message == null) {
-    return const ServerError(message: 'An unknown error occurred.');
+    return ServerError(message: response?.statusMessage ?? 'An unknown error occurred.');
   }
 
   final apiError = ApiErrorType.from(status, message);
@@ -165,7 +165,8 @@ enum ApiErrorType {
   INCORRECT_CREDENTIALS(400, 'Invalid email or password.'),
   INCORRECT_CREDENTIALS_401(401, 'Incorrect username or password.'),
   INVALID_CODE(400, 'Invalid code provided, please request a code again.'),
-  INVALID_REFRESH_TOKEN(400, 'Invalid Refresh Token');
+  INVALID_REFRESH_TOKEN(400, 'Invalid Refresh Token'),
+  EMAIL_NOT_VERIFIED(400, 'Email not verified, please verify your email first.');
 
   final int statusCode;
   final String message;

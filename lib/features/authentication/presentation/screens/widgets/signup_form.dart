@@ -1,5 +1,7 @@
 import 'package:animated_visibility/animated_visibility.dart';
+import 'package:dokkan/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/extensions/theme_extensions.dart';
@@ -281,38 +283,55 @@ class _SignupFormState extends State<SignupForm> {
           SizedBox(height: 24.h),
 
           // Continue to Verification Button matching Figma 37:1984 / 37:2028 (52h, 14r, ColorM.primaryDark)
-          SizedBox(
-            height: 52.h,
-            child: ElevatedButton(
-              onPressed: _submitForm,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorM.primaryDark,
-                foregroundColor: ColorM.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14.r),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Continue to Verification',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              final isLoading = state is AuthLoading;
+
+              return SizedBox(
+                height: 52.h,
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : _submitForm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorM.primaryDark,
+                    foregroundColor: ColorM.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
                     ),
                   ),
-                  SizedBox(width: 8.w),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 18.sp,
-                    color: ColorM.white,
-                  ),
-                ],
-              ),
-            ),
+                  child: isLoading
+                      ? SizedBox(
+                          width: 20.w,
+                          height: 20.w,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              ColorM.white,
+                            ),
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Continue to Verification',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: -0.2,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 18.sp,
+                              color: ColorM.white,
+                            ),
+                          ],
+                        ),
+                ),
+              );
+            },
           ),
         ],
       ),

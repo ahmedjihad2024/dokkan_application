@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../core/network/base_response.dart';
 import '../../../../core/network/error_handler/error_handler.dart';
 import '../../../../core/network/error_handler/failure.dart';
 import '../../../../core/services/storage_services/storage_service.dart';
@@ -8,7 +9,11 @@ import '../../domain/repository/auth_repository.dart';
 import '../data_source/auth_remote_data_source.dart';
 import '../mapper/login_mapper.dart';
 import '../request/login_request.dart';
+import '../request/register_request.dart';
+import '../request/resend_otp_request.dart';
+import '../request/verify_email_request.dart';
 import '../response/login_response.dart';
+import '../response/register_response.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
@@ -22,14 +27,40 @@ class AuthRepositoryImpl implements AuthRepository {
       request: () => _remoteDataSource.login(request),
       mapper: (response) {
         final domainModel = response.toDomain();
+
         if (domainModel.accessToken.isNotEmpty) {
           _storageService.saveAuthTokens(
             accessToken: domainModel.accessToken,
             refreshToken: domainModel.refreshToken,
           );
         }
+
         return domainModel;
       },
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> register(RegisterRequest request) {
+    return fastHandler<RegisterResponse, String>(
+      request: () => _remoteDataSource.register(request),
+      mapper: (response) => response.message,
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> verifyEmail(VerifyEmailRequest request) {
+    return fastHandler<BaseResponse, String>(
+      request: () => _remoteDataSource.verifyEmail(request),
+      mapper: (response) => response.message,
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> resendOtp(ResendOtpRequest request) {
+    return fastHandler<BaseResponse, String>(
+      request: () => _remoteDataSource.resendOtp(request),
+      mapper: (response) => response.message,
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../di/dependency_injection.dart';
@@ -72,22 +72,31 @@ class RouteGenerator {
         );
 
       case Routes.register:
-        return MaterialPageRoute(builder: (_) => const SignupScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AuthCubit>(),
+            child: const SignupScreen(),
+          ),
+        );
 
       case Routes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
-
       case Routes.verifyEmailAddress:
       case Routes.otpVerification:
         final email = _extractEmail(settings.arguments);
+
         final isPasswordRecovery = _extractBool(
           settings.arguments,
           key: 'isPasswordRecovery',
         );
+
         return MaterialPageRoute(
-          builder: (_) => VerifyEmailAddressScreen(
-            email: email,
-            isPasswordRecovery: isPasswordRecovery,
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AuthCubit>(),
+            child: VerifyEmailAddressScreen(
+              email: email,
+              isPasswordRecovery: isPasswordRecovery,
+            ),
           ),
         );
 

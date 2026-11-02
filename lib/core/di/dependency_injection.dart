@@ -8,6 +8,9 @@ import 'package:dokkan/features/authentication/data/data_source/auth_remote_data
 import 'package:dokkan/features/authentication/data/repository/auth_repository_impl.dart';
 import 'package:dokkan/features/authentication/domain/repository/auth_repository.dart';
 import 'package:dokkan/features/authentication/domain/usecase/login_usecase.dart';
+import 'package:dokkan/features/authentication/domain/usecase/register_usecase.dart';
+import 'package:dokkan/features/authentication/domain/usecase/resend_otp_usecase.dart';
+import 'package:dokkan/features/authentication/domain/usecase/verify_email_usecase.dart';
 import 'package:dokkan/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,7 +53,22 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<LoginUseCase>(
     () => LoginUseCase(sl<AuthRepository>()),
   );
+  sl.registerLazySingleton<RegisterUseCase>(
+    () => RegisterUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<VerifyEmailUseCase>(
+    () => VerifyEmailUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<ResendOtpUseCase>(
+    () => ResendOtpUseCase(sl<AuthRepository>()),
+  );
+
   sl.registerFactory<AuthCubit>(
-    () => AuthCubit(loginUseCase: sl<LoginUseCase>()),
+    () => AuthCubit(
+      loginUseCase: sl<LoginUseCase>(),
+      registerUseCase: sl<RegisterUseCase>(),
+      verifyEmailUseCase: sl<VerifyEmailUseCase>(),
+      resendOtpUseCase: sl<ResendOtpUseCase>(),
+    ),
   );
 }

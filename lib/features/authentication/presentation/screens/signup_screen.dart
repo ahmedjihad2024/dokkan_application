@@ -1,6 +1,7 @@
 import 'package:animated_visibility/animated_visibility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/navigation_extension.dart';
@@ -8,6 +9,7 @@ import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/gen/assets.gen.dart';
 import '../../../../core/res/router/routes.dart';
+import '../cubit/auth_cubit.dart';
 import 'widgets/signup_form.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -19,6 +21,7 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   String? _infoMessage;
+  String? _registeredEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class _SignupScreenState extends State<SignupScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Circular Back Button matching Figma 37:1984 / 37:2028 (38x38, radius 19)
+              // Circular Back Button
               Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -64,58 +67,55 @@ class _SignupScreenState extends State<SignupScreen> {
 
               SizedBox(height: 28.h),
 
-              // Title matching Figma (size 28sp Bold)
+              // Title
               Text(
-                'Create Account',
-                style: TextStyle(
-                  fontSize: 28.sp,
-                  fontWeight: FontWeight.w700,
-                  color: context.textPrimaryColor,
-                  letterSpacing: -0.5,
-                ),
-              )
+                    'Create Account',
+                    style: TextStyle(
+                      fontSize: 28.sp,
+                      fontWeight: FontWeight.w700,
+                      color: context.textPrimaryColor,
+                      letterSpacing: -0.5,
+                    ),
+                  )
                   .animate()
                   .fadeIn(duration: 400.ms)
-                  .slideY(
-                    begin: 0.12,
-                    end: 0,
-                    curve: Curves.easeOutCubic,
-                  ),
+                  .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
 
               SizedBox(height: 8.h),
 
-              // Subtitle matching Figma (size 14sp Regular)
+              // Subtitle
               Text(
-                'Join Dokkan to explore exclusive collections',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  color: context.textSecondaryColor,
-                ),
-              )
+                    'Join Dokkan to explore exclusive collections',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      color: context.textSecondaryColor,
+                    ),
+                  )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 60.ms)
-                  .slideY(
-                    begin: 0.12,
-                    end: 0,
-                    curve: Curves.easeOutCubic,
-                  ),
+                  .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
 
               SizedBox(height: 24.h),
 
               // Animated On-Screen Message Banner
               AnimatedVisibility(
                 visible: _infoMessage != null,
-                enter: fadeIn(curve: Curves.easeOut) +
+                enter:
+                    fadeIn(curve: Curves.easeOut) +
                     expandVertically(curve: Curves.easeOut),
-                exit: fadeOut(curve: Curves.easeIn) +
+                exit:
+                    fadeOut(curve: Curves.easeIn) +
                     shrinkVertically(curve: Curves.easeIn),
                 enterDuration: const Duration(milliseconds: 150),
                 exitDuration: const Duration(milliseconds: 125),
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 16.h),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 12.h,
+                    ),
                     decoration: BoxDecoration(
                       color: context.surfaceSubtleColor,
                       borderRadius: BorderRadius.circular(12.r),
@@ -160,26 +160,58 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
 
-              // Sign Up Form
-              SignupForm(
-                onContinue: (firstName, lastName, email, password) {
-                  context.pushNamed(
-                    Routes.verifyEmailAddress,
-                    arguments: email,
-                  );
+              // Sign Up Form + API Integration
+              BlocConsumer<AuthCubit, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthRegisterSuccess) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: const Color(0xFF00B889),
+                      ),
+                    );
+
+                    context.pushNamed(
+                      Routes.verifyEmailAddress,
+                      arguments: _registeredEmail,
+                    );
+                  }
+
+                  if (state is AuthFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: ColorM.danger,
+                      ),
+                    );
+                  }
                 },
-              )
-                  .animate()
-                  .fadeIn(duration: 450.ms, delay: 120.ms)
-                  .slideY(
-                    begin: 0.06,
-                    end: 0,
-                    curve: Curves.easeOutCubic,
-                  ),
+                builder: (context, state) {
+                  return SignupForm(
+                        onContinue: (firstName, lastName, email, password) {
+                          _registeredEmail = email;
+
+                          context.read<AuthCubit>().register(
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            password: password,
+                          );
+                        },
+                      )
+                      .animate()
+                      .fadeIn(duration: 450.ms, delay: 120.ms)
+                      .slideY(
+                        begin: 0.06,
+                        end: 0,
+                        curve: Curves.easeOutCubic,
+                      );
+                },
+              ),
 
               SizedBox(height: 28.h),
 
-              // Bottom Account Switcher matching Figma (Already have an account? Sign In)
+              // Bottom Account Switcher
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
