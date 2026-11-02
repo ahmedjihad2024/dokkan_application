@@ -25,14 +25,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.scaffoldBackgroundColor,
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
+          if (state is AuthSuccess) {
+            context.pushNamedAndRemoveUntil(Routes.home, (route) => false);
+          }
+
           if (state is AuthFailure) {
             CustomSnackBar.showError(
               context,
               state.message,
-              duration: Duration(seconds: 5),
+              duration: const Duration(seconds: 5),
             );
           }
         },

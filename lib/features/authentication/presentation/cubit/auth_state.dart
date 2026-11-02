@@ -16,3 +16,6 @@ final class AuthFailure extends AuthState {
   final String message;
   AuthFailure({required this.message});
 }
+
+final class AuthRegisterSuccess extends AuthState {}
+final class AuthVerifyEmailSuccess extends AuthState {}
