@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/res/router/routes.dart';
-import '../../../core/shared/domain/model/category_entity.dart';
 import '../../../core/shared/domain/model/product_entity.dart';
 import '../../../core/widgets/feedback/app_error_widget.dart';
 import '../../../core/widgets/feedback/custom_snackbar.dart';
@@ -76,7 +75,6 @@ class _HomeTabState extends State<HomeTab>
 
         // 3. Success State -> Consume domain entities directly from state
         if (state is HomeSuccess) {
-
           return CustomizedSmartRefresh(
             controller: _refreshController,
             onRefresh: _handleRefresh,
@@ -140,11 +138,17 @@ class _HomeTabState extends State<HomeTab>
                       onProductTap: (ProductEntity product) {
                         context.pushNamed(
                           Routes.productDetails,
-                          arguments: product,
+                          arguments: product.id,
                         );
                       },
                       onFavoriteToggle: _onFavoriteToggle,
-                      onAddToCart: (ProductEntity product) {},
+                      onAddToCart: (ProductEntity product) {
+                        context.read<HomeCubit>().addToCart(
+                          product.id,
+                          quantity: 1,
+                          context: context,
+                        );
+                      },
                     ),
                   ),
                 ),

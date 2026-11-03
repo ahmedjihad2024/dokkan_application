@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../../product_details/data/models/product_review_model.dart';
+import '../../../../core/shared/domain/model/review_entity.dart';
 import 'review_item_card.dart';
 
 class ReviewsListView extends StatelessWidget {
-  final List<ProductReviewModel> reviews;
+  final List<ReviewEntity> reviews;
 
   const ReviewsListView({
     super.key,

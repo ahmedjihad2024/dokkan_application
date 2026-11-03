@@ -10,6 +10,7 @@ class ProductBottomBar extends StatelessWidget {
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
   final VoidCallback onAddToCart;
+  final bool isLoading;
 
   const ProductBottomBar({
     super.key,
@@ -18,6 +19,7 @@ class ProductBottomBar extends StatelessWidget {
     required this.onIncrement,
     required this.onDecrement,
     required this.onAddToCart,
+    this.isLoading = false,
   });
 
   @override
@@ -61,7 +63,7 @@ class ProductBottomBar extends StatelessWidget {
                   children: [
                     // Minus button
                     InkWell(
-                      onTap: onDecrement,
+                      onTap: isLoading ? null : onDecrement,
                       borderRadius: BorderRadius.circular(8.r),
                       child: Container(
                         width: 32.w,
@@ -96,7 +98,7 @@ class ProductBottomBar extends StatelessWidget {
 
                     // Plus button
                     InkWell(
-                      onTap: onIncrement,
+                      onTap: isLoading ? null : onIncrement,
                       borderRadius: BorderRadius.circular(8.r),
                       child: Container(
                         width: 32.w,
@@ -123,7 +125,7 @@ class ProductBottomBar extends StatelessWidget {
                 child: SizedBox(
                   height: 48.h,
                   child: ElevatedButton(
-                    onPressed: onAddToCart,
+                    onPressed: isLoading ? null : onAddToCart,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorM.primaryDark,
                       foregroundColor: ColorM.white,
@@ -133,15 +135,25 @@ class ProductBottomBar extends StatelessWidget {
                       ),
                       padding: EdgeInsets.zero,
                     ),
-                    child: Text(
-                      'Add to Bag • \$${totalPrice.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
-                        color: ColorM.white,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
+                    child: isLoading
+                        ? SizedBox(
+                            width: 22.r,
+                            height: 22.r,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(ColorM.white),
+                            ),
+                          )
+                        : Text(
+                            'Add to Bag • \$${totalPrice.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: ColorM.white,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
                   ),
                 ),
               ),

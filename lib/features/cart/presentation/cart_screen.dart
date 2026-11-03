@@ -11,7 +11,7 @@ import '../../../core/res/router/routes.dart';
 import '../../../core/res/sizes_manager.dart';
 import '../../../core/widgets/refresh/customized_smart_refresh.dart';
 import '../../main_layout/presentation/cubit/layout_cubit.dart';
-import '../data/models/cart_item_model.dart';
+import '../domain/model/cart_entity.dart';
 import 'widgets/cart_item_card.dart';
 import 'widgets/cart_order_summary.dart';
 import 'widgets/empty_cart_view.dart';

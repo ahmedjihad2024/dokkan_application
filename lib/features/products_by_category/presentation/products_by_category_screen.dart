@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/enums/request_state.dart';
 import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
-import '../../../core/res/color_manager.dart';
 import '../../../core/res/router/routes.dart';
 import '../../../core/res/sizes_manager.dart';
 import '../../../core/shared/domain/model/product_entity.dart';
-import '../../../core/widgets/feedback/app_error_widget.dart';
 import '../../../core/widgets/refresh/customized_smart_refresh.dart';
 import '../../../core/widgets/state/req_state_widget.dart';
 import 'widgets/products_by_category_grid.dart';
@@ -108,7 +105,7 @@ class _ProductsByCategoryScreenState extends State<ProductsByCategoryScreen> {
                   onProductTap: (product) {
                     context.pushNamed(
                       Routes.productDetails,
-                      arguments: product,
+                      arguments: product.id,
                     );
                   },
                 ),

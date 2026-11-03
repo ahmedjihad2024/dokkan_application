@@ -5,27 +5,37 @@ import '../../../../core/extensions/navigation_extension.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/router/routes.dart';
+import '../../../../core/shared/domain/model/review_entity.dart';
+import '../../../../core/widgets/images/custom_cached_image.dart';
 import '../../../../core/widgets/rating/rate_widget.dart';
-import '../../data/models/product_review_model.dart';
 
 class ProductReviewsSection extends StatelessWidget {
+  final String? productId;
   final String productName;
   final double rating;
   final int reviewsCount;
-  final List<ProductReviewModel> reviews;
+  final List<ReviewEntity> reviews;
+  final VoidCallback? onExploreAll;
 
   const ProductReviewsSection({
     super.key,
-    this.productName = 'Heritage Chronograph Steel Watch',
-    this.rating = 4.9,
-    this.reviewsCount = 128,
+    this.productId,
+    this.productName = 'Product',
+    this.rating = 5.0,
+    this.reviewsCount = 0,
     required this.reviews,
+    this.onExploreAll,
   });
 
   void _navigateToAllReviews(BuildContext context) {
+    if (onExploreAll != null) {
+      onExploreAll!();
+      return;
+    }
     context.pushNamed(
       Routes.productReviews,
       arguments: {
+        'productId': productId ?? '',
         'productName': productName,
         'rating': rating,
         'reviewsCount': reviewsCount,
@@ -35,6 +45,8 @@ class ProductReviewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (reviews.isEmpty) return const SizedBox.shrink();
+
     final primaryText = context.textPrimaryColor;
     final cardBg = context.surfaceSubtleColor;
     final cardBorder = context.borderColor;
@@ -44,7 +56,7 @@ class ProductReviewsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Row matching Figma 37:541 with Explore All under the rating
+        // Header Row with Explore All under the rating
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +85,6 @@ class ProductReviewsSection extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 3.h),
-                // Button under the rating as requested
                 InkWell(
                   onTap: () => _navigateToAllReviews(context),
                   borderRadius: BorderRadius.circular(4.r),
@@ -107,7 +118,7 @@ class ProductReviewsSection extends StatelessWidget {
 
         SizedBox(height: 12.h),
 
-        // Review Cards list using RateWidget to control star rating count
+        // Review Cards (at most 2 reviews displayed)
         ...reviews.take(2).map((rev) {
           return Container(
             width: double.infinity,
@@ -121,11 +132,11 @@ class ProductReviewsSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Avatar + Author + Verified + Rating & Date Row
+                // Avatar + Author + Rating & Date Row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Avatar Circle (32x32) matching Figma 37:545
+                    // Avatar Circle (32x32)
                     Container(
                       width: 32.w,
                       height: 32.w,
@@ -134,14 +145,33 @@ class ProductReviewsSection extends StatelessWidget {
                         color: rev.avatarBgColor,
                         shape: BoxShape.circle,
                       ),
-                      child: Text(
-                        rev.initials,
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w700,
-                          color: ColorM.white,
-                        ),
-                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: rev.userPicture != null &&
+                              rev.userPicture!.isNotEmpty
+                          ? CustomCachedImage(
+                              imageUrl: rev.userPicture!,
+                              width: 32.w,
+                              height: 32.w,
+                              fit: BoxFit.cover,
+                              errorWidget: Center(
+                                child: Text(
+                                  rev.initials,
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: ColorM.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Text(
+                              rev.initials,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w700,
+                                color: ColorM.white,
+                              ),
+                            ),
                     ),
 
                     SizedBox(width: 10.w),
@@ -151,33 +181,17 @@ class ProductReviewsSection extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                rev.author,
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: primaryText,
-                                ),
-                              ),
-                              if (rev.isVerified) ...[
-                                SizedBox(width: 4.w),
-                                Text(
-                                  '✓ Verified Buyer',
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: ColorM.success,
-                                  ),
-                                ),
-                              ],
-                            ],
+                          Text(
+                            rev.userName,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
+                            ),
                           ),
                           SizedBox(height: 3.h),
                           Row(
                             children: [
-                              // RateWidget controlling the rating count
                               RateWidget(
                                 initialRate: rev.rating,
                                 readonly: true,
@@ -187,15 +201,17 @@ class ProductReviewsSection extends StatelessWidget {
                                 inactiveColor: inactiveStarColor,
                                 allowHalfRating: true,
                               ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                '• ${rev.dateText}',
-                                style: TextStyle(
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: context.textMutedColor,
+                              if (rev.dateText.isNotEmpty) ...[
+                                SizedBox(width: 6.w),
+                                Text(
+                                  '• ${rev.dateText}',
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: context.textMutedColor,
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ],
@@ -206,11 +222,11 @@ class ProductReviewsSection extends StatelessWidget {
 
                 SizedBox(height: 8.h),
 
-                // Comment Quote text matching Figma 37:549 / 37:609
+                // Review Comment Body
                 Text(
                   rev.comment,
                   style: TextStyle(
-                    fontSize: 11.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
                     color: commentTextColor,
                     height: 1.4,
@@ -220,43 +236,6 @@ class ProductReviewsSection extends StatelessWidget {
             ),
           );
         }),
-
-        SizedBox(height: 4.h),
-
-        // Full width outline button below cards to explore all reviews
-        SizedBox(
-          width: double.infinity,
-          height: 42.h,
-          child: OutlinedButton(
-            onPressed: () => _navigateToAllReviews(context),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: cardBorder),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              backgroundColor: cardBg,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Explore All $reviewsCount Reviews',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: context.isDark ? ColorM.primary : ColorM.primaryDark,
-                  ),
-                ),
-                SizedBox(width: 6.w),
-                Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 15.sp,
-                  color: context.isDark ? ColorM.primary : ColorM.primaryDark,
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }

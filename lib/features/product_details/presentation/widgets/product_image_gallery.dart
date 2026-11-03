@@ -8,12 +8,14 @@ import '../../../../core/widgets/images/custom_cached_image.dart';
 
 class ProductImageGallery extends StatefulWidget {
   final String? imageUrl;
+  final List<String> pictures;
   final String? discountTag;
   final String emoji;
 
   const ProductImageGallery({
     super.key,
     this.imageUrl,
+    this.pictures = const [],
     this.discountTag = '-25%',
     this.emoji = '⌚',
   });
@@ -25,11 +27,28 @@ class ProductImageGallery extends StatefulWidget {
 class _ProductImageGalleryState extends State<ProductImageGallery> {
   int _selectedIndex = 0;
 
+  List<String> get _allImages {
+    final list = <String>[];
+    if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) {
+      list.add(widget.imageUrl!);
+    }
+    for (final p in widget.pictures) {
+      if (p.isNotEmpty && !list.contains(p)) {
+        list.add(p);
+      }
+    }
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     final gradientColors = context.productHeroGradient;
     final borderColor = context.borderColor;
     final thumbBg = context.surfaceSubtleColor;
+    final images = _allImages;
+    final currentImage = images.isNotEmpty && _selectedIndex < images.length
+        ? images[_selectedIndex]
+        : widget.imageUrl;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,10 +75,10 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                   duration: const Duration(milliseconds: 250),
                   transitionBuilder: (child, animation) =>
                       FadeTransition(opacity: animation, child: child),
-                  child: widget.imageUrl != null && widget.imageUrl!.isNotEmpty
+                  child: currentImage != null && currentImage.isNotEmpty
                       ? CustomCachedImage(
-                          key: ValueKey('img_${widget.imageUrl}_$_selectedIndex'),
-                          imageUrl: widget.imageUrl!,
+                          key: ValueKey('img_${currentImage}_$_selectedIndex'),
+                          imageUrl: currentImage,
                           width: double.infinity,
                           height: 172.h,
                           fit: BoxFit.contain,
@@ -100,13 +119,18 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
         SizedBox(height: 12.h),
 
         // Thumbnail Selector Row matching Figma 37:519 / 37:579
-        Row(
-          children: List.generate(3, (index) {
-            final isSelected = _selectedIndex == index;
+        SizedBox(
+          height: 44.w,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemCount: images.length,
+            separatorBuilder: (_, _) => SizedBox(width: 10.w),
+            itemBuilder: (context, index) {
+              final isSelected = _selectedIndex == index;
+              final thumbUrl = images[index];
 
-            return Padding(
-              padding: EdgeInsets.only(right: 10.w),
-              child: GestureDetector(
+              return GestureDetector(
                 onTap: () => setState(() => _selectedIndex = index),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
@@ -121,14 +145,24 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                       width: isSelected ? 2 : 1,
                     ),
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: Opacity(
                     opacity: isSelected ? 1.0 : 0.65,
-                    child: _buildThumbnailVisual(),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: CustomCachedImage(
+                        imageUrl: thumbUrl,
+                        width: 44.w,
+                        height: 44.w,
+                        fit: BoxFit.cover,
+                        errorWidget: _buildThumbnailVisual(),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ),
       ],
     );
@@ -139,10 +173,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
       height: 110.h,
       fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) {
-        return Text(
-          widget.emoji,
-          style: TextStyle(fontSize: 70.sp),
-        );
+        return Text(widget.emoji, style: TextStyle(fontSize: 70.sp));
       },
     );
   }
@@ -153,10 +184,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
       width: 26.w,
       fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) {
-        return Text(
-          widget.emoji,
-          style: TextStyle(fontSize: 18.sp),
-        );
+        return Text(widget.emoji, style: TextStyle(fontSize: 18.sp));
       },
     );
   }

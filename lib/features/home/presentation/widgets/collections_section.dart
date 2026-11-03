@@ -108,7 +108,7 @@ class CollectionsSection extends StatelessWidget {
                   ),
                 ),
               )
-                  .animate(delay: (150 + (index * 60)).ms)
+                  .animate(delay: (150 + ((index % 5) * 60)).ms)
                   .fadeIn(
                     duration: 400.ms,
                     curve: Curves.easeOutCubic,

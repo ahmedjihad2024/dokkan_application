@@ -3,16 +3,26 @@ import 'package:dokkan/core/network/dio_factory.dart';
 import 'package:dokkan/core/services/storage_services/secure_storage_service.dart';
 import 'package:dokkan/core/services/storage_services/shared_prefrences_service.dart';
 import 'package:dokkan/core/services/storage_services/storage_service.dart';
+import 'package:dokkan/core/shared/data/api/add_to_cart_api_service.dart';
 import 'package:dokkan/core/shared/data/api/category_api_service.dart';
 import 'package:dokkan/core/shared/data/api/product_api_service.dart';
+import 'package:dokkan/core/shared/data/api/review_api_service.dart';
+import 'package:dokkan/core/shared/data/data_source/add_to_cart_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/data_source/category_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/data_source/product_remote_data_source.dart';
+import 'package:dokkan/core/shared/data/data_source/review_remote_data_source.dart';
+import 'package:dokkan/core/shared/data/repository/add_to_cart_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/category_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/product_repository_impl.dart';
+import 'package:dokkan/core/shared/data/repository/review_repository_impl.dart';
+import 'package:dokkan/core/shared/domain/repository/add_to_cart_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/category_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/product_repository.dart';
+import 'package:dokkan/core/shared/domain/repository/review_repository.dart';
+import 'package:dokkan/core/shared/domain/usecase/add_to_cart_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_categories_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_products_usecase.dart';
+import 'package:dokkan/core/shared/domain/usecase/get_reviews_usecase.dart';
 import 'package:dokkan/features/authentication/data/api/auth_api_service.dart';
 import 'package:dokkan/features/authentication/data/data_source/auth_remote_data_source.dart';
 import 'package:dokkan/features/authentication/data/repository/auth_repository_impl.dart';
@@ -22,12 +32,25 @@ import 'package:dokkan/features/authentication/domain/usecase/register_usecase.d
 import 'package:dokkan/features/authentication/domain/usecase/resend_otp_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/verify_email_usecase.dart';
 import 'package:dokkan/features/authentication/presentation/cubit/auth_cubit.dart';
+import 'package:dokkan/features/cart/data/api/cart_api_service.dart';
+import 'package:dokkan/features/cart/data/data_source/cart_remote_data_source.dart';
+import 'package:dokkan/features/cart/data/repository/cart_repository_impl.dart';
+import 'package:dokkan/features/cart/domain/repository/cart_repository.dart';
+import 'package:dokkan/features/cart/domain/usecase/decrement_cart_item_usecase.dart';
+import 'package:dokkan/features/cart/domain/usecase/get_cart_usecase.dart';
 import 'package:dokkan/features/home/data/api/home_api_service.dart';
 import 'package:dokkan/features/home/data/data_source/home_remote_data_source.dart';
 import 'package:dokkan/features/home/data/repository/home_repository_impl.dart';
 import 'package:dokkan/features/home/domain/repository/home_repository.dart';
 import 'package:dokkan/features/home/domain/usecase/get_offers_usecase.dart';
 import 'package:dokkan/features/home/presentation/cubit/home_cubit.dart';
+import 'package:dokkan/features/product_details/data/api/product_details_api_service.dart';
+import 'package:dokkan/features/product_details/data/data_source/product_details_remote_data_source.dart';
+import 'package:dokkan/features/product_details/data/repository/product_details_repository_impl.dart';
+import 'package:dokkan/features/product_details/domain/repository/product_details_repository.dart';
+import 'package:dokkan/features/product_details/domain/usecase/get_product_details_usecase.dart';
+import 'package:dokkan/features/product_details/presentation/cubit/product_details_cubit.dart';
+import 'package:dokkan/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -88,7 +111,7 @@ Future<void> setupServiceLocator() async {
     ),
   );
 
-  // ─── Shared Categories Feature ──────────────────────────────────────────────
+  // ─── Shared Categories Feature ───────────────────────────────────────────────
   sl.registerLazySingleton<CategoryApiService>(
     () => CategoryApiServiceImpl(sl<Dio>()),
   );
@@ -102,7 +125,7 @@ Future<void> setupServiceLocator() async {
     () => GetCategoriesUseCase(sl<CategoryRepository>()),
   );
 
-  // ─── Shared Products Feature ────────────────────────────────────────────────
+  // ─── Shared Products Feature ─────────────────────────────────────────────────
   sl.registerLazySingleton<ProductApiService>(
     () => ProductApiServiceImpl(sl<Dio>()),
   );
@@ -114,6 +137,51 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerLazySingleton<GetProductsUseCase>(
     () => GetProductsUseCase(sl<ProductRepository>()),
+  );
+
+  // ─── Shared Reviews Feature ─────────────────────────────────────────────────
+  sl.registerLazySingleton<ReviewApiService>(
+    () => ReviewApiServiceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<ReviewRemoteDataSource>(
+    () => ReviewRemoteDataSourceImpl(sl<ReviewApiService>()),
+  );
+  sl.registerLazySingleton<ReviewRepository>(
+    () => ReviewRepositoryImpl(sl<ReviewRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetReviewsUseCase>(
+    () => GetReviewsUseCase(sl<ReviewRepository>()),
+  );
+
+  // ─── Shared Add To Cart Feature ─────────────────────────────────────────────
+  sl.registerLazySingleton<AddToCartApiService>(
+    () => AddToCartApiServiceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<AddToCartRemoteDataSource>(
+    () => AddToCartRemoteDataSourceImpl(sl<AddToCartApiService>()),
+  );
+  sl.registerLazySingleton<AddToCartRepository>(
+    () => AddToCartRepositoryImpl(sl<AddToCartRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<AddToCartUseCase>(
+    () => AddToCartUseCase(sl<AddToCartRepository>()),
+  );
+
+  // ─── Cart Feature ───────────────────────────────────────────────────────────
+  sl.registerLazySingleton<CartApiService>(
+    () => CartApiServiceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<CartRemoteDataSource>(
+    () => CartRemoteDataSourceImpl(sl<CartApiService>()),
+  );
+  sl.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(sl<CartRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetCartUseCase>(
+    () => GetCartUseCase(sl<CartRepository>()),
+  );
+  sl.registerLazySingleton<DecrementCartItemUseCase>(
+    () => DecrementCartItemUseCase(sl<CartRepository>()),
   );
 
   // ─── Home Feature ───────────────────────────────────────────────────────────
@@ -135,6 +203,35 @@ Future<void> setupServiceLocator() async {
       getOffersUseCase: sl<GetOffersUseCase>(),
       getCategoriesUseCase: sl<GetCategoriesUseCase>(),
       getProductsUseCase: sl<GetProductsUseCase>(),
+      addToCartUseCase: sl<AddToCartUseCase>(),
+    ),
+  );
+
+  // ─── Product Details Feature ───────────────────────────────────────────────
+  sl.registerLazySingleton<ProductDetailsApiService>(
+    () => ProductDetailsApiServiceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<ProductDetailsRemoteDataSource>(
+    () => ProductDetailsRemoteDataSourceImpl(sl<ProductDetailsApiService>()),
+  );
+  sl.registerLazySingleton<ProductDetailsRepository>(
+    () => ProductDetailsRepositoryImpl(sl<ProductDetailsRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetProductDetailsUseCase>(
+    () => GetProductDetailsUseCase(sl<ProductDetailsRepository>()),
+  );
+  sl.registerFactory<ProductDetailsCubit>(
+    () => ProductDetailsCubit(
+      getProductDetailsUseCase: sl<GetProductDetailsUseCase>(),
+      getReviewsUseCase: sl<GetReviewsUseCase>(),
+      addToCartUseCase: sl<AddToCartUseCase>()
+    ),
+  );
+
+  // ─── Reviews Feature ───────────────────────────────────────────────────────
+  sl.registerFactory<ReviewsCubit>(
+    () => ReviewsCubit(
+      getReviewsUseCase: sl<GetReviewsUseCase>(),
     ),
   );
 }

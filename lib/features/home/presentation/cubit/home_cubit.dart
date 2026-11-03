@@ -1,12 +1,16 @@
+import 'package:dokkan/core/network/failure_message.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/network/failure_message.dart';
+import '../../../../core/shared/data/request/add_to_cart_request.dart';
 import '../../../../core/shared/data/request/products_request.dart';
 import '../../../../core/shared/domain/model/category_entity.dart';
 import '../../../../core/shared/domain/model/product_entity.dart';
+import '../../../../core/shared/domain/usecase/add_to_cart_usecase.dart';
 import '../../../../core/shared/domain/usecase/get_categories_usecase.dart';
 import '../../../../core/shared/domain/usecase/get_products_usecase.dart';
 import '../../../../core/utils/wait_fails_fast.dart';
+import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import '../../data/request/offers_request.dart';
 import '../../domain/model/offer_entity.dart';
 import '../../domain/usecase/get_offers_usecase.dart';
@@ -16,11 +20,13 @@ class HomeCubit extends Cubit<HomeState> {
   final GetOffersUseCase getOffersUseCase;
   final GetCategoriesUseCase getCategoriesUseCase;
   final GetProductsUseCase getProductsUseCase;
+  final AddToCartUseCase addToCartUseCase;
 
   HomeCubit({
     required this.getOffersUseCase,
     required this.getCategoriesUseCase,
     required this.getProductsUseCase,
+    required this.addToCartUseCase,
   }) : super(const HomeLoading());
 
   Future<void> init() async {
@@ -94,4 +100,39 @@ class HomeCubit extends Cubit<HomeState> {
       },
     );
   }
+
+  Future<void> addToCart(
+    String productId, {
+    int quantity = 1,
+    BuildContext? context,
+  }) async {
+    final result = await addToCartUseCase.call(
+      AddToCartRequest(productId: productId, quantity: quantity),
+    );
+
+    result.fold(
+      (failure) {
+        if (context != null) {
+          CustomSnackBar.showError(context, failure.message);
+        }
+      },
+      (data) {
+        if (context != null) {
+          CustomSnackBar.showSuccess(
+            context,
+            data.message.isNotEmpty
+                ? data.message
+                : 'Item added to cart successfully.',
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> addToCard(
+    String productId, {
+    int quantity = 1,
+    BuildContext? context,
+  }) =>
+      addToCart(productId, quantity: quantity, context: context);
 }

@@ -6,7 +6,7 @@ import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/fonts_manager.dart';
 import '../../../../core/res/sizes_manager.dart';
 import '../../../../core/widgets/images/custom_cached_image.dart';
-import '../../data/models/cart_item_model.dart';
+import '../../domain/model/cart_entity.dart';
 
 class CartItemCard extends StatelessWidget {
   final CartItemModel item;

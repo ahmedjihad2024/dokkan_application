@@ -17,18 +17,19 @@ import '../../../features/checkout/presentation/screens/add_edit_address_screen.
 import '../../../features/checkout/presentation/screens/payment_redirect_screen.dart';
 import '../../../features/contact_us/presentation/contact_us_screen.dart';
 import '../../shared/domain/model/product_entity.dart';
-
 import '../../../features/main_layout/presentation/main_layout_screen.dart';
 import '../../../features/manage_products/presentation/manage_products_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../../features/order_status/presentation/payment_failed_screen.dart';
 import '../../../features/order_status/presentation/payment_success_screen.dart';
+import '../../../features/product_details/presentation/cubit/product_details_cubit.dart';
 import '../../../features/product_details/presentation/product_details_screen.dart';
 import '../../../features/products_by_category/presentation/products_by_category_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/about_us_screen.dart';
 import '../../../features/change_password/presentation/screens/change_password_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/privacy_policy_screen.dart';
 import '../../../features/profile/presentation/screens/profile_screen.dart';
+import '../../../features/reviews/presentation/cubit/reviews_cubit.dart';
 import '../../../features/reviews/presentation/reviews_screen.dart';
 import '../../../features/splash/presentation/splash_screen.dart';
 import 'routes.dart';
@@ -46,25 +47,33 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const MainLayoutScreen());
 
       case Routes.productDetails:
-        final product = settings.arguments as ProductEntity?;
-
-
-
-
-
+        final productId = settings.arguments as String? ??
+            (settings.arguments is ProductEntity
+                ? (settings.arguments as ProductEntity).id
+                : '');
         return MaterialPageRoute(
-          builder: (_) => ProductDetailsScreen(product: product),
+          builder: (_) => BlocProvider(
+            create: (_) =>
+                sl<ProductDetailsCubit>()..getProductDetails(productId),
+            child: ProductDetailsScreen(
+              productId: productId,
+            ),
+          ),
         );
 
       case Routes.productReviews:
         final args = settings.arguments as Map<String, dynamic>?;
+        final productId = args?['productId'] as String? ?? '';
         return MaterialPageRoute(
-          builder: (_) => ReviewsScreen(
-            productName:
-                args?['productName'] as String? ??
-                'Heritage Chronograph Steel Watch',
-            averageRating: (args?['rating'] as num?)?.toDouble() ?? 4.9,
-            totalReviews: args?['reviewsCount'] as int? ?? 128,
+          builder: (_) => BlocProvider(
+            create: (_) => sl<ReviewsCubit>()..getReviews(productId),
+            child: ReviewsScreen(
+              productId: productId,
+              productName:
+                  args?['productName'] as String? ?? 'Product Reviews',
+              averageRating: (args?['rating'] as num?)?.toDouble() ?? 5.0,
+              totalReviews: (args?['reviewsCount'] as num?)?.toInt() ?? 0,
+            ),
           ),
         );
 
@@ -87,10 +96,10 @@ class RouteGenerator {
 
       case Routes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
+
       case Routes.verifyEmailAddress:
       case Routes.otpVerification:
         final email = _extractEmail(settings.arguments);
-
         final isPasswordRecovery = _extractBool(
           settings.arguments,
           key: 'isPasswordRecovery',
@@ -202,14 +211,16 @@ class RouteGenerator {
   static String _extractEmail(Object? args) {
     if (args is String) return args;
     if (args is Map<String, dynamic>) {
-      return args['email'] as String? ?? '';
+      final value = args['email'];
+      if (value is String) return value;
     }
     return '';
   }
 
   static bool _extractBool(Object? args, {required String key}) {
     if (args is Map<String, dynamic>) {
-      return args[key] as bool? ?? false;
+      final value = args[key];
+      if (value is bool) return value;
     }
     return false;
   }
@@ -217,11 +228,10 @@ class RouteGenerator {
   static Route<dynamic> _unDefinedRoute(String? routeName) {
     return MaterialPageRoute(
       builder: (_) => Scaffold(
-        appBar: AppBar(title: const Text('Route Not Found')),
+        appBar: AppBar(title: const Text('Not Found')),
         body: Center(
           child: Text(
-            'No route defined for $routeName',
-            style: const TextStyle(fontSize: 16),
+            'Route not defined${routeName != null ? ': $routeName' : ''}',
           ),
         ),
       ),
