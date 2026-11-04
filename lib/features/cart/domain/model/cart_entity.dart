@@ -57,6 +57,7 @@ class CartItemEntity {
         finalPricePerUnit = finalPricePerUnit ?? price ?? 0.0,
         basePricePerUnit =
             basePricePerUnit ?? finalPricePerUnit ?? price ?? 0.0,
+        // ignore: prefer_initializing_formals
         _totalPrice = totalPrice;
 
   double get totalPrice => _totalPrice ?? (finalPricePerUnit * quantity);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
@@ -73,14 +72,6 @@ class AddressSkeletonCard extends StatelessWidget {
           ),
         ],
       ),
-    )
-        .animate(onPlay: (controller) => controller.repeat(reverse: true))
-        .fade(
-          begin: 0.5,
-          end: 1.0,
-          duration: 800.ms,
-          curve: Curves.easeInOut,
-        );
+    );
   }
 }
-

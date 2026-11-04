@@ -1,4 +1,4 @@
-class AddressModel {
+class AddressEntity {
   final String id;
   final String tag;
   final String state;
@@ -9,9 +9,9 @@ class AddressModel {
   final String? deliveryNotes;
   final bool isDefault;
 
-  const AddressModel({
+  const AddressEntity({
     required this.id,
-    required this.tag,
+    this.tag = 'HOME',
     required this.state,
     required this.city,
     required this.street,
@@ -23,9 +23,9 @@ class AddressModel {
 
   String get fullAddress => '$street, $apartment, $city, $state';
   String get phone => phoneNumber;
-  String? get notes => deliveryNotes;
+  String get notes => deliveryNotes ?? '';
 
-  AddressModel copyWith({
+  AddressEntity copyWith({
     String? id,
     String? tag,
     String? state,
@@ -34,9 +34,10 @@ class AddressModel {
     String? apartment,
     String? phoneNumber,
     String? deliveryNotes,
+    String? notes,
     bool? isDefault,
   }) {
-    return AddressModel(
+    return AddressEntity(
       id: id ?? this.id,
       tag: tag ?? this.tag,
       state: state ?? this.state,
@@ -44,47 +45,49 @@ class AddressModel {
       street: street ?? this.street,
       apartment: apartment ?? this.apartment,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      deliveryNotes: deliveryNotes ?? this.deliveryNotes,
+      deliveryNotes: deliveryNotes ?? notes ?? this.deliveryNotes,
       isDefault: isDefault ?? this.isDefault,
     );
   }
 
-  static List<AddressModel> mockAddresses() {
-    return [
-      const AddressModel(
+  static List<AddressEntity> mockAddresses() {
+    return const [
+      AddressEntity(
         id: 'addr_1',
         tag: 'HOME',
         state: 'Cairo Governorate',
         city: 'New Cairo',
         street: 'El-Teseen St, Building 42',
         apartment: 'Apartment 3, Floor 2',
-        phoneNumber: '+20 102 345 6789',
+        phoneNumber: '01023456789',
         deliveryNotes: 'Leave with security at main gate',
         isDefault: true,
       ),
-      const AddressModel(
+      AddressEntity(
         id: 'addr_2',
         tag: 'OFFICE',
         state: 'Giza Governorate',
         city: 'Smart Village',
         street: 'Building B12, Floor 4',
         apartment: 'Suite 402',
-        phoneNumber: '+20 114 987 6543',
+        phoneNumber: '01149876543',
         deliveryNotes: 'Deliver between 9 AM and 5 PM',
         isDefault: false,
       ),
-      const AddressModel(
+      AddressEntity(
         id: 'addr_3',
         tag: 'OTHER',
         state: 'Alexandria Governorate',
         city: 'Kafr Abdo',
         street: 'Ismailia Canal St, Villa 8',
         apartment: 'Ground Floor',
-        phoneNumber: '+20 128 555 4321',
+        phoneNumber: '01285554321',
         deliveryNotes: 'Ring bell twice upon arrival',
         isDefault: false,
       ),
     ];
   }
 }
+
+typedef AddressModel = AddressEntity;
 

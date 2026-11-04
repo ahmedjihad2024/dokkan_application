@@ -7,19 +7,17 @@ import '../../../../core/res/color_manager.dart';
 class AddressFormField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
-  final String hint;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
-  final int maxLines;
+  final String? hint;
+  final TextInputType keyboardType;
+  final FormFieldValidator<String>? validator;
 
   const AddressFormField({
     super.key,
     required this.label,
     required this.controller,
-    required this.hint,
-    this.keyboardType,
+    this.hint,
+    this.keyboardType = TextInputType.text,
     this.validator,
-    this.maxLines = 1,
   });
 
   @override
@@ -30,57 +28,48 @@ class AddressFormField extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            color: context.textSecondaryColor,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: context.textPrimaryColor,
           ),
         ),
-        6.verticalSpace,
+        8.verticalSpace,
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
-          maxLines: maxLines,
+          validator: validator,
           style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
+            fontSize: 14.sp,
             color: context.textPrimaryColor,
           ),
-          validator: validator,
           decoration: InputDecoration(
-            isDense: true,
             hintText: hint,
             hintStyle: TextStyle(
               fontSize: 13.sp,
-              fontWeight: FontWeight.w400,
               color: context.textSecondaryColor.withValues(alpha: 0.6),
             ),
             filled: true,
             fillColor: context.surfaceColor,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 13.h,
-            ),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: context.borderColor, width: 1),
+              borderRadius: BorderRadius.circular(14.r),
+              borderSide: BorderSide(color: context.borderColor),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: context.borderColor, width: 1),
+              borderRadius: BorderRadius.circular(14.r),
+              borderSide: BorderSide(color: context.borderColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: const BorderSide(
-                color: ColorM.primaryDark,
-                width: 1.5,
-              ),
+              borderRadius: BorderRadius.circular(14.r),
+              borderSide: const BorderSide(color: ColorM.primaryDark, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(14.r),
               borderSide: const BorderSide(color: ColorM.danger, width: 1),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(14.r),
               borderSide: const BorderSide(color: ColorM.danger, width: 1.5),
             ),
           ),

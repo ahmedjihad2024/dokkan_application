@@ -38,6 +38,22 @@ import 'package:dokkan/features/cart/data/repository/cart_repository_impl.dart';
 import 'package:dokkan/features/cart/domain/repository/cart_repository.dart';
 import 'package:dokkan/features/cart/domain/usecase/decrement_cart_item_usecase.dart';
 import 'package:dokkan/features/cart/domain/usecase/get_cart_usecase.dart';
+import 'package:dokkan/features/checkout/data/api/address_api_service.dart';
+import 'package:dokkan/features/checkout/data/data_source/address_remote_data_source.dart';
+import 'package:dokkan/features/checkout/data/repository/address_repository_impl.dart';
+import 'package:dokkan/features/checkout/domain/repository/address_repository.dart';
+import 'package:dokkan/features/checkout/domain/usecase/create_address_usecase.dart';
+import 'package:dokkan/features/checkout/domain/usecase/delete_address_usecase.dart';
+import 'package:dokkan/features/checkout/domain/usecase/get_addresses_usecase.dart';
+import 'package:dokkan/features/checkout/presentation/cubit/checkout_cubit.dart';
+import 'package:dokkan/features/edit_address/data/api/edit_address_api_service.dart';
+import 'package:dokkan/features/edit_address/data/data_source/edit_address_remote_data_source.dart';
+import 'package:dokkan/features/edit_address/data/repository/edit_address_repository_impl.dart';
+import 'package:dokkan/features/edit_address/domain/repository/edit_address_repository.dart';
+import 'package:dokkan/features/edit_address/domain/usecase/create_address_usecase.dart' as edit_address_create;
+import 'package:dokkan/features/edit_address/domain/usecase/get_address_by_id_usecase.dart';
+import 'package:dokkan/features/edit_address/domain/usecase/update_address_usecase.dart';
+import 'package:dokkan/features/edit_address/presentation/cubit/edit_address_cubit.dart';
 import 'package:dokkan/features/home/data/api/home_api_service.dart';
 import 'package:dokkan/features/home/data/data_source/home_remote_data_source.dart';
 import 'package:dokkan/features/home/data/repository/home_repository_impl.dart';
@@ -225,6 +241,60 @@ Future<void> setupServiceLocator() async {
       getProductDetailsUseCase: sl<GetProductDetailsUseCase>(),
       getReviewsUseCase: sl<GetReviewsUseCase>(),
       addToCartUseCase: sl<AddToCartUseCase>()
+    ),
+  );
+
+  // ─── Checkout / Addresses Feature ──────────────────────────────────────────
+  sl.registerLazySingleton<AddressApiService>(
+    () => AddressApiServiceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<AddressRemoteDataSource>(
+    () => AddressRemoteDataSourceImpl(sl<AddressApiService>()),
+  );
+  sl.registerLazySingleton<AddressRepository>(
+    () => AddressRepositoryImpl(sl<AddressRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<CreateAddressUseCase>(
+    () => CreateAddressUseCase(sl<AddressRepository>()),
+  );
+  sl.registerLazySingleton<GetAddressesUseCase>(
+    () => GetAddressesUseCase(sl<AddressRepository>()),
+  );
+  sl.registerLazySingleton<DeleteAddressUseCase>(
+    () => DeleteAddressUseCase(sl<AddressRepository>()),
+  );
+  sl.registerFactory<CheckoutCubit>(
+    () => CheckoutCubit(
+      getAddressesUseCase: sl<GetAddressesUseCase>(),
+      createAddressUseCase: sl<CreateAddressUseCase>(),
+      deleteAddressUseCase: sl<DeleteAddressUseCase>(),
+      getCartUseCase: sl<GetCartUseCase>(),
+    ),
+  );
+
+  // ─── Edit Address Feature ──────────────────────────────────────────────────
+  sl.registerLazySingleton<EditAddressApiService>(
+    () => EditAddressApiServiceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<EditAddressRemoteDataSource>(
+    () => EditAddressRemoteDataSourceImpl(sl<EditAddressApiService>()),
+  );
+  sl.registerLazySingleton<EditAddressRepository>(
+    () => EditAddressRepositoryImpl(sl<EditAddressRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<UpdateAddressUseCase>(
+    () => UpdateAddressUseCase(sl<EditAddressRepository>()),
+  );
+  sl.registerLazySingleton<GetAddressByIdUseCase>(
+    () => GetAddressByIdUseCase(sl<EditAddressRepository>()),
+  );
+  sl.registerLazySingleton<edit_address_create.CreateAddressUseCase>(
+    () => edit_address_create.CreateAddressUseCase(sl<EditAddressRepository>()),
+  );
+  sl.registerFactory<EditAddressCubit>(
+    () => EditAddressCubit(
+      createAddressUseCase: sl<edit_address_create.CreateAddressUseCase>(),
+      updateAddressUseCase: sl<UpdateAddressUseCase>(),
     ),
   );
 
