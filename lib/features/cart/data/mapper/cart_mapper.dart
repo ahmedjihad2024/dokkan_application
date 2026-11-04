@@ -1,5 +1,7 @@
 import '../../domain/model/cart_entity.dart';
+import '../../domain/model/cart_item_action_entity.dart';
 import '../../domain/model/decrement_cart_item_entity.dart';
+import '../response/cart_item_action_response.dart';
 import '../response/decrement_cart_item_response.dart';
 import '../response/get_cart_response.dart';
 
@@ -30,6 +32,17 @@ extension CartItemResponseMapper on CartItemResponse {
   }
 }
 
+extension CartItemActionResponseMapper on CartItemActionResponse {
+  CartItemActionEntity toDomain() {
+    return CartItemActionEntity(
+      message: message,
+      itemId: itemId,
+      productId: productId,
+      quantity: quantity,
+    );
+  }
+}
+
 extension DecrementCartItemResponseMapper on DecrementCartItemResponse {
   DecrementCartItemEntity toDomain() {
     return DecrementCartItemEntity(
@@ -40,4 +53,3 @@ extension DecrementCartItemResponseMapper on DecrementCartItemResponse {
     );
   }
 }
-

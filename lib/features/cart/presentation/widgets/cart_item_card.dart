@@ -9,10 +9,10 @@ import '../../../../core/widgets/images/custom_cached_image.dart';
 import '../../domain/model/cart_entity.dart';
 
 class CartItemCard extends StatelessWidget {
-  final CartItemModel item;
-  final VoidCallback onIncrement;
-  final VoidCallback onDecrement;
-  final VoidCallback onRemove;
+  final CartItemEntity item;
+  final VoidCallback? onIncrement;
+  final VoidCallback? onDecrement;
+  final VoidCallback? onRemove;
 
   const CartItemCard({
     super.key,
@@ -24,6 +24,15 @@ class CartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = item.productCoverUrl;
+    final placeholder = Center(
+      child: Icon(
+        Icons.image_outlined,
+        size: 30.sp,
+        color: context.textMutedColor,
+      ),
+    );
+
     return Container(
       padding: EdgeInsets.all(12.r),
       decoration: BoxDecoration(
@@ -34,7 +43,6 @@ class CartItemCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Image / Visual container (Figma: 78x78, radius: 12)
           Container(
             width: 78.w,
             height: 78.w,
@@ -42,38 +50,26 @@ class CartItemCard extends StatelessWidget {
               color: context.surfaceElevatedColor,
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: (item.imageUrl != null && item.imageUrl!.isNotEmpty)
+            child: (imageUrl != null && imageUrl.isNotEmpty)
                 ? CustomCachedImage(
-                    imageUrl: item.imageUrl!,
+                    imageUrl: imageUrl,
                     width: 78.w,
                     height: 78.w,
                     fit: BoxFit.cover,
                     borderRadius: BorderRadius.circular(12.r),
-                    errorWidget: Center(
-                      child: Text(
-                        item.emoji,
-                        style: TextStyle(fontSize: 32.sp),
-                      ),
-                    ),
+                    errorWidget: placeholder,
                   )
-                : Center(
-                    child: Text(
-                      item.emoji,
-                      style: TextStyle(fontSize: 32.sp),
-                    ),
-                  ),
+                : placeholder,
           ),
           12.horizontalSpace,
-
-          // Details column
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  item.name,
-                  maxLines: 1,
+                  item.productName,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 13.sp,
@@ -82,16 +78,31 @@ class CartItemCard extends StatelessWidget {
                   ),
                 ),
                 4.verticalSpace,
-                Text(
-                  item.variant,
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: context.textSecondaryColor,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      '\$${item.finalPricePerUnit.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: context.textSecondaryColor,
+                      ),
+                    ),
+                    if (item.hasDiscount) ...[
+                      6.horizontalSpace,
+                      Text(
+                        '\$${item.basePricePerUnit.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: context.textMutedColor,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                10.verticalSpace,
+                8.verticalSpace,
                 Text(
-                  '\$${(item.price * item.quantity).toStringAsFixed(2)}',
+                  '\$${item.totalPrice.toStringAsFixed(2)}',
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeightM.bold,
@@ -102,13 +113,10 @@ class CartItemCard extends StatelessWidget {
             ),
           ),
           8.horizontalSpace,
-
-          // Actions: Remove button & Stepper
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Remove button (Figma: 28x28 circle)
               InkWell(
                 onTap: onRemove,
                 borderRadius: BorderRadius.circular(14.r),
@@ -128,8 +136,6 @@ class CartItemCard extends StatelessWidget {
                 ),
               ),
               12.verticalSpace,
-
-              // Quantity Stepper (Figma: 88x30, radius: 8)
               Container(
                 height: 30.h,
                 decoration: BoxDecoration(
@@ -172,7 +178,7 @@ class CartItemCard extends StatelessWidget {
 
 class CartStepperButton extends StatelessWidget {
   final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const CartStepperButton({
     super.key,
@@ -188,10 +194,13 @@ class CartStepperButton extends StatelessWidget {
       child: SizedBox(
         width: 28.w,
         height: 30.h,
-        child: Icon(
-          icon,
-          size: 13.sp,
-          color: ColorM.textSecondaryLight,
+        child: Opacity(
+          opacity: onTap == null ? 0.35 : 1,
+          child: Icon(
+            icon,
+            size: 13.sp,
+            color: ColorM.textSecondaryLight,
+          ),
         ),
       ),
     );
