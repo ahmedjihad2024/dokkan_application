@@ -30,20 +30,33 @@ class CartItemEntity {
   final double basePricePerUnit;
   final double finalPricePerUnit;
   final double totalPrice;
+  final String variant;
 
   const CartItemEntity({
-    required this.itemId,
-    required this.productId,
-    required this.productName,
-    this.productCoverUrl,
-    required this.productStock,
-    required this.weightInGrams,
-    required this.quantity,
-    required this.discountPercentage,
-    required this.basePricePerUnit,
-    required this.finalPricePerUnit,
-    required this.totalPrice,
-  });
+    String? itemId,
+    String? id,
+    this.productId = '',
+    String? productName,
+    String? name,
+    String? productCoverUrl,
+    String? imageUrl,
+    this.productStock = 1,
+    this.weightInGrams = 0.0,
+    this.quantity = 1,
+    this.discountPercentage = 0,
+    double? basePricePerUnit,
+    double? finalPricePerUnit,
+    double? price,
+    double? totalPrice,
+    this.variant = '',
+  })  : itemId = itemId ?? id ?? '',
+        productName = productName ?? name ?? '',
+        productCoverUrl = productCoverUrl ?? imageUrl,
+        finalPricePerUnit = finalPricePerUnit ?? price ?? 0.0,
+        basePricePerUnit =
+            basePricePerUnit ?? finalPricePerUnit ?? price ?? 0.0,
+        // ignore: prefer_initializing_formals
+        totalPrice = totalPrice ?? 0;
 
   bool get hasDiscount => basePricePerUnit > finalPricePerUnit;
   bool get isInStock => productStock > 0;

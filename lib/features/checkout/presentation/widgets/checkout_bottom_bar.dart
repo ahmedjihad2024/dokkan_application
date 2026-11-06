@@ -9,6 +9,8 @@ class CheckoutBottomBar extends StatelessWidget {
   final int currentStep;
   final double total;
   final bool isPlacingOrder;
+  final bool isCartLoading;
+  final bool isPlaceOrderEnabled;
   final VoidCallback onContinue;
   final VoidCallback onPlaceOrder;
 
@@ -17,9 +19,19 @@ class CheckoutBottomBar extends StatelessWidget {
     required this.currentStep,
     required this.total,
     required this.isPlacingOrder,
+    this.isCartLoading = false,
+    this.isPlaceOrderEnabled = true,
     required this.onContinue,
     required this.onPlaceOrder,
   });
+
+  bool get _canClick {
+    if (isPlacingOrder) return false;
+    if (currentStep == 2) {
+      return !isCartLoading && isPlaceOrderEnabled;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +51,26 @@ class CheckoutBottomBar extends StatelessWidget {
             backgroundColor: context.isDark
                 ? ColorM.primaryDark
                 : ColorM.textPrimaryLight,
+            disabledBackgroundColor: (context.isDark
+                    ? ColorM.primaryDark
+                    : ColorM.textPrimaryLight)
+                .withValues(alpha: 0.38),
             foregroundColor: Colors.white,
+            disabledForegroundColor: Colors.white60,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
             elevation: 0,
           ),
-          onPressed: isPlacingOrder
-              ? null
-              : () {
+          onPressed: _canClick
+              ? () {
                   if (currentStep == 2) {
                     onPlaceOrder();
                   } else {
                     onContinue();
                   }
-                },
+                }
+              : null,
           child: _buttonContent(context),
         ),
       ),
@@ -133,7 +150,7 @@ class CheckoutBottomBar extends StatelessWidget {
         Row(
           children: [
             Text(
-              '\$${total.toStringAsFixed(2)}',
+              isCartLoading ? '...' : '\$${total.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 15.sp,
                 fontWeight: FontWeight.bold,
@@ -147,4 +164,3 @@ class CheckoutBottomBar extends StatelessWidget {
     );
   }
 }
-

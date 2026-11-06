@@ -7,11 +7,13 @@ import '../../../../core/res/color_manager.dart';
 
 class AddEditAddressBottomBar extends StatelessWidget {
   final bool isEditing;
+  final bool isLoading;
   final VoidCallback onSave;
 
   const AddEditAddressBottomBar({
     super.key,
     required this.isEditing,
+    this.isLoading = false,
     required this.onSave,
   });
 
@@ -39,14 +41,23 @@ class AddEditAddressBottomBar extends StatelessWidget {
             ),
             elevation: 0,
           ),
-          onPressed: onSave,
-          child: Text(
-            isEditing ? 'Save Changes' : 'Save Delivery Address',
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          onPressed: isLoading ? null : onSave,
+          child: isLoading
+              ? SizedBox(
+                  width: 22.sp,
+                  height: 22.sp,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Text(
+                  isEditing ? 'Save Changes' : 'Save Delivery Address',
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
         ),
       ),
     )
@@ -55,4 +66,6 @@ class AddEditAddressBottomBar extends StatelessWidget {
         .slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }
 }
+
+typedef EditAddressBottomBar = AddEditAddressBottomBar;
 

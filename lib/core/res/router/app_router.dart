@@ -11,9 +11,11 @@ import '../../../features/authentication/presentation/screens/login_screen.dart'
 import '../../../features/authentication/presentation/screens/signup_screen.dart';
 import '../../../features/authentication/presentation/screens/verify_email_address_screen.dart';
 import '../../../features/categories/presentation/categories_screen.dart';
-import '../../../features/checkout/data/models/address_model.dart';
+import '../../../features/checkout/domain/model/address_entity.dart';
 import '../../../features/checkout/presentation/checkout_screen.dart';
-import '../../../features/checkout/presentation/screens/add_edit_address_screen.dart';
+import '../../../features/checkout/presentation/cubit/checkout_cubit.dart';
+import '../../../features/edit_address/presentation/screens/edit_address_screen.dart';
+import '../../../features/edit_address/presentation/cubit/edit_address_cubit.dart';
 import '../../../features/checkout/presentation/screens/payment_redirect_screen.dart';
 import '../../../features/contact_us/presentation/contact_us_screen.dart';
 import '../../shared/domain/model/product_entity.dart';
@@ -162,23 +164,41 @@ class RouteGenerator {
       case Routes.checkout:
       case Routes.checkoutSelectAddress:
         return MaterialPageRoute(
-          builder: (_) => const CheckoutScreen(initialStep: 0),
+          builder: (_) => BlocProvider(
+            create: (_) => sl<CheckoutCubit>()
+              ..getAddresses()
+              ..getCart(),
+            child: const CheckoutScreen(initialStep: 0),
+          ),
         );
 
       case Routes.checkoutPaymentMethod:
         return MaterialPageRoute(
-          builder: (_) => const CheckoutScreen(initialStep: 1),
+          builder: (_) => BlocProvider(
+            create: (_) => sl<CheckoutCubit>()
+              ..getAddresses()
+              ..getCart(),
+            child: const CheckoutScreen(initialStep: 1),
+          ),
         );
 
       case Routes.checkoutOrderSummary:
         return MaterialPageRoute(
-          builder: (_) => const CheckoutScreen(initialStep: 2),
+          builder: (_) => BlocProvider(
+            create: (_) => sl<CheckoutCubit>()
+              ..getAddresses()
+              ..getCart(),
+            child: const CheckoutScreen(initialStep: 2),
+          ),
         );
 
       case Routes.checkoutAddEditAddress:
         final initialAddress = settings.arguments as AddressModel?;
         return MaterialPageRoute(
-          builder: (_) => AddEditAddressScreen(initialAddress: initialAddress),
+          builder: (_) => BlocProvider(
+            create: (_) => sl<EditAddressCubit>(),
+            child: EditAddressScreen(initialAddress: initialAddress),
+          ),
         );
 
       case Routes.checkoutPaymentRedirect:

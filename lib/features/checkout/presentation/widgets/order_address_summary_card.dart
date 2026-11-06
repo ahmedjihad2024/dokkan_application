@@ -1,4 +1,4 @@
-import 'package:dokkan/features/checkout/data/models/address_model.dart';
+import 'package:dokkan/features/checkout/domain/model/address_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -7,10 +7,12 @@ import '../../../../core/res/color_manager.dart';
 
 class AddressErrorView extends StatelessWidget {
   final VoidCallback onRetry;
+  final String? errorMessage;
 
   const AddressErrorView({
     super.key,
     required this.onRetry,
+    this.errorMessage,
   });
 
   @override
@@ -45,7 +47,9 @@ class AddressErrorView extends StatelessWidget {
             ),
             8.verticalSpace,
             Text(
-              'We couldn\'t retrieve your saved addresses. Please check your internet connection and try again.',
+              errorMessage?.isNotEmpty == true
+                  ? errorMessage!
+                  : 'We couldn\'t retrieve your saved addresses. Please check your internet connection and try again.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13.sp,
@@ -75,4 +79,3 @@ class AddressErrorView extends StatelessWidget {
     );
   }
 }
-

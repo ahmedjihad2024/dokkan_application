@@ -3,11 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
-import '../../data/models/address_model.dart';
+import '../../domain/model/address_entity.dart';
 
 class AddressCard extends StatelessWidget {
   final AddressModel address;
   final bool isSelected;
+  final bool isDeleting;
   final VoidCallback onSelect;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -16,6 +17,7 @@ class AddressCard extends StatelessWidget {
     super.key,
     required this.address,
     required this.isSelected,
+    this.isDeleting = false,
     required this.onSelect,
     required this.onEdit,
     required this.onDelete,
@@ -83,8 +85,10 @@ class AddressCard extends StatelessWidget {
                 if (address.isDefault) ...[
                   10.horizontalSpace,
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 3.h,
+                    ),
                     decoration: BoxDecoration(
                       color: ColorM.success.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(6.r),
@@ -116,16 +120,29 @@ class AddressCard extends StatelessWidget {
                 12.horizontalSpace,
 
                 // Delete Button
-                IconButton(
-                  onPressed: onDelete,
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  iconSize: 18.sp,
-                  color: ColorM.danger,
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  tooltip: 'Delete Address',
-                ),
+                if (isDeleting)
+                  SizedBox(
+                    width: 22.sp,
+                    height: 22.sp,
+                    child: Padding(
+                      padding: EdgeInsets.all(3.r),
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: ColorM.danger,
+                      ),
+                    ),
+                  )
+                else
+                  IconButton(
+                    onPressed: onDelete,
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    iconSize: 18.sp,
+                    color: ColorM.danger,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    tooltip: 'Delete Address',
+                  ),
               ],
             ),
             12.verticalSpace,
@@ -203,4 +220,3 @@ class AddressCard extends StatelessWidget {
     );
   }
 }
-

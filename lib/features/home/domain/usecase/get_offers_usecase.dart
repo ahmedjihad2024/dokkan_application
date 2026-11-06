@@ -14,4 +14,3 @@ class GetOffersUseCase {
     return _repository.getOffers(request);
   }
 }
-

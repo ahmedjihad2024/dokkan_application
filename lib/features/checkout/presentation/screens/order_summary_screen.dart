@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../data/models/address_model.dart';
+import '../../domain/model/address_entity.dart';
 import '../../data/models/payment_method_model.dart';
 import '../checkout_screen.dart';
 
