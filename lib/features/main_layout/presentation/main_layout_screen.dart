@@ -1,4 +1,5 @@
 import 'package:dokkan/core/di/dependency_injection.dart';
+import 'package:dokkan/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:dokkan/features/home/presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,7 +48,10 @@ class _MainLayoutContent extends StatelessWidget {
                   create: (context) => sl<HomeCubit>()..init(),
                   child: HomeTab(),
                 ),
-                CartScreen(),
+                BlocProvider(
+                  create: (context) => sl<CartCubit>()..loadCart(),
+                  child: const CartScreen(),
+                ),
                 ProfileScreen(),
               ],
             ),

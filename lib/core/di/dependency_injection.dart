@@ -36,8 +36,12 @@ import 'package:dokkan/features/cart/data/api/cart_api_service.dart';
 import 'package:dokkan/features/cart/data/data_source/cart_remote_data_source.dart';
 import 'package:dokkan/features/cart/data/repository/cart_repository_impl.dart';
 import 'package:dokkan/features/cart/domain/repository/cart_repository.dart';
+import 'package:dokkan/features/cart/domain/usecase/add_cart_item_usecase.dart';
 import 'package:dokkan/features/cart/domain/usecase/decrement_cart_item_usecase.dart';
+import 'package:dokkan/features/cart/domain/usecase/delete_cart_item_usecase.dart';
 import 'package:dokkan/features/cart/domain/usecase/get_cart_usecase.dart';
+import 'package:dokkan/features/cart/domain/usecase/update_cart_item_usecase.dart';
+import 'package:dokkan/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:dokkan/features/home/data/api/home_api_service.dart';
 import 'package:dokkan/features/home/data/data_source/home_remote_data_source.dart';
 import 'package:dokkan/features/home/data/repository/home_repository_impl.dart';
@@ -180,8 +184,25 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<GetCartUseCase>(
     () => GetCartUseCase(sl<CartRepository>()),
   );
+  sl.registerLazySingleton<AddCartItemUseCase>(
+    () => AddCartItemUseCase(sl<CartRepository>()),
+  );
+  sl.registerLazySingleton<UpdateCartItemUseCase>(
+    () => UpdateCartItemUseCase(sl<CartRepository>()),
+  );
   sl.registerLazySingleton<DecrementCartItemUseCase>(
     () => DecrementCartItemUseCase(sl<CartRepository>()),
+  );
+  sl.registerLazySingleton<DeleteCartItemUseCase>(
+    () => DeleteCartItemUseCase(sl<CartRepository>()),
+  );
+  sl.registerFactory<CartCubit>(
+    () => CartCubit(
+      sl<GetCartUseCase>(),
+      sl<UpdateCartItemUseCase>(),
+      sl<DecrementCartItemUseCase>(),
+      sl<DeleteCartItemUseCase>(),
+    ),
   );
 
   // ─── Home Feature ───────────────────────────────────────────────────────────

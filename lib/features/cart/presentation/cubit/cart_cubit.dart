@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dokkan/core/network/failure_message.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/error_handler/failure.dart';

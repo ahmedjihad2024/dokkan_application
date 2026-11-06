@@ -16,6 +16,7 @@ import 'cubit/cart_state.dart';
 import 'widgets/cart_error_view.dart';
 import 'widgets/cart_item_card.dart';
 import 'widgets/cart_order_summary.dart';
+import 'widgets/cart_shimmer_loading.dart';
 import 'widgets/empty_cart_view.dart';
 
 class CartScreen extends StatefulWidget {
@@ -154,9 +155,7 @@ class _CartScreenState extends State<CartScreen>
 
   Widget _buildContent(BuildContext context, CartState state) {
     if (state is CartLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: ColorM.primary),
-      );
+      return const CartShimmerLoading();
     }
 
     if (state is CartError) {
