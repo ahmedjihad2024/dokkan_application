@@ -91,10 +91,16 @@ class RouteGenerator {
 
       case Routes.createNewPassword:
       case Routes.resetPassword:
-        final email = _extractEmail(settings.arguments);
+        final args = settings.arguments;
+        final email = _extractEmail(args);
+        final otp = args is Map<String, dynamic>
+            ? args['otp'] as String? ?? ''
+            : '';
         return MaterialPageRoute(
-          builder: (_) =>
-              CreateNewPasswordScreen(email: email.isEmpty ? null : email),
+          builder: (_) => CreateNewPasswordScreen(
+            email: email.isEmpty ? null : email,
+            otp: otp,
+          ),
         );
 
       case Routes.profile:

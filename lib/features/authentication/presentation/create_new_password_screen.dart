@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,10 +10,12 @@ import '../../../core/res/color_manager.dart';
 import '../../../core/res/router/routes.dart';
 import '../../../core/widgets/buttons/primary_button.dart';
 
+import '../data/repositories/auth_repository.dart';
+
 class CreateNewPasswordScreen extends StatefulWidget {
   final String? email;
-
-  const CreateNewPasswordScreen({super.key, this.email});
+  final String otp;
+  const CreateNewPasswordScreen({super.key, this.email, this.otp = ''});
 
   @override
   State<CreateNewPasswordScreen> createState() =>
@@ -22,11 +26,13 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final AuthRepository _authRepository = AuthRepositoryImpl();
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _hasStartedTyping = false;
   bool _hasAttemptedSubmit = false;
+  bool _isLoading = false;
 
   bool get _hasMinLength => _passwordController.text.length >= 8;
 
@@ -34,7 +40,9 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
   bool get _hasNumber => RegExp(r'[0-9]').hasMatch(_passwordController.text);
 
-  void _resetPassword() {
+  Future<void> _resetPassword() async {
+    if (_isLoading) return;
+
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -43,23 +51,65 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
     if (!_formKey.currentState!.validate()) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Password reset successfully! Please sign in with your new password.',
+    if (widget.email == null || widget.email!.isEmpty || widget.otp.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Recovery information is missing. Please try again.'),
         ),
-        backgroundColor: Color(0xFF00B889),
-      ),
-    );
+      );
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
 
-    context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+    try {
+      await _authRepository.resetPassword(
+        widget.email!,
+        widget.otp,
+        _passwordController.text,
+      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Password reset successfully! Please sign in with your new password.',
+          ),
+          backgroundColor: Color(0xFF00B889),
+        ),
+      );
+      context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+    } on DioException catch (error) {
+      debugPrint('RESET PASSWORD STATUS: ${error.response?.statusCode}');
+      debugPrint('RESET PASSWORD RESPONSE: ${error.response?.data}');
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not reset your password. Please try again.'),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong. Please try again.'),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   // Interactive password requirement indicator
-  Widget _buildRequirementItem({
-    required String text,
-    required bool isValid,
-  }) {
+  Widget _buildRequirementItem({required String text, required bool isValid}) {
     final bool hasStarted = _hasStartedTyping || _hasAttemptedSubmit;
 
     final Color color;
@@ -209,104 +259,88 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
                 // Main heading
                 Text(
-                  'Create New Password',
-                  style: TextStyle(
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.bold,
-                    color: context.textPrimaryColor,
-                  ),
-                )
+                      'Create New Password',
+                      style: TextStyle(
+                        fontSize: 28.sp,
+                        fontWeight: FontWeight.bold,
+                        color: context.textPrimaryColor,
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms)
-                    .slideY(
-                      begin: 0.12,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                    .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
 
                 SizedBox(height: 12.h),
 
                 Text(
-                  'Your new password must be different from '
-                  'your previously used password.',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    height: 1.6,
-                    color: context.textSecondaryColor,
-                  ),
-                )
+                      'Your new password must be different from '
+                      'your previously used password.',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        height: 1.6,
+                        color: context.textSecondaryColor,
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 60.ms)
-                    .slideY(
-                      begin: 0.12,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                    .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
 
                 SizedBox(height: 32.h),
 
                 // New password
                 Text(
-                  'New Password',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: context.textPrimaryColor,
-                  ),
-                )
+                      'New Password',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: context.textPrimaryColor,
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 100.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                    .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
 
                 SizedBox(height: 10.h),
 
                 TextFormField(
-                  controller: _passwordController,
-                  obscureText: !_isPasswordVisible,
-                  textInputAction: TextInputAction.next,
-                  style: TextStyle(
-                    color: context.textPrimaryColor,
-                    fontSize: 14.sp,
-                  ),
-                  onChanged: (val) {
-                    setState(() {
-                      if (!_hasStartedTyping && val.isNotEmpty) {
-                        _hasStartedTyping = true;
-                      }
-                    });
-                  },
-                  decoration: _passwordDecoration(
-                    hint: 'Enter your new password',
-                    isVisible: _isPasswordVisible,
-                    onToggle: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a new password.';
-                    }
+                      controller: _passwordController,
+                      obscureText: !_isPasswordVisible,
+                      textInputAction: TextInputAction.next,
+                      style: TextStyle(
+                        color: context.textPrimaryColor,
+                        fontSize: 14.sp,
+                      ),
+                      onChanged: (val) {
+                        setState(() {
+                          if (!_hasStartedTyping && val.isNotEmpty) {
+                            _hasStartedTyping = true;
+                          }
+                        });
+                      },
+                      decoration: _passwordDecoration(
+                        hint: 'Enter your new password',
+                        isVisible: _isPasswordVisible,
+                        onToggle: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a new password.';
+                        }
 
-                    if (!_hasMinLength || !_hasUppercase || !_hasNumber) {
-                      return 'Please meet all password requirements.';
-                    }
+                        if (!_hasMinLength || !_hasUppercase || !_hasNumber) {
+                          return 'Please meet all password requirements.';
+                        }
 
-                    return null;
-                  },
-                )
+                        return null;
+                      },
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 120.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                    .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
 
                 SizedBox(height: 16.h),
 
@@ -314,99 +348,85 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                 _buildRequirementItem(
                   text: 'At least 8 characters',
                   isValid: _hasMinLength,
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 140.ms),
+                ).animate().fadeIn(duration: 400.ms, delay: 140.ms),
 
                 SizedBox(height: 8.h),
 
                 _buildRequirementItem(
                   text: 'Includes uppercase letters and numbers',
                   isValid: _hasUppercase && _hasNumber,
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 160.ms),
+                ).animate().fadeIn(duration: 400.ms, delay: 160.ms),
 
                 SizedBox(height: 24.h),
 
                 // Confirm password
                 Text(
-                  'Confirm Password',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: context.textPrimaryColor,
-                  ),
-                )
+                      'Confirm Password',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: context.textPrimaryColor,
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 180.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                    .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
 
                 SizedBox(height: 10.h),
 
                 TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: !_isConfirmPasswordVisible,
-                  textInputAction: TextInputAction.done,
-                  style: TextStyle(
-                    color: context.textPrimaryColor,
-                    fontSize: 14.sp,
-                  ),
-                  onChanged: (_) {
-                    setState(() {});
-                  },
-                  decoration: _passwordDecoration(
-                    hint: 'Confirm your new password',
-                    isVisible: _isConfirmPasswordVisible,
-                    onToggle: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password.';
-                    }
+                      controller: _confirmPasswordController,
+                      obscureText: !_isConfirmPasswordVisible,
+                      textInputAction: TextInputAction.done,
+                      style: TextStyle(
+                        color: context.textPrimaryColor,
+                        fontSize: 14.sp,
+                      ),
+                      onChanged: (_) {
+                        setState(() {});
+                      },
+                      decoration: _passwordDecoration(
+                        hint: 'Confirm your new password',
+                        isVisible: _isConfirmPasswordVisible,
+                        onToggle: () {
+                          setState(() {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          });
+                        },
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password.';
+                        }
 
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match.';
-                    }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match.';
+                        }
 
-                    return null;
-                  },
-                )
+                        return null;
+                      },
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                    .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
 
                 SizedBox(height: 40.h),
 
                 // Reset button
                 PrimaryButton(
-                  title: 'Reset Password & Sign In',
-                  onPressed: _resetPassword,
-                  height: 52.h,
-                  backgroundColor: isDark
-                      ? ColorM.primary
-                      : const Color(0xFF0F172A),
-                  textColor: Colors.white,
-                )
+                      title: 'Reset Password & Sign In',
+                      onPressed: _resetPassword,
+                      isLoading: _isLoading,
+                      height: 52.h,
+                      backgroundColor: isDark
+                          ? ColorM.primary
+                          : const Color(0xFF0F172A),
+                      textColor: Colors.white,
+                    )
                     .animate()
                     .fadeIn(duration: 450.ms, delay: 220.ms)
-                    .slideY(
-                      begin: 0.12,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                    .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
 
                 SizedBox(height: 24.h),
               ],

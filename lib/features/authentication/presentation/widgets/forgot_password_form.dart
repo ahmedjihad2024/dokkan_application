@@ -6,9 +6,14 @@ import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/forms/app_text_field.dart';
 
 class ForgotPasswordForm extends StatefulWidget {
-  const ForgotPasswordForm({super.key, required this.onSubmit});
+  const ForgotPasswordForm({
+    super.key,
+    required this.onSubmit,
+    this.isLoading = false,
+  });
 
   final ValueChanged<String> onSubmit;
+  final bool isLoading;
 
   @override
   State<ForgotPasswordForm> createState() => _ForgotPasswordFormState();
@@ -41,6 +46,8 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   }
 
   void _submitForm() {
+    if (widget.isLoading) return;
+
     FocusScope.of(context).unfocus();
 
     if (!(_formKey.currentState?.validate() ?? false)) {
@@ -73,6 +80,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
           PrimaryButton(
             title: 'Send Reset Code',
             onPressed: _submitForm,
+            isLoading: widget.isLoading,
             height: 52.h,
           ),
         ],
