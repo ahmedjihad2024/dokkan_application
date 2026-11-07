@@ -182,9 +182,12 @@ class _AppTextFieldState extends State<AppTextField> {
           enabled: widget.enabled,
           textDirection: widget.textDirection,
           inputFormatters: widget.inputFormatters,
+          strutStyle: StrutStyle(
+            fontSize: (15.sp > 0) ? 15.sp : 15.0,
+          ),
           style: widget.textStyle ??
               TextStyle(
-                fontSize: 15.sp,
+                fontSize: (15.sp > 0) ? 15.sp : 15.0,
                 fontWeight: FontWeight.w400,
                 color: context.textPrimaryColor,
                 height: effectiveMaxLines > 1 ? 1.45 : null,

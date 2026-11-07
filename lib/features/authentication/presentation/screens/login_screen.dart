@@ -183,15 +183,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: () {
                           context.pushNamed(Routes.register);
                         },
-                        child: Text(
-                          'Register',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w700,
-                            color: ColorM.primaryDark,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 8.h,
+                          ),
+                          child: Text(
+                            'Register',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: ColorM.primaryDark,
+                            ),
                           ),
                         ),
                       ),

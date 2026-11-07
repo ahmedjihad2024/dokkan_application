@@ -16,6 +16,7 @@ class SignupForm extends StatefulWidget {
     String lastName,
     String email,
     String password,
+    String confirmPassword,
   ) onContinue;
 
   @override
@@ -108,6 +109,7 @@ class _SignupFormState extends State<SignupForm> {
       _lastNameController.text.trim(),
       _emailController.text.trim(),
       _passwordController.text,
+      _confirmPasswordController.text,
     );
   }
 

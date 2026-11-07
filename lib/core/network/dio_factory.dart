@@ -36,6 +36,9 @@ class DioFactory {
       BaseOptions(
         baseUrl: Constants.baseUrl,
         headers: headers,
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+        sendTimeout: const Duration(seconds: 15),
         followRedirects: false,
         receiveDataWhenStatusError: true,
       ),

@@ -77,6 +77,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/cat_watches.svg
   SvgGenImage get catWatches => const SvgGenImage('assets/svg/cat_watches.svg');
 
+  /// File path: assets/svg/dokkan_logo.svg
+  SvgGenImage get dokkanLogo => const SvgGenImage('assets/svg/dokkan_logo.svg');
+
   /// File path: assets/svg/empty_cart.svg
   SvgGenImage get emptyCart => const SvgGenImage('assets/svg/empty_cart.svg');
 
@@ -240,6 +243,7 @@ class $AssetsSvgGen {
     catJewelry,
     catWallets,
     catWatches,
+    dokkanLogo,
     emptyCart,
     emptyCartDark,
     emptyCartLight,

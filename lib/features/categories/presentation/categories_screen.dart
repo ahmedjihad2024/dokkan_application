@@ -1,45 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../core/enums/request_state.dart';
 import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
-import '../../../core/res/color_manager.dart';
 import '../../../core/res/router/routes.dart';
 import '../../../core/res/sizes_manager.dart';
 import '../../../core/widgets/feedback/app_error_widget.dart';
 import '../../../core/widgets/refresh/customized_smart_refresh.dart';
-import '../../../core/widgets/state/req_state_widget.dart';
+import 'cubit/categories_cubit.dart';
+import 'cubit/categories_state.dart';
 import 'widgets/categories_grid.dart';
+import 'widgets/categories_shimmer.dart';
 
-class CategoriesScreen extends StatefulWidget {
+class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
-
-  @override
-  State<CategoriesScreen> createState() => _CategoriesScreenState();
-}
-
-class _CategoriesScreenState extends State<CategoriesScreen> {
-  final RefreshController _refreshController = RefreshController(
-    initialRefresh: false,
-  );
-
-  @override
-  void dispose() {
-    _refreshController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleRefresh() async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    _refreshController.refreshCompleted(resetFooterState: true);
-  }
-
-  Future<void> _handleLoadMore() async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    _refreshController.loadComplete();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,87 +34,109 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         ),
         title: const Text('Categories'),
       ),
-      body: ReqStateWidget(
-        state: ReqState.success,
-        errorMessage: '',
-        onRetry: () {},
-        onLoading: (_) => const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(ColorM.primary),
-          ),
-        ),
-        onFailure: (context, error) => AppErrorWidget(
-          message: error ?? '',
-          onRetry: () {},
-        ),
-        onEmpty: (context) => Center(
-          child: Text(
-            'No collections available',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: context.textSecondaryColor,
-            ),
-          ),
-        ),
-        onSuccess: (context) => CustomizedSmartRefresh(
-          controller: _refreshController,
-          onRefresh: _handleRefresh,
-          onLoading: _handleLoadMore,
-          enableRefresh: true,
-          enableLoading: true,
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            slivers: [
-              // Subtitle
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  top: 8.h,
-                  left: SizeM.pagePaddingLarge.w,
-                  right: SizeM.pagePaddingLarge.w,
-                  bottom: 14.h,
-                ),
-                sliver: SliverToBoxAdapter(
-                  child: Text(
-                    '6 Collections • 218 Handcrafted Pieces',
+      body: BlocBuilder<CategoriesCubit, CategoriesState>(
+        builder: (context, state) {
+          final cubit = context.read<CategoriesCubit>();
+
+          if (state is CategoriesLoading) {
+            return const CategoriesShimmer();
+          }
+
+          if (state is CategoriesError) {
+            return AppErrorWidget(
+              message: state.message,
+              onRetry: () => cubit.getCategories(isRefresh: true),
+            );
+          }
+
+          if (state is CategoriesEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.category_outlined,
+                    size: 64.r,
+                    color: context.textMutedColor,
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'No categories available',
                     style: TextStyle(
+                      fontSize: 16.sp,
                       color: context.textSecondaryColor,
-                      fontSize: 13.sp,
                     ),
-                  )
-                      .animate()
-                      .fadeIn(duration: 400.ms)
-                      .slideY(
-                        begin: 0.1,
-                        end: 0,
-                        curve: Curves.easeOutCubic,
-                      ),
-                ),
+                  ),
+                  SizedBox(height: 16.h),
+                  ElevatedButton(
+                    onPressed: () => cubit.getCategories(isRefresh: true),
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
+            );
+          }
 
-              // Categories grid with animated cards
-              SliverPadding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SizeM.pagePaddingLarge.w,
-                ),
-                sliver: CategoriesGrid(
-                  onCategoryTap: (categoryTitle) {
-                    context.pushNamed(
-                      Routes.productsByCategory,
-                      arguments: categoryTitle,
-                    );
-                  },
-                ),
-              ),
+          if (state is CategoriesActive) {
+            final categories = state.categories;
 
-              // Bottom padding sliver
-              SliverToBoxAdapter(
-                child: SizedBox(height: 24.h),
+            return CustomizedSmartRefresh(
+              controller: cubit.refreshController,
+              onRefresh: () => cubit.getCategories(isRefresh: true),
+              enableRefresh: true,
+              enableLoading: false,
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: 8.h,
+                      left: SizeM.pagePaddingLarge.w,
+                      right: SizeM.pagePaddingLarge.w,
+                      bottom: 14.h,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child:
+                          Text(
+                                '${categories.length} Collections',
+                                style: TextStyle(
+                                  color: context.textSecondaryColor,
+                                  fontSize: 13.sp,
+                                ),
+                              )
+                              .animate()
+                              .fadeIn(duration: 400.ms)
+                              .slideY(
+                                begin: 0.1,
+                                end: 0,
+                                curve: Curves.easeOutCubic,
+                              ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: SizeM.pagePaddingLarge.w,
+                    ),
+                    sliver: CategoriesGrid(
+                      categories: categories,
+                      onCategoryTap: (category) {
+                        context.pushNamed(
+                          Routes.productsByCategory,
+                          arguments: category,
+                        );
+                      },
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+                ],
               ),
-            ],
-          ),
-        ),
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

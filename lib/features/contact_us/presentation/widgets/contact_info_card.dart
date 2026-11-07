@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
-import '../../../core/extensions/theme_extensions.dart';
-import '../../../core/res/sizes_manager.dart';
+import '../../../../core/extensions/theme_extensions.dart';
+import '../../../../core/res/sizes_manager.dart';
+import '../../../../core/widgets/feedback/custom_snackbar.dart';
+import '../../domain/models/contact_channel_model.dart';
 
 class ContactInfoCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String footer;
+  final ContactChannelModel channel;
 
   const ContactInfoCard({
     super.key,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.footer,
+    required this.channel,
   });
+
+  void _copyToClipboard(BuildContext context) {
+    Clipboard.setData(ClipboardData(text: channel.value));
+    CustomSnackBar.showSuccess(
+      context,
+      'Copied to clipboard: ${channel.value}',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.r),
+      padding: EdgeInsets.all(14.r),
       decoration: BoxDecoration(
         color: context.surfaceColor,
         borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
@@ -37,18 +42,18 @@ class ContactInfoCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              icon,
+              channel.icon,
               color: context.colorScheme.primary,
-              size: 24.r,
+              size: 22.r,
             ),
           ),
-          Gap(16.w),
+          Gap(14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  channel.title,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: context.textMutedColor,
@@ -57,26 +62,36 @@ class ContactInfoCard extends StatelessWidget {
                 ),
                 Gap(2.h),
                 Text(
-                  subtitle,
+                  channel.value,
                   style: TextStyle(
                     fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     color: context.textPrimaryColor,
                   ),
                 ),
                 Gap(2.h),
                 Text(
-                  footer,
+                  channel.hint,
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 11.sp,
                     color: context.textSecondaryColor,
                   ),
                 ),
               ],
             ),
           ),
+          IconButton(
+            onPressed: () => _copyToClipboard(context),
+            icon: Icon(
+              Icons.copy_rounded,
+              size: 18.r,
+              color: context.textSecondaryColor,
+            ),
+            tooltip: 'Copy',
+          ),
         ],
       ),
     );
   }
 }
+

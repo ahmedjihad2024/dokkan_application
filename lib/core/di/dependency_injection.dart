@@ -50,6 +50,13 @@ import 'package:dokkan/features/product_details/data/repository/product_details_
 import 'package:dokkan/features/product_details/domain/repository/product_details_repository.dart';
 import 'package:dokkan/features/product_details/domain/usecase/get_product_details_usecase.dart';
 import 'package:dokkan/features/product_details/presentation/cubit/product_details_cubit.dart';
+import 'package:dokkan/features/categories/presentation/cubit/categories_cubit.dart';
+import 'package:dokkan/features/products_by_category/data/api/products_by_category_api_service.dart';
+import 'package:dokkan/features/products_by_category/data/data_source/products_by_category_remote_data_source.dart';
+import 'package:dokkan/features/products_by_category/data/repository/products_by_category_repository_impl.dart';
+import 'package:dokkan/features/products_by_category/domain/repository/products_by_category_repository.dart';
+import 'package:dokkan/features/products_by_category/domain/usecase/get_products_by_category_usecase.dart';
+import 'package:dokkan/features/products_by_category/presentation/cubit/products_by_category_cubit.dart';
 import 'package:dokkan/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,6 +64,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 final GetIt sl = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
+  await sl.reset();
   // ─── Storage Services ────────────────────────────────────────────────────────
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
@@ -224,14 +232,36 @@ Future<void> setupServiceLocator() async {
     () => ProductDetailsCubit(
       getProductDetailsUseCase: sl<GetProductDetailsUseCase>(),
       getReviewsUseCase: sl<GetReviewsUseCase>(),
-      addToCartUseCase: sl<AddToCartUseCase>()
+      addToCartUseCase: sl<AddToCartUseCase>(),
     ),
   );
 
-  // ─── Reviews Feature ───────────────────────────────────────────────────────
   sl.registerFactory<ReviewsCubit>(
     () => ReviewsCubit(
       getReviewsUseCase: sl<GetReviewsUseCase>(),
+    ),
+  );
+  sl.registerFactory<CategoriesCubit>(
+    () => CategoriesCubit(
+      getCategoriesUseCase: sl<GetCategoriesUseCase>(),
+    ),
+  );
+  sl.registerLazySingleton<ProductsByCategoryApiService>(
+    () => ProductsByCategoryApiServiceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<ProductsByCategoryRemoteDataSource>(
+    () => ProductsByCategoryRemoteDataSourceImpl(sl<ProductsByCategoryApiService>()),
+  );
+  sl.registerLazySingleton<ProductsByCategoryRepository>(
+    () => ProductsByCategoryRepositoryImpl(sl<ProductsByCategoryRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetProductsByCategoryUseCase>(
+    () => GetProductsByCategoryUseCase(sl<ProductsByCategoryRepository>()),
+  );
+  sl.registerFactoryParam<ProductsByCategoryCubit, String, void>(
+    (categoryId, _) => ProductsByCategoryCubit(
+      getProductsByCategoryUseCase: sl<GetProductsByCategoryUseCase>(),
+      categoryId: categoryId,
     ),
   );
 }

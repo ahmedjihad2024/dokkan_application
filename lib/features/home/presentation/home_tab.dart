@@ -119,7 +119,7 @@ class _HomeTabState extends State<HomeTab>
                       onCategorySelected: (category) {
                         context.pushNamed(
                           Routes.productsByCategory,
-                          arguments: category.name,
+                          arguments: category,
                         );
                       },
                       onSeeAllPressed: () {
