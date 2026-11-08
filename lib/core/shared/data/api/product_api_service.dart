@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:dokkan/core/network/dio_factory.dart';
 
 import '../request/products_request.dart';

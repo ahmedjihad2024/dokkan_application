@@ -10,8 +10,7 @@ import '../../../features/authentication/presentation/screens/forget_password_sc
 import '../../../features/authentication/presentation/screens/login_screen.dart';
 import '../../../features/authentication/presentation/screens/signup_screen.dart';
 import '../../../features/authentication/presentation/screens/verify_email_address_screen.dart';
-import '../../../features/categories/presentation/cubit/categories_cubit.dart';
-import '../../../features/categories/presentation/categories_screen.dart';
+
 import '../../../features/checkout/domain/model/address_entity.dart';
 import '../../../features/checkout/presentation/checkout_screen.dart';
 import '../../../features/checkout/presentation/cubit/checkout_cubit.dart';
@@ -27,9 +26,8 @@ import '../../../features/order_status/presentation/payment_failed_screen.dart';
 import '../../../features/order_status/presentation/payment_success_screen.dart';
 import '../../../features/product_details/presentation/cubit/product_details_cubit.dart';
 import '../../../features/product_details/presentation/product_details_screen.dart';
-import '../../../features/products_by_category/presentation/cubit/products_by_category_cubit.dart';
-import '../../../features/products_by_category/presentation/products_by_category_screen.dart';
-import '../../shared/domain/model/category_entity.dart';
+import '../../../features/search/presentation/cubit/search_cubit.dart';
+import '../../../features/search/presentation/search_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/about_us_screen.dart';
 import '../../../features/change_password/presentation/screens/change_password_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/privacy_policy_screen.dart';
@@ -169,53 +167,12 @@ class RouteGenerator {
       case Routes.addProduct:
         return MaterialPageRoute(builder: (_) => const AddProductScreen());
 
-      // ─── Categories & Products ─────────────────────────────────
-      case Routes.categories:
+      // ─── Search & Discover ─────────────────────────────────────
+      case Routes.search:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_) => sl<CategoriesCubit>()..getCategories(),
-            child: const CategoriesScreen(),
-          ),
-        );
-
-      case Routes.productsByCategory:
-        String? categoryId;
-        String? categoryTitle;
-        if (settings.arguments is CategoryEntity) {
-          final category = settings.arguments as CategoryEntity;
-          categoryId = category.id.isNotEmpty ? category.id : category.name;
-          categoryTitle = category.name.isNotEmpty ? category.name : category.id;
-        } else if (settings.arguments is Map<String, dynamic>) {
-          final map = settings.arguments as Map<String, dynamic>;
-          final rawId = (map['id'] ??
-                  map['categoryId'] ??
-                  map['_id'] ??
-                  map['category_id'] ??
-                  map['name'])
-              ?.toString();
-          final rawTitle = (map['title'] ??
-                  map['name'] ??
-                  map['categoryTitle'] ??
-                  map['categoryName'])
-              ?.toString();
-          categoryId = (rawId != null && rawId.isNotEmpty) ? rawId : rawTitle;
-          categoryTitle =
-              (rawTitle != null && rawTitle.isNotEmpty) ? rawTitle : rawId;
-        } else if (settings.arguments is String) {
-          categoryId = settings.arguments as String;
-          categoryTitle = settings.arguments as String;
-        }
-
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => sl<ProductsByCategoryCubit>(
-              param1: categoryId ?? '',
-              param2: categoryTitle,
-            )..getProductsByCategory(),
-            child: ProductsByCategoryScreen(
-              categoryId: categoryId,
-              categoryTitle: categoryTitle,
-            ),
+            create: (_) => sl<SearchCubit>()..fetchProducts(),
+            child: const SearchScreen(),
           ),
         );
 

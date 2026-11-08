@@ -10,8 +10,7 @@ abstract class Routes {
   static const String createNewPassword = '/create-new-password';
   static const String resetPassword = '/reset-password';
   static const String home = '/home';
-  static const String categories = '/categories';
-  static const String productsByCategory = '/products-by-category';
+  static const String search = '/search';
   static const String productDetails = '/product-details';
   static const String productReviews = '/product-reviews';
   static const String cart = '/cart';

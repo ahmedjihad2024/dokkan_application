@@ -11,10 +11,10 @@ import '../../../core/widgets/feedback/custom_snackbar.dart';
 import '../../../core/widgets/refresh/customized_smart_refresh.dart';
 import 'cubit/home_cubit.dart';
 import 'cubit/home_state.dart';
-import 'widgets/collections_section.dart';
 import 'widgets/curated_arrivals_section.dart';
 import 'widgets/home_header.dart';
 import 'widgets/home_promo_banner.dart';
+import 'widgets/home_search_bar_widget.dart';
 import 'widgets/home_shimmer_loading.dart';
 
 class HomeTab extends StatefulWidget {
@@ -87,9 +87,19 @@ class _HomeTabState extends State<HomeTab>
               slivers: [
                 // Header (Dokkan Atelier + Greeting)
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 20.h),
+                  padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 14.h),
                   sliver: const SliverToBoxAdapter(
                     child: HomeHeader(userName: 'Alexander'),
+                  ),
+                ),
+
+                // Search Bar Widget (Navigates to Search Screen on tap)
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 18.h),
+                  sliver: SliverToBoxAdapter(
+                    child: HomeSearchBarWidget(
+                      onTap: () => context.pushNamed(Routes.search),
+                    ),
                   ),
                 ),
 
@@ -108,33 +118,15 @@ class _HomeTabState extends State<HomeTab>
                         ),
                   ),
 
-                // Collections category filter pills (scrolls edge-to-edge)
+                // Curated Arrivals product cards with See All button
                 SliverPadding(
                   padding: EdgeInsets.only(
-                    top: state.offers.isNotEmpty ? 22.h : 8.h,
+                    top: state.offers.isNotEmpty ? 24.h : 12.h,
                   ),
-                  sliver: SliverToBoxAdapter(
-                    child: CollectionsSection(
-                      categories: state.categories,
-                      onCategorySelected: (category) {
-                        context.pushNamed(
-                          Routes.productsByCategory,
-                          arguments: category,
-                        );
-                      },
-                      onSeeAllPressed: () {
-                        context.pushNamed(Routes.categories);
-                      },
-                    ),
-                  ),
-                ),
-
-                // Curated Arrivals product cards
-                SliverPadding(
-                  padding: EdgeInsets.only(top: 22.h),
                   sliver: SliverToBoxAdapter(
                     child: CuratedArrivalsSection(
                       products: state.products,
+                      onSeeAllPressed: () => context.pushNamed(Routes.search),
                       onProductTap: (ProductEntity product) {
                         context.pushNamed(
                           Routes.productDetails,

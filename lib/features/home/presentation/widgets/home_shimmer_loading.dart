@@ -51,9 +51,21 @@ class HomeShimmerLoading extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 20.h),
+              SizedBox(height: 16.h),
 
-              // 2. Promo Banner Shimmer (140.h matching HomePromoBanner)
+              // 2. Search Bar Shimmer
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Bone(
+                  height: 48.h,
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(14.r),
+                ),
+              ),
+
+              SizedBox(height: 16.h),
+
+              // 3. Promo Banner Shimmer (140.h matching HomePromoBanner)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Container(
@@ -114,40 +126,16 @@ class HomeShimmerLoading extends StatelessWidget {
 
               SizedBox(height: 24.h),
 
-              // 3. Collections Section Shimmer (matching CollectionsSection)
+              // 4. Curated Arrivals Section Shimmer
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Bone.text(words: 1, fontSize: 16),
+                    const Bone.text(words: 2, fontSize: 16),
                     Bone.text(width: 50.w, fontSize: 12),
                   ],
                 ),
-              ),
-              SizedBox(height: 12.h),
-              SizedBox(
-                height: 36.h,
-                child: ListView.separated(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 5,
-                  separatorBuilder: (_, _) => SizedBox(width: 8.w),
-                  itemBuilder: (_, i) => Bone(
-                    width: (70 + (i % 3) * 18).w,
-                    height: 36.h,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 24.h),
-
-              // 4. Curated Arrivals Section Shimmer (matching ProductCard 165.w, 265.h)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: const Bone.text(words: 2, fontSize: 16),
               ),
               SizedBox(height: 14.h),
               SizedBox(
@@ -170,11 +158,10 @@ class HomeShimmerLoading extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Bone(
-                            width: double.infinity,
-                            height: 140.h,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.r),
-                              topRight: Radius.circular(16.r),
+                            width: 165.w,
+                            height: 145.h,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(16.r),
                             ),
                           ),
                           Padding(
@@ -214,4 +201,3 @@ class HomeShimmerLoading extends StatelessWidget {
     );
   }
 }
-

@@ -4,10 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/shared/data/request/add_to_cart_request.dart';
 import '../../../../core/shared/data/request/products_request.dart';
-import '../../../../core/shared/domain/model/category_entity.dart';
 import '../../../../core/shared/domain/model/product_entity.dart';
 import '../../../../core/shared/domain/usecase/add_to_cart_usecase.dart';
-import '../../../../core/shared/domain/usecase/get_categories_usecase.dart';
 import '../../../../core/shared/domain/usecase/get_products_usecase.dart';
 import '../../../../core/utils/wait_fails_fast.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
@@ -18,13 +16,11 @@ import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final GetOffersUseCase getOffersUseCase;
-  final GetCategoriesUseCase getCategoriesUseCase;
   final GetProductsUseCase getProductsUseCase;
   final AddToCartUseCase addToCartUseCase;
 
   HomeCubit({
     required this.getOffersUseCase,
-    required this.getCategoriesUseCase,
     required this.getProductsUseCase,
     required this.addToCartUseCase,
   }) : super(const HomeLoading());
@@ -34,7 +30,6 @@ class HomeCubit extends Cubit<HomeState> {
 
     final result = await waitFailFast([
       getOffersUseCase(const OffersRequest(page: 1, pageSize: 10)),
-      getCategoriesUseCase(),
       getProductsUseCase(const ProductsRequest(page: 1, pageSize: 10)),
     ]);
 
@@ -42,12 +37,10 @@ class HomeCubit extends Cubit<HomeState> {
       (failure) => emit(HomeError(message: failure.message)),
       (data) {
         final offers = (data[0] as OffersPaginationEntity).items;
-        final categories = data[1] as List<CategoryEntity>;
-        final products = (data[2] as ProductsPaginationEntity).items;
+        final products = (data[1] as ProductsPaginationEntity).items;
 
         emit(HomeSuccess(
           offers: offers,
-          categories: categories,
           products: products,
         ));
       },
@@ -66,21 +59,6 @@ class HomeCubit extends Cubit<HomeState> {
           emit((state as HomeSuccess).copyWith(offers: data.items));
         } else {
           emit(HomeSuccess(offers: data.items));
-        }
-      },
-    );
-  }
-
-  Future<void> getCategories() async {
-    final result = await getCategoriesUseCase();
-
-    result.fold(
-      (failure) => emit(HomeError(message: failure.message)),
-      (data) {
-        if (state is HomeSuccess) {
-          emit((state as HomeSuccess).copyWith(categories: data));
-        } else {
-          emit(HomeSuccess(categories: data));
         }
       },
     );
@@ -106,33 +84,26 @@ class HomeCubit extends Cubit<HomeState> {
     int quantity = 1,
     BuildContext? context,
   }) async {
-    final result = await addToCartUseCase.call(
+    final result = await addToCartUseCase(
       AddToCartRequest(productId: productId, quantity: quantity),
     );
 
     result.fold(
       (failure) {
-        if (context != null) {
+        if (context != null && context.mounted) {
           CustomSnackBar.showError(context, failure.message);
         }
       },
-      (data) {
-        if (context != null) {
+      (cartEntity) {
+        if (context != null && context.mounted) {
           CustomSnackBar.showSuccess(
             context,
-            data.message.isNotEmpty
-                ? data.message
-                : 'Item added to cart successfully.',
+            cartEntity.message.isNotEmpty
+                ? cartEntity.message
+                : 'Item added to cart',
           );
         }
       },
     );
   }
-
-  Future<void> addToCard(
-    String productId, {
-    int quantity = 1,
-    BuildContext? context,
-  }) =>
-      addToCart(productId, quantity: quantity, context: context);
 }

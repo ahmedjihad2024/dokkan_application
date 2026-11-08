@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
+import '../../../../core/res/color_manager.dart';
 import '../../../../core/shared/domain/model/product_entity.dart';
 import 'product_card.dart';
 
@@ -11,6 +12,7 @@ class CuratedArrivalsSection extends StatelessWidget {
   final ValueChanged<ProductEntity>? onProductTap;
   final ValueChanged<String>? onFavoriteToggle;
   final ValueChanged<ProductEntity>? onAddToCart;
+  final VoidCallback? onSeeAllPressed;
   final double horizontalPadding;
 
   const CuratedArrivalsSection({
@@ -19,6 +21,7 @@ class CuratedArrivalsSection extends StatelessWidget {
     this.onProductTap,
     this.onFavoriteToggle,
     this.onAddToCart,
+    this.onSeeAllPressed,
     this.horizontalPadding = 20.0,
   });
 
@@ -43,16 +46,49 @@ class CuratedArrivalsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Section Title matching Figma 37:365 with its own padding
+        // Section Header Row (Title + See All Button)
         Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding.w),
-          child: Text(
-            'Curated Arrivals',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: context.textPrimaryColor,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Curated Arrivals',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: context.textPrimaryColor,
+                ),
+              ),
+              if (onSeeAllPressed != null)
+                GestureDetector(
+                  onTap: onSeeAllPressed,
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'See All',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: ColorM.primary,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 11.sp,
+                          color: ColorM.primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
         )
             .animate()
@@ -99,7 +135,7 @@ class CuratedArrivalsSection extends StatelessWidget {
                     begin: const Offset(0.95, 0.95),
                     end: const Offset(1, 1),
                     duration: 450.ms,
-                    curve: Curves.fastLinearToSlowEaseIn,
+                    curve: Curves.easeOutCubic,
                   );
             },
           ),

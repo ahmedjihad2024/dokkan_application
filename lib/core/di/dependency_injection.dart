@@ -4,23 +4,18 @@ import 'package:dokkan/core/services/storage_services/secure_storage_service.dar
 import 'package:dokkan/core/services/storage_services/shared_prefrences_service.dart';
 import 'package:dokkan/core/services/storage_services/storage_service.dart';
 import 'package:dokkan/core/shared/data/api/add_to_cart_api_service.dart';
-import 'package:dokkan/core/shared/data/api/category_api_service.dart';
 import 'package:dokkan/core/shared/data/api/product_api_service.dart';
 import 'package:dokkan/core/shared/data/api/review_api_service.dart';
 import 'package:dokkan/core/shared/data/data_source/add_to_cart_remote_data_source.dart';
-import 'package:dokkan/core/shared/data/data_source/category_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/data_source/product_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/data_source/review_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/repository/add_to_cart_repository_impl.dart';
-import 'package:dokkan/core/shared/data/repository/category_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/product_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/review_repository_impl.dart';
 import 'package:dokkan/core/shared/domain/repository/add_to_cart_repository.dart';
-import 'package:dokkan/core/shared/domain/repository/category_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/product_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/review_repository.dart';
 import 'package:dokkan/core/shared/domain/usecase/add_to_cart_usecase.dart';
-import 'package:dokkan/core/shared/domain/usecase/get_categories_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_products_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_reviews_usecase.dart';
 import 'package:dokkan/features/authentication/data/api/auth_api_service.dart';
@@ -73,8 +68,7 @@ import 'package:dokkan/features/product_details/data/repository/product_details_
 import 'package:dokkan/features/product_details/domain/repository/product_details_repository.dart';
 import 'package:dokkan/features/product_details/domain/usecase/get_product_details_usecase.dart';
 import 'package:dokkan/features/product_details/presentation/cubit/product_details_cubit.dart';
-import 'package:dokkan/features/categories/presentation/cubit/categories_cubit.dart';
-import 'package:dokkan/features/products_by_category/presentation/cubit/products_by_category_cubit.dart';
+import 'package:dokkan/features/search/presentation/cubit/search_cubit.dart';
 import 'package:dokkan/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -149,19 +143,6 @@ Future<void> setupServiceLocator() async {
     ),
   );
 
-  // ─── Shared Categories Feature ───────────────────────────────────────────────
-  sl.registerLazySingleton<CategoryApiService>(
-    () => CategoryApiServiceImpl(sl<Dio>()),
-  );
-  sl.registerLazySingleton<CategoryRemoteDataSource>(
-    () => CategoryRemoteDataSourceImpl(sl<CategoryApiService>()),
-  );
-  sl.registerLazySingleton<CategoryRepository>(
-    () => CategoryRepositoryImpl(sl<CategoryRemoteDataSource>()),
-  );
-  sl.registerLazySingleton<GetCategoriesUseCase>(
-    () => GetCategoriesUseCase(sl<CategoryRepository>()),
-  );
 
   // ─── Shared Products Feature ─────────────────────────────────────────────────
   sl.registerLazySingleton<ProductApiService>(
@@ -256,7 +237,6 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory<HomeCubit>(
     () => HomeCubit(
       getOffersUseCase: sl<GetOffersUseCase>(),
-      getCategoriesUseCase: sl<GetCategoriesUseCase>(),
       getProductsUseCase: sl<GetProductsUseCase>(),
       addToCartUseCase: sl<AddToCartUseCase>(),
     ),
@@ -343,16 +323,11 @@ Future<void> setupServiceLocator() async {
       getReviewsUseCase: sl<GetReviewsUseCase>(),
     ),
   );
-  sl.registerFactory<CategoriesCubit>(
-    () => CategoriesCubit(
-      getCategoriesUseCase: sl<GetCategoriesUseCase>(),
-    ),
-  );
-  sl.registerFactoryParam<ProductsByCategoryCubit, String, String?>(
-    (categoryId, categoryTitle) => ProductsByCategoryCubit(
+  // ─── Search Feature ────────────────────────────────────────────────────────
+  sl.registerFactory<SearchCubit>(
+    () => SearchCubit(
       getProductsUseCase: sl<GetProductsUseCase>(),
-      categoryId: categoryId,
-      categoryTitle: categoryTitle,
+      addToCartUseCase: sl<AddToCartUseCase>(),
     ),
   );
 }

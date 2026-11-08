@@ -63,8 +63,8 @@ class ProductsRequest {
       if (minPrice != null) 'minPrice': minPrice,
       if (maxPrice != null) 'maxPrice': maxPrice,
       if (isInStock != null) 'isInStock': isInStock,
-      if (resolvedSortBy != null) 'sortBy': resolvedSortBy,
-      if (resolvedSortOrder != null) 'sortOrder': resolvedSortOrder,
+      if (resolvedSortBy case final String sortBy) 'sortBy': sortBy,
+      if (resolvedSortOrder case final String sortOrder) 'sortOrder': sortOrder,
       'page': page,
       'pageSize': pageSize,
     };
