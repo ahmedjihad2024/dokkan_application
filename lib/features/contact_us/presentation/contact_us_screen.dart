@@ -1,115 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
 import '../../../core/res/sizes_manager.dart';
-import '../widgets/contactInfoCard.dart';
-import '../widgets/directAtelierInquiryWidget.dart';
+import '../domain/models/contact_channel_model.dart';
+import 'widgets/branches_section.dart';
+import 'widgets/contact_header_banner.dart';
+import 'widgets/contact_info_card.dart';
+import 'widgets/direct_atelier_inquiry_widget.dart';
 
-class ContactUsScreen extends StatefulWidget {
+class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
 
   @override
-  State<ContactUsScreen> createState() => _ContactUsScreenState();
-}
-
-class _ContactUsScreenState extends State<ContactUsScreen> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: context.surfaceColor,
+        elevation: 0,
         leading: Padding(
           padding: EdgeInsets.all(8.r),
           child: IconButton(
             style: IconButton.styleFrom(
-              backgroundColor: context.surfaceColor,
+              backgroundColor: context.surfaceElevatedColor,
               shape: const CircleBorder(),
             ),
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 18.sp,
+              color: context.textPrimaryColor,
+            ),
           ),
         ),
-        title: const Text('Contact Us'),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          top: 8.h,
-          left: SizeM.pagePaddingLarge.w,
-          right: SizeM.pagePaddingLarge.w,
-          bottom: 24.h,
+        title: Text(
+          'Contact Us',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: context.textPrimaryColor,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 14.h),
-              child: Text(
-                'Our atelier advisors are available 7 days a week for bespoke consultations and order assistance.',
+        centerTitle: true,
+      ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.opaque,
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(
+            horizontal: SizeM.pagePaddingLarge.w,
+            vertical: 16.h,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const ContactHeaderBanner()
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(begin: -0.06, end: 0, curve: Curves.easeOutCubic),
+              Gap(20.h),
+              Text(
+                'Customer Support Channels',
                 style: TextStyle(
-                  fontSize: 13.sp,
-                  color: context.textSecondaryColor,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  color: context.textPrimaryColor,
                 ),
               ),
-            )
-                .animate()
-                .fadeIn(duration: 400.ms)
-                .slideX(begin: -0.06, end: 0, curve: Curves.easeOutCubic),
-
-            const ContactInfoCard(
-              icon: Icons.mail_outline,
-              title: 'Concierge Email',
-              subtitle: 'concierge@dokkan-atelier.com',
-              footer: 'Replies within 2 hours',
-            )
-                .animate(delay: 80.ms)
-                .fadeIn(duration: 400.ms, curve: Curves.easeOutCubic)
-                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic)
-                .scale(
-                  begin: const Offset(0.98, 0.98),
-                  end: const Offset(1, 1),
-                  curve: Curves.easeOutCubic,
-                ),
-            12.verticalSpace,
-
-            const ContactInfoCard(
-              icon: Icons.phone_outlined,
-              title: 'Atelier Hotline',
-              subtitle: '+971 4 800 DOKKAN',
-              footer: 'Mon-Sat 8AM-8PM GST',
-            )
-                .animate(delay: 140.ms)
-                .fadeIn(duration: 400.ms, curve: Curves.easeOutCubic)
-                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic)
-                .scale(
-                  begin: const Offset(0.98, 0.98),
-                  end: const Offset(1, 1),
-                  curve: Curves.easeOutCubic,
-                ),
-            12.verticalSpace,
-
-            const ContactInfoCard(
-              icon: Icons.location_on_outlined,
-              title: 'Flagship Boutique',
-              subtitle: 'Atelier 42, Design District, Dubai',
-              footer: 'Private viewings by booking',
-            )
-                .animate(delay: 200.ms)
-                .fadeIn(duration: 400.ms, curve: Curves.easeOutCubic)
-                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic)
-                .scale(
-                  begin: const Offset(0.98, 0.98),
-                  end: const Offset(1, 1),
-                  curve: Curves.easeOutCubic,
-                ),
-            20.verticalSpace,
-
-            const DirectAtelierInquiryWidget()
-                .animate(delay: 260.ms)
-                .fadeIn(duration: 450.ms, curve: Curves.easeOutCubic)
-                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
-          ],
+              Gap(10.h),
+              ...ContactChannelModel.defaultChannels.asMap().entries.map(
+                (entry) {
+                  final index = entry.key;
+                  final channel = entry.value;
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 10.h),
+                    child: ContactInfoCard(channel: channel)
+                        .animate(delay: (80 + index * 50).ms)
+                        .fadeIn(duration: 400.ms, curve: Curves.easeOutCubic)
+                        .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+                  );
+                },
+              ),
+              Gap(16.h),
+              const BranchesSection(),
+              Gap(16.h),
+              const DirectAtelierInquiryWidget()
+                  .animate(delay: 350.ms)
+                  .fadeIn(duration: 450.ms, curve: Curves.easeOutCubic)
+                  .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+              Gap(24.h),
+            ],
+          ),
         ),
       ),
     );

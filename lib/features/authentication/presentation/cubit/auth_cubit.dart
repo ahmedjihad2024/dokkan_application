@@ -50,20 +50,24 @@ class AuthCubit extends Cubit<AuthState> {
        super(AuthInitial());
 
   Future<void> login({required String email, required String password}) async {
+    if (isClosed) return;
     emit(AuthLoading());
 
     final result = await _loginUseCase(
       LoginRequest(email: email, password: password),
     );
 
+    if (isClosed) return;
     result.fold((failure) {
       if (failure is CustomServerError &&
           failure.error == ApiErrorType.EMAIL_NOT_VERIFIED) {
         resendOtp(email: email);
         return;
       }
-      emit(AuthFailure(message: failure.message));
-    }, (tokenModel) => emit(AuthSuccess()));
+      if (!isClosed) emit(AuthFailure(message: failure.message));
+    }, (tokenModel) {
+      if (!isClosed) emit(AuthSuccess());
+    });
   }
 
   Future<void> register({
@@ -71,7 +75,9 @@ class AuthCubit extends Cubit<AuthState> {
     required String lastName,
     required String email,
     required String password,
+    String? confirmPassword,
   }) async {
+    if (isClosed) return;
     emit(AuthLoading());
 
     final result = await _registerUseCase(
@@ -80,36 +86,54 @@ class AuthCubit extends Cubit<AuthState> {
         lastName: lastName,
         email: email,
         password: password,
+        confirmPassword: confirmPassword ?? password,
       ),
     );
 
+    if (isClosed) return;
     result.fold(
-      (failure) => emit(AuthFailure(message: failure.message)),
-      (message) => emit(AuthRegisterSuccess(message: message)),
+      (failure) {
+        if (!isClosed) emit(AuthFailure(message: failure.message));
+      },
+      (message) {
+        if (!isClosed) emit(AuthRegisterSuccess(message: message));
+      },
     );
   }
 
   Future<void> verifyEmail({required String email, required String otp}) async {
+    if (isClosed) return;
     emit(AuthLoading());
 
     final result = await _verifyEmailUseCase(
       VerifyEmailRequest(email: email, otp: otp),
     );
 
+    if (isClosed) return;
     result.fold(
-      (failure) => emit(AuthFailure(message: failure.message)),
-      (message) => emit(AuthVerifyEmailSuccess(message: message)),
+      (failure) {
+        if (!isClosed) emit(AuthFailure(message: failure.message));
+      },
+      (message) {
+        if (!isClosed) emit(AuthVerifyEmailSuccess(message: message));
+      },
     );
   }
 
   Future<void> resendOtp({required String email}) async {
+    if (isClosed) return;
     emit(AuthLoading());
 
     final result = await _resendOtpUseCase(ResendOtpRequest(email: email));
 
+    if (isClosed) return;
     result.fold(
-      (failure) => emit(AuthFailure(message: failure.message)),
-      (message) => emit(AuthResendOtpSuccess(message: message, email: email)),
+      (failure) {
+        if (!isClosed) emit(AuthFailure(message: failure.message));
+      },
+      (message) {
+        if (!isClosed) emit(AuthResendOtpSuccess(message: message, email: email));
+      },
     );
   }
 

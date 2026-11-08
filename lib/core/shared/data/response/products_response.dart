@@ -29,14 +29,19 @@ class ProductsResponse implements BasicResponse {
       responseMessage ?? (success ? 'Success' : 'Failed to fetch products');
 
   factory ProductsResponse.fromJson(Map<String, dynamic> json) {
-    final rawList = json['items'] as List<dynamic>? ?? [];
+    final dynamic candidateList =
+        json['items'] ?? json['products'] ?? json['data'];
+    final rawList =
+        candidateList is List<dynamic> ? candidateList : <dynamic>[];
     return ProductsResponse(
       items: rawList
-          .map((i) => ProductItemResponse.fromJson(i as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .map((i) => ProductItemResponse.fromJson(i))
           .toList(),
-      page: json['page'] as int? ?? 1,
-      pageSize: json['pageSize'] as int? ?? 10,
-      totalCount: json['totalCount'] as int? ?? 0,
+      page: (json['page'] ?? json['currentPage']) as int? ?? 1,
+      pageSize: (json['pageSize'] ?? json['limit']) as int? ?? 10,
+      totalCount:
+          (json['totalCount'] ?? json['total'] ?? rawList.length) as int? ?? 0,
       hasNextPage: json['hasNextPage'] as bool? ?? false,
       hasPreviousPage: json['hasPreviousPage'] as bool? ?? false,
       isSuccess: json['success'] as bool?,

@@ -60,11 +60,11 @@ class ProductsRequest {
         'searchTerm': searchTerm!.trim(),
       if (category != null && category!.trim().isNotEmpty)
         'category': category!.trim(),
-      'minPrice': ?minPrice,
-      'maxPrice': ?maxPrice,
-      'isInStock': ?isInStock,
-      'sortBy': ?resolvedSortBy,
-      'sortOrder': ?resolvedSortOrder,
+      if (minPrice != null) 'minPrice': minPrice,
+      if (maxPrice != null) 'maxPrice': maxPrice,
+      if (isInStock != null) 'isInStock': isInStock,
+      if (resolvedSortBy != null) 'sortBy': resolvedSortBy,
+      if (resolvedSortOrder != null) 'sortOrder': resolvedSortOrder,
       'page': page,
       'pageSize': pageSize,
     };

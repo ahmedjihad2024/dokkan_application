@@ -227,5 +227,5 @@ class _CartScreenState extends State<CartScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => context.read<CartCubit>().state is CartActive;
 }

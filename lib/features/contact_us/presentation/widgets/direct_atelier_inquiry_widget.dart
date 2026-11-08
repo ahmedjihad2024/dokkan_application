@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 
-import '../../../core/extensions/theme_extensions.dart';
-import '../../../core/res/sizes_manager.dart';
-import '../../../core/widgets/feedback/custom_snackbar.dart';
+import '../../../../core/extensions/theme_extensions.dart';
+import '../../../../core/res/sizes_manager.dart';
+import '../../../../core/widgets/feedback/custom_snackbar.dart';
 
 class DirectAtelierInquiryWidget extends StatefulWidget {
   const DirectAtelierInquiryWidget({super.key});
@@ -20,6 +21,7 @@ class _DirectAtelierInquiryWidgetState
     'Order Tracking & Assistance',
     'Custom Jewelry Engraving',
     'Private Boutique Viewing Appointment',
+    'Branch Visit & Atelier Tour',
     'Leather Goods & Restoration Inquiry',
     'Corporate & VIP Gifting',
   ];
@@ -63,17 +65,33 @@ class _DirectAtelierInquiryWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Icon(
+                Icons.edit_note_rounded,
+                size: 22.r,
+                color: context.colorScheme.primary,
+              ),
+              Gap(8.w),
+              Text(
+                'Direct Atelier Inquiry',
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  color: context.textPrimaryColor,
+                ),
+              ),
+            ],
+          ),
+          Gap(4.h),
           Text(
-            'Direct Atelier Inquiry',
+            'Send a message directly to our concierge team',
             style: TextStyle(
-              fontSize: SizeM.cardBorderRadius.sp,
-              fontWeight: FontWeight.bold,
-              color: context.textPrimaryColor,
+              fontSize: 12.sp,
+              color: context.textSecondaryColor,
             ),
           ),
-          12.verticalSpace,
-
-          // Working Subject Dropdown
+          Gap(14.h),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             decoration: BoxDecoration(
@@ -88,7 +106,7 @@ class _DirectAtelierInquiryWidgetState
                 dropdownColor: context.surfaceColor,
                 borderRadius: BorderRadius.circular(SizeM.inputBorderRadius.r),
                 icon: Icon(
-                  Icons.keyboard_arrow_down,
+                  Icons.keyboard_arrow_down_rounded,
                   color: context.textMutedColor,
                 ),
                 items: _inquiryOptions.map((option) {
@@ -114,25 +132,24 @@ class _DirectAtelierInquiryWidgetState
               ),
             ),
           ),
-          12.verticalSpace,
-
-          // Message field
+          Gap(12.h),
           TextField(
             controller: _messageController,
             maxLines: 4,
-            style: TextStyle(fontSize: 13.sp, color: context.textPrimaryColor),
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: context.textPrimaryColor,
+            ),
             decoration: InputDecoration(
               hintText:
-                  'Describe your desired customizations or order number...',
+                  'Describe your desired request, inquiry or preferred branch...',
               hintStyle: TextStyle(
                 color: context.textMutedColor,
                 fontSize: 13.sp,
               ),
             ),
           ),
-          12.verticalSpace,
-
-          // Send button
+          Gap(14.h),
           SizedBox(
             width: double.infinity,
             height: SizeM.buttonHeight.h,
@@ -146,3 +163,4 @@ class _DirectAtelierInquiryWidgetState
     );
   }
 }
+

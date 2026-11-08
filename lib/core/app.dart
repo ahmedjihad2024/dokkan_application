@@ -7,11 +7,9 @@ import 'res/router/routes.dart';
 import 'res/theme_manager.dart';
 import 'theme/theme_cubit.dart';
 
-// Global keys matching clean architecture pattern from otlob
-// ignore: non_constant_identifier_names
+
 final GlobalKey<ScaffoldMessengerState> SCAFFOLD_MESSENGER_KEY =
     GlobalKey<ScaffoldMessengerState>();
-// ignore: non_constant_identifier_names
 final GlobalKey<NavigatorState> NAVIGATOR_KEY = GlobalKey<NavigatorState>();
 
 class DokkanApp extends StatelessWidget {
@@ -23,7 +21,6 @@ class DokkanApp extends StatelessWidget {
       create: (_) => ThemeCubit(),
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
-          // Standard Figma design canvas size (390 x 844)
           return ScreenUtilInit(
             designSize: const Size(390, 844),
             minTextAdapt: true,
@@ -39,8 +36,8 @@ class DokkanApp extends StatelessWidget {
                 themeMode: themeMode,
                 initialRoute: Routes.splash,
                 onGenerateInitialRoutes: (initialRoute) => [
-                  RouteGenerator.getRoute(RouteSettings(name: initialRoute)),
-                ],
+                   RouteGenerator.getRoute(RouteSettings(name: initialRoute)),
+                 ],
                 onGenerateRoute: RouteGenerator.getRoute,
               );
             },

@@ -57,6 +57,11 @@ Failure _handleBadResponse(Response? response) {
 
   final message = _extractMessage(response?.data);
   if (message == null) {
+    if (status == 500) {
+      return const ServerError(
+        message: 'This email is already registered or a server error occurred.',
+      );
+    }
     return ServerError(message: response?.statusMessage ?? 'An unknown error occurred.');
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/navigation_extension.dart';
+import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/gen/assets.gen.dart';
@@ -41,6 +42,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   onTap: () {
                     if (context.canPop()) {
                       context.pop();
+                    } else {
+                      context.pushReplacementNamed(Routes.login);
                     }
                   },
                   borderRadius: BorderRadius.circular(19.r),
@@ -178,17 +181,22 @@ class _SignupScreenState extends State<SignupScreen> {
                   }
 
                   if (state is AuthFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: ColorM.danger,
-                      ),
+                    CustomSnackBar.showError(
+                      context,
+                      state.message,
+                      duration: const Duration(seconds: 5),
                     );
                   }
                 },
                 builder: (context, state) {
                   return SignupForm(
-                        onContinue: (firstName, lastName, email, password) {
+                        onContinue: (
+                          firstName,
+                          lastName,
+                          email,
+                          password,
+                          confirmPassword,
+                        ) {
                           _registeredEmail = email;
 
                           context.read<AuthCubit>().register(
@@ -196,6 +204,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             lastName: lastName,
                             email: email,
                             password: password,
+                            confirmPassword: confirmPassword,
                           );
                         },
                       )
@@ -224,15 +233,22 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         context.pushReplacementNamed(Routes.login);
                       },
-                      child: Text(
-                        'Sign In',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w700,
-                          color: ColorM.primaryDark,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6.w,
+                          vertical: 8.h,
+                        ),
+                        child: Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w700,
+                            color: ColorM.primaryDark,
+                          ),
                         ),
                       ),
                     ),
