@@ -148,7 +148,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     subtitle:
                                         'Product Code: ${product.productCode ?? 'PRD-${product.id.length >= 6 ? product.id.substring(0, 6).toUpperCase() : product.id}'} • Official Warranty',
                                     currentPrice: product.finalPrice,
-                                    originalPrice: product.price,
+                                    originalPrice: product.price == product.finalPrice ? null : product.price,
                                     materialText: product.color ?? 'Gold',
                                     weightText: product.weight != null
                                         ? 'Weight: ${product.weight}g'

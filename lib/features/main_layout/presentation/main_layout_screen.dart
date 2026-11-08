@@ -17,8 +17,12 @@ class MainLayoutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => LayoutCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => LayoutCubit()),
+        BlocProvider(create: (_) => sl<HomeCubit>()..init()),
+        BlocProvider(create: (_) => sl<CartCubit>()..loadCart()),
+      ],
       child: const _MainLayoutContent(),
     );
   }
@@ -43,15 +47,9 @@ class _MainLayoutContent extends StatelessWidget {
               controller: cubit.pageController,
               physics: const BouncingScrollPhysics(),
               onPageChanged: cubit.setNavIndex,
-              children: [
-                BlocProvider(
-                  create: (context) => sl<HomeCubit>()..init(),
-                  child: HomeTab(),
-                ),
-                BlocProvider(
-                  create: (context) => sl<CartCubit>()..loadCart(),
-                  child: const CartScreen(),
-                ),
+              children: const [
+                HomeTab(),
+                CartScreen(),
                 ProfileScreen(),
               ],
             ),

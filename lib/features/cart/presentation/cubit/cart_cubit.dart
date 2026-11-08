@@ -50,7 +50,8 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> remove(CartItemEntity item) async {
-    await _runAction(() => _deleteItem(item.itemId));
+    final idToDelete = item.itemId.isNotEmpty ? item.itemId : item.productId;
+    await _runAction(() => _deleteItem(idToDelete));
   }
 
   Future<void> clearCart() async {
@@ -61,7 +62,8 @@ class CartCubit extends Cubit<CartState> {
 
     String? errorMessage;
     for (final item in current.cart.items) {
-      final result = await _deleteItem(item.itemId);
+      final idToDelete = item.itemId.isNotEmpty ? item.itemId : item.productId;
+      final result = await _deleteItem(idToDelete);
       final failure = result.fold<Failure?>((f) => f, (_) => null);
       if (failure != null) {
         errorMessage = failure.message;

@@ -20,7 +20,7 @@ class ProductInfoHeader extends StatelessWidget {
     required this.title,
     this.subtitle = 'Product Code: DOK-9842 • 2-Year Official Warranty',
     required this.currentPrice,
-    this.originalPrice = 199.00,
+    this.originalPrice,
     this.saveTag,
     this.materialText = 'Espresso Leather',
     this.weightText = 'Weight: 142g',

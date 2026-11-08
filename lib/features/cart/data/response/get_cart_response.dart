@@ -21,12 +21,18 @@ class GetCartResponse implements BasicResponse {
       responseMessage ?? (success ? 'Cart retrieved successfully' : 'Failed to retrieve cart');
 
   factory GetCartResponse.fromJson(Map<String, dynamic> json) {
+    final dynamic rawItems = json['cartItems'] ??
+        json['items'] ??
+        json['data'] ??
+        json['cart']?['items'];
+    final list = rawItems is List<dynamic> ? rawItems : <dynamic>[];
+
     return GetCartResponse(
-      cartId: json['cartId'] as String? ?? '',
-      cartItems: (json['cartItems'] as List<dynamic>?)
-              ?.map((item) => CartItemResponse.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          const [],
+      cartId: (json['cartId'] ?? json['id'] ?? '')?.toString() ?? '',
+      cartItems: list
+          .whereType<Map<String, dynamic>>()
+          .map((item) => CartItemResponse.fromJson(item))
+          .toList(),
       responseMessage: json['message'] as String?,
       isSuccess: json['success'] as bool?,
     );
@@ -72,18 +78,66 @@ class CartItemResponse {
   });
 
   factory CartItemResponse.fromJson(Map<String, dynamic> json) {
+    final rawItemId = (json['id'] ??
+            json['itemId'] ??
+            json['_id'] ??
+            json['cartItemId'])
+        ?.toString() ??
+        '';
+    final rawProductId = (json['productId'] ??
+            json['product_id'] ??
+            json['product']?['id'])
+        ?.toString() ??
+        '';
+    final rawName = (json['productName'] ??
+            json['name'] ??
+            json['product']?['name'])
+        ?.toString() ??
+        '';
+    final rawCover = (json['productCoverUrl'] ??
+            json['coverPictureUrl'] ??
+            json['coverImage'] ??
+            json['image'] ??
+            json['imageUrl'] ??
+            json['product']?['coverPictureUrl'])
+        ?.toString();
+    final rawStock =
+        (json['productStock'] ?? json['stock'] ?? json['product']?['stock']
+                as num?)
+            ?.toInt() ??
+        1;
+    final rawWeight =
+        (json['weightInGrams'] ?? json['weight'] as num?)?.toDouble() ?? 0.0;
+    final rawQuantity = (json['quantity'] as num?)?.toInt() ?? 1;
+    final rawDiscount =
+        (json['discountPercentage'] ?? json['discount'] as num?)?.toInt() ??
+            0;
+    final rawPrice = (json['finalPricePerUnit'] ??
+            json['price'] ??
+            json['unitPrice'] as num?)
+        ?.toDouble() ??
+        0.0;
+    final rawBasePrice = (json['basePricePerUnit'] ??
+            json['originalPrice'] ??
+            rawPrice as num?)
+        ?.toDouble() ??
+        rawPrice;
+    final rawTotal = (json['totalPrice'] ?? json['total'] as num?)
+        ?.toDouble() ??
+        (rawPrice * rawQuantity);
+
     return CartItemResponse(
-      itemId: json['itemId'] as String? ?? '',
-      productId: json['productId'] as String? ?? '',
-      productName: json['productName'] as String? ?? '',
-      productCoverUrl: json['productCoverUrl'] as String?,
-      productStock: (json['productStock'] as num?)?.toInt() ?? 0,
-      weightInGrams: (json['weightInGrams'] as num?)?.toDouble() ?? 0.0,
-      quantity: (json['quantity'] as num?)?.toInt() ?? 0,
-      discountPercentage: (json['discountPercentage'] as num?)?.toInt() ?? 0,
-      basePricePerUnit: (json['basePricePerUnit'] as num?)?.toDouble() ?? 0.0,
-      finalPricePerUnit: (json['finalPricePerUnit'] as num?)?.toDouble() ?? 0.0,
-      totalPrice: (json['totalPrice'] as num?)?.toDouble() ?? 0.0,
+      itemId: rawItemId.isNotEmpty ? rawItemId : rawProductId,
+      productId: rawProductId.isNotEmpty ? rawProductId : rawItemId,
+      productName: rawName,
+      productCoverUrl: rawCover,
+      productStock: rawStock,
+      weightInGrams: rawWeight,
+      quantity: rawQuantity,
+      discountPercentage: rawDiscount,
+      basePricePerUnit: rawBasePrice,
+      finalPricePerUnit: rawPrice,
+      totalPrice: rawTotal,
     );
   }
 

@@ -48,6 +48,9 @@ class CartApiServiceImpl implements CartApiService {
 
   @override
   Future<Response> deleteCartItem(String itemId) {
-    return _dio.delete('/api/cart/items/$itemId');
+    return _dio.delete(
+      '/api/cart/items/$itemId',
+      data: {'id': itemId},
+    );
   }
 }

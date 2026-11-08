@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/extensions/theme_extensions.dart';
@@ -57,27 +58,36 @@ class _CartScreenState extends State<CartScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Scaffold(
-      backgroundColor: context.scaffoldBackgroundColor,
-      body: BlocConsumer<CartCubit, CartState>(
-        listenWhen: (previous, current) => current is CartActionFailed,
-        listener: (context, state) {
-          if (state is CartActionFailed) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.message)));
-          }
-        },
-        buildWhen: (previous, current) => current is! CartActionFailed,
-        builder: (context, state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context, state),
-              Expanded(child: _buildContent(context, state)),
-            ],
-          );
-        },
+    return VisibilityDetector(
+      key: const Key('cart-tab'),
+      onVisibilityChanged: (info) {
+        if (info.visibleFraction == 1 &&
+            context.read<CartCubit>().state is! CartActive) {
+          context.read<CartCubit>().loadCart();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: context.scaffoldBackgroundColor,
+        body: BlocConsumer<CartCubit, CartState>(
+          listenWhen: (previous, current) => current is CartActionFailed,
+          listener: (context, state) {
+            if (state is CartActionFailed) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+          buildWhen: (previous, current) => current is! CartActionFailed,
+          builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context, state),
+                Expanded(child: _buildContent(context, state)),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -100,13 +110,13 @@ class _CartScreenState extends State<CartScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Shopping Bag',
-                  style: TextStyle(
-                    color: context.textPrimaryColor,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeightM.bold,
-                  ),
-                )
+                      'Shopping Bag',
+                      style: TextStyle(
+                        color: context.textPrimaryColor,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeightM.bold,
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms)
                     .slideX(begin: -0.06, end: 0, curve: Curves.easeOutCubic),
@@ -130,10 +140,7 @@ class _CartScreenState extends State<CartScreen>
                   : () => context.read<CartCubit>().clearCart(),
               borderRadius: BorderRadius.circular(8.r),
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10.w,
-                  vertical: 6.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: context.dangerContainerColor,
                   borderRadius: BorderRadius.circular(8.r),
@@ -170,9 +177,7 @@ class _CartScreenState extends State<CartScreen>
       onRefresh: _handleRefresh,
       enableRefresh: true,
       enableLoading: false,
-      child: state is CartActive
-          ? _buildList(context, state)
-          : _buildEmpty(),
+      child: state is CartActive ? _buildList(context, state) : _buildEmpty(),
     );
   }
 
@@ -227,5 +232,7 @@ class _CartScreenState extends State<CartScreen>
   }
 
   @override
-  bool get wantKeepAlive => context.read<CartCubit>().state is CartActive;
+  bool get wantKeepAlive {
+    return true;
+  }
 }
