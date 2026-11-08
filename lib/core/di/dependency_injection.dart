@@ -27,9 +27,12 @@ import 'package:dokkan/features/authentication/data/api/auth_api_service.dart';
 import 'package:dokkan/features/authentication/data/data_source/auth_remote_data_source.dart';
 import 'package:dokkan/features/authentication/data/repository/auth_repository_impl.dart';
 import 'package:dokkan/features/authentication/domain/repository/auth_repository.dart';
+import 'package:dokkan/features/authentication/domain/usecase/forgot_password_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/login_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/register_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/resend_otp_usecase.dart';
+import 'package:dokkan/features/authentication/domain/usecase/reset_password_usecase.dart';
+import 'package:dokkan/features/authentication/domain/usecase/validate_otp_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/verify_email_usecase.dart';
 import 'package:dokkan/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:dokkan/features/cart/data/api/cart_api_service.dart';
@@ -121,6 +124,15 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<ResendOtpUseCase>(
     () => ResendOtpUseCase(sl<AuthRepository>()),
   );
+  sl.registerLazySingleton<ForgotPasswordUseCase>(
+    () => ForgotPasswordUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<ValidateOtpUseCase>(
+    () => ValidateOtpUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<ResetPasswordUseCase>(
+    () => ResetPasswordUseCase(sl<AuthRepository>()),
+  );
 
   sl.registerFactory<AuthCubit>(
     () => AuthCubit(
@@ -128,6 +140,9 @@ Future<void> setupServiceLocator() async {
       registerUseCase: sl<RegisterUseCase>(),
       verifyEmailUseCase: sl<VerifyEmailUseCase>(),
       resendOtpUseCase: sl<ResendOtpUseCase>(),
+      forgotPasswordUseCase: sl<ForgotPasswordUseCase>(),
+      validateOtpUseCase: sl<ValidateOtpUseCase>(),
+      resetPasswordUseCase: sl<ResetPasswordUseCase>(),
     ),
   );
 

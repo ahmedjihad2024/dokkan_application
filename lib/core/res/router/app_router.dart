@@ -97,7 +97,12 @@ class RouteGenerator {
         );
 
       case Routes.forgotPassword:
-        return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AuthCubit>(),
+            child: const ForgotPasswordScreen(),
+          ),
+        );
 
       case Routes.verifyEmailAddress:
       case Routes.otpVerification:
@@ -120,15 +125,27 @@ class RouteGenerator {
       case Routes.recoveryCode:
         final email = _extractEmail(settings.arguments);
         return MaterialPageRoute(
-          builder: (_) => EnterRecoveryCodeScreen(email: email),
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AuthCubit>(),
+            child: EnterRecoveryCodeScreen(email: email),
+          ),
         );
 
       case Routes.createNewPassword:
       case Routes.resetPassword:
-        final email = _extractEmail(settings.arguments);
+        final args = settings.arguments;
+        final email = _extractEmail(args);
+        final otp = args is Map<String, dynamic>
+            ? args['otp'] as String? ?? ''
+            : '';
         return MaterialPageRoute(
-          builder: (_) =>
-              CreateNewPasswordScreen(email: email.isEmpty ? null : email),
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AuthCubit>(),
+            child: CreateNewPasswordScreen(
+              email: email.isEmpty ? null : email,
+              otp: otp,
+            ),
+          ),
         );
 
       case Routes.profile:

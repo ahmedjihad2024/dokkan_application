@@ -34,3 +34,28 @@ final class AuthResendOtpSuccess extends AuthState {
 
   AuthResendOtpSuccess({required this.message, required this.email});
 }
+
+final class AuthForgotPasswordSuccess extends AuthState {
+  final String message;
+  final String email;
+
+  AuthForgotPasswordSuccess({required this.message, required this.email});
+}
+
+final class AuthValidateOtpSuccess extends AuthState {
+  final String message;
+  final String email;
+  final String otp;
+
+  AuthValidateOtpSuccess({
+    required this.message,
+    required this.email,
+    required this.otp,
+  });
+}
+
+final class AuthResetPasswordSuccess extends AuthState {
+  final String message;
+
+  AuthResetPasswordSuccess({required this.message});
+}

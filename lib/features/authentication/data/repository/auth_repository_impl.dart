@@ -8,9 +8,12 @@ import '../../domain/model/auth_token_model.dart';
 import '../../domain/repository/auth_repository.dart';
 import '../data_source/auth_remote_data_source.dart';
 import '../mapper/login_mapper.dart';
+import '../request/forgot_password_request.dart';
 import '../request/login_request.dart';
 import '../request/register_request.dart';
 import '../request/resend_otp_request.dart';
+import '../request/reset_password_request.dart';
+import '../request/validate_otp_request.dart';
 import '../request/verify_email_request.dart';
 import '../response/login_response.dart';
 import '../response/register_response.dart';
@@ -60,6 +63,30 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, String>> resendOtp(ResendOtpRequest request) {
     return fastHandler<BaseResponse, String>(
       request: () => _remoteDataSource.resendOtp(request),
+      mapper: (response) => response.message,
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> forgotPassword(ForgotPasswordRequest request) {
+    return fastHandler<BaseResponse, String>(
+      request: () => _remoteDataSource.forgotPassword(request),
+      mapper: (response) => response.message,
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> validateOtp(ValidateOtpRequest request) {
+    return fastHandler<BaseResponse, String>(
+      request: () => _remoteDataSource.validateOtp(request),
+      mapper: (response) => response.message,
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> resetPassword(ResetPasswordRequest request) {
+    return fastHandler<BaseResponse, String>(
+      request: () => _remoteDataSource.resetPassword(request),
       mapper: (response) => response.message,
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/navigation_extension.dart';
@@ -7,11 +8,13 @@ import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/router/routes.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../core/widgets/feedback/custom_snackbar.dart';
+import '../cubit/auth_cubit.dart';
 
 class CreateNewPasswordScreen extends StatefulWidget {
   final String? email;
-
-  const CreateNewPasswordScreen({super.key, this.email});
+  final String otp;
+  const CreateNewPasswordScreen({super.key, this.email, this.otp = ''});
 
   @override
   State<CreateNewPasswordScreen> createState() =>
@@ -43,105 +46,18 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
     if (!_formKey.currentState!.validate()) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Password reset successfully! Please sign in with your new password.',
-        ),
-        backgroundColor: Color(0xFF00B889),
-      ),
-    );
-
-    context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
-  }
-
-  // Interactive password requirement indicator
-  Widget _buildRequirementItem({
-    required String text,
-    required bool isValid,
-  }) {
-    final bool hasStarted = _hasStartedTyping || _hasAttemptedSubmit;
-
-    final Color color;
-    final IconData icon;
-
-    if (!hasStarted) {
-      color = context.textSecondaryColor;
-      icon = Icons.radio_button_unchecked_rounded;
-    } else if (isValid) {
-      color = const Color(0xFF00B889);
-      icon = Icons.check_circle_rounded;
-    } else {
-      color = const Color(0xFFEF4444);
-      icon = Icons.cancel_rounded;
+    if (widget.email == null || widget.email!.isEmpty || widget.otp.isEmpty) {
+      CustomSnackBar.showError(
+        context,
+        'Recovery information is missing. Please try again.',
+      );
+      return;
     }
 
-    return AnimatedDefaultTextStyle(
-      duration: const Duration(milliseconds: 200),
-      style: TextStyle(
-        color: color,
-        fontSize: 14.sp,
-        fontWeight: isValid && hasStarted ? FontWeight.w600 : FontWeight.w400,
-      ),
-      child: Row(
-        children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, anim) =>
-                ScaleTransition(scale: anim, child: child),
-            child: Icon(
-              icon,
-              key: ValueKey('$text-$hasStarted-$isValid'),
-              color: color,
-              size: 18.sp,
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Text(text),
-        ],
-      ),
-    );
-  }
-
-  InputDecoration _passwordDecoration({
-    required String hint,
-    required bool isVisible,
-    required VoidCallback onToggle,
-  }) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 14.sp),
-      filled: true,
-      fillColor: context.surfaceElevatedColor,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 17.h),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: context.borderColor),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: context.borderColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: ColorM.primary, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: const BorderSide(color: Colors.red),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
-      ),
-      suffixIcon: IconButton(
-        onPressed: onToggle,
-        icon: Icon(
-          isVisible ? Icons.visibility_off : Icons.visibility,
-          color: context.textSecondaryColor,
-          size: 20.sp,
-        ),
-      ),
+    context.read<AuthCubit>().resetPassword(
+      email: widget.email!,
+      otp: widget.otp,
+      newPassword: _passwordController.text,
     );
   }
 
@@ -152,268 +68,345 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
     super.dispose();
   }
 
+  InputDecoration _passwordDecoration({
+    required String hint,
+    required bool isVisible,
+    required VoidCallback onToggle,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(
+        color: context.textMutedColor,
+        fontSize: 14.sp,
+      ),
+      filled: true,
+      fillColor: context.surfaceSubtleColor,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: context.borderColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: context.borderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: const BorderSide(color: ColorM.primary, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: const BorderSide(color: ColorM.danger),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: const BorderSide(color: ColorM.danger, width: 1.5),
+      ),
+      suffixIcon: IconButton(
+        icon: Icon(
+          isVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+          color: context.textMutedColor,
+          size: 20.sp,
+        ),
+        onPressed: onToggle,
+      ),
+    );
+  }
+
+  Widget _buildRequirement(String text, bool isMet) {
+    return Row(
+      children: [
+        Icon(
+          isMet ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
+          color: isMet ? const Color(0xFF00B889) : context.textMutedColor,
+          size: 16.sp,
+        ),
+        SizedBox(width: 8.w),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: isMet ? context.textPrimaryColor : context.textMutedColor,
+            fontWeight: isMet ? FontWeight.w500 : FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
 
-    return Scaffold(
-      backgroundColor: context.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Back button and header
-                Row(
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthResetPasswordSuccess) {
+          CustomSnackBar.showSuccess(
+            context,
+            'Password reset successfully! Please sign in with your new password.',
+          );
+          context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+        }
+        if (state is AuthFailure) {
+          CustomSnackBar.showError(context, state.message);
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is AuthLoading;
+
+        return Scaffold(
+          backgroundColor: context.scaffoldBackgroundColor,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 42.w,
-                      height: 42.w,
-                      decoration: BoxDecoration(
-                        color: context.surfaceElevatedColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: context.borderColor),
+                    // Back button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                context.pushReplacementNamed(Routes.login);
+                              }
+                            },
+                            borderRadius: BorderRadius.circular(19.r),
+                            child: Container(
+                              width: 38.w,
+                              height: 38.w,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: context.surfaceSubtleColor,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: context.borderColor),
+                              ),
+                              child: Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                size: 16.sp,
+                                color: context.textPrimaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ).animate().fadeIn(duration: 350.ms),
+
+                    SizedBox(height: 32.h),
+
+                    // Title
+                    Text(
+                          'Create New Password',
+                          style: TextStyle(
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.w700,
+                            color: context.textPrimaryColor,
+                            letterSpacing: -0.5,
+                          ),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
+
+                    SizedBox(height: 8.h),
+
+                    // Description
+                    Text(
+                          'Your new password must be unique from previously used passwords for security.',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: context.textSecondaryColor,
+                            height: 1.5,
+                          ),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 60.ms)
+                        .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
+
+                    SizedBox(height: 32.h),
+
+                    // Password label
+                    Text(
+                      'New Password',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: context.textPrimaryColor,
                       ),
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          if (context.canPop()) {
-                            context.pop();
-                          } else {
-                            context.pushReplacementNamed(Routes.login);
-                          }
+                    ),
+                    SizedBox(height: 8.h),
+
+                    // New password field
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: !_isPasswordVisible,
+                      textInputAction: TextInputAction.next,
+                      style: TextStyle(
+                        color: context.textPrimaryColor,
+                        fontSize: 14.sp,
+                      ),
+                      onChanged: (_) {
+                        setState(() {
+                          _hasStartedTyping = true;
+                        });
+                      },
+                      decoration: _passwordDecoration(
+                        hint: 'Enter your new password',
+                        isVisible: _isPasswordVisible,
+                        onToggle: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
                         },
-                        icon: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          size: 17.sp,
-                          color: context.textPrimaryColor,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a password.';
+                        }
+
+                        if (!_hasMinLength || !_hasUppercase || !_hasNumber) {
+                          return 'Password does not meet all requirements.';
+                        }
+
+                        return null;
+                      },
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 100.ms)
+                        .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
+
+                    SizedBox(height: 14.h),
+
+                    // Password requirements checklist
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: (_hasStartedTyping || _hasAttemptedSubmit) ? 1.0 : 0.6,
+                      child: Container(
+                        padding: EdgeInsets.all(14.w),
+                        decoration: BoxDecoration(
+                          color: context.surfaceSubtleColor,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: context.borderColor),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Password Requirements:',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: context.textPrimaryColor,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            _buildRequirement(
+                              'At least 8 characters long',
+                              _hasMinLength,
+                            ),
+                            SizedBox(height: 6.h),
+                            _buildRequirement(
+                              'Contains an uppercase letter',
+                              _hasUppercase,
+                            ),
+                            SizedBox(height: 6.h),
+                            _buildRequirement(
+                              'Contains at least one number',
+                              _hasNumber,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    SizedBox(width: 12.w),
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 150.ms)
+                        .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
+
+                    SizedBox(height: 20.h),
+
+                    // Confirm password label
                     Text(
-                      'Password Recovery',
+                      'Confirm Password',
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w600,
-                        color: context.textSecondaryColor,
+                        color: context.textPrimaryColor,
                       ),
                     ),
+                    SizedBox(height: 8.h),
+
+                    // Confirm password field
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: !_isConfirmPasswordVisible,
+                      textInputAction: TextInputAction.done,
+                      style: TextStyle(
+                        color: context.textPrimaryColor,
+                        fontSize: 14.sp,
+                      ),
+                      onChanged: (_) {
+                        setState(() {});
+                      },
+                      decoration: _passwordDecoration(
+                        hint: 'Confirm your new password',
+                        isVisible: _isConfirmPasswordVisible,
+                        onToggle: () {
+                          setState(() {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          });
+                        },
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password.';
+                        }
+
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match.';
+                        }
+
+                        return null;
+                      },
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 200.ms)
+                        .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
+
+                    SizedBox(height: 40.h),
+
+                    // Reset button
+                    PrimaryButton(
+                      title: 'Reset Password & Sign In',
+                      onPressed: isLoading ? () {} : _resetPassword,
+                      isLoading: isLoading,
+                      height: 52.h,
+                      backgroundColor: isDark
+                          ? ColorM.primary
+                          : const Color(0xFF0F172A),
+                      textColor: Colors.white,
+                    )
+                        .animate()
+                        .fadeIn(duration: 450.ms, delay: 220.ms)
+                        .slideY(begin: 0.12, end: 0, curve: Curves.easeOutCubic),
+
+                    SizedBox(height: 24.h),
                   ],
-                ).animate().fadeIn(duration: 350.ms),
-
-                SizedBox(height: 40.h),
-
-                // Main heading
-                Text(
-                  'Create New Password',
-                  style: TextStyle(
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.bold,
-                    color: context.textPrimaryColor,
-                  ),
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms)
-                    .slideY(
-                      begin: 0.12,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
-
-                SizedBox(height: 12.h),
-
-                Text(
-                  'Your new password must be different from '
-                  'your previously used password.',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    height: 1.6,
-                    color: context.textSecondaryColor,
-                  ),
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 60.ms)
-                    .slideY(
-                      begin: 0.12,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
-
-                SizedBox(height: 32.h),
-
-                // New password
-                Text(
-                  'New Password',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: context.textPrimaryColor,
-                  ),
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 100.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
-
-                SizedBox(height: 10.h),
-
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: !_isPasswordVisible,
-                  textInputAction: TextInputAction.next,
-                  style: TextStyle(
-                    color: context.textPrimaryColor,
-                    fontSize: 14.sp,
-                  ),
-                  onChanged: (val) {
-                    setState(() {
-                      if (!_hasStartedTyping && val.isNotEmpty) {
-                        _hasStartedTyping = true;
-                      }
-                    });
-                  },
-                  decoration: _passwordDecoration(
-                    hint: 'Enter your new password',
-                    isVisible: _isPasswordVisible,
-                    onToggle: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a new password.';
-                    }
-
-                    if (!_hasMinLength || !_hasUppercase || !_hasNumber) {
-                      return 'Please meet all password requirements.';
-                    }
-
-                    return null;
-                  },
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 120.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
-
-                SizedBox(height: 16.h),
-
-                // Interactive password requirements
-                _buildRequirementItem(
-                  text: 'At least 8 characters',
-                  isValid: _hasMinLength,
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 140.ms),
-
-                SizedBox(height: 8.h),
-
-                _buildRequirementItem(
-                  text: 'Includes uppercase letters and numbers',
-                  isValid: _hasUppercase && _hasNumber,
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 160.ms),
-
-                SizedBox(height: 24.h),
-
-                // Confirm password
-                Text(
-                  'Confirm Password',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: context.textPrimaryColor,
-                  ),
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 180.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
-
-                SizedBox(height: 10.h),
-
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: !_isConfirmPasswordVisible,
-                  textInputAction: TextInputAction.done,
-                  style: TextStyle(
-                    color: context.textPrimaryColor,
-                    fontSize: 14.sp,
-                  ),
-                  onChanged: (_) {
-                    setState(() {});
-                  },
-                  decoration: _passwordDecoration(
-                    hint: 'Confirm your new password',
-                    isVisible: _isConfirmPasswordVisible,
-                    onToggle: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password.';
-                    }
-
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match.';
-                    }
-
-                    return null;
-                  },
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideY(
-                      begin: 0.06,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
-
-                SizedBox(height: 40.h),
-
-                // Reset button
-                PrimaryButton(
-                  title: 'Reset Password & Sign In',
-                  onPressed: _resetPassword,
-                  height: 52.h,
-                  backgroundColor: isDark
-                      ? ColorM.primary
-                      : const Color(0xFF0F172A),
-                  textColor: Colors.white,
-                )
-                    .animate()
-                    .fadeIn(duration: 450.ms, delay: 220.ms)
-                    .slideY(
-                      begin: 0.12,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
-
-                SizedBox(height: 24.h),
-              ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
