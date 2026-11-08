@@ -35,6 +35,39 @@ class StorageService extends StorageServiceBase {
     return t != null && t.trim().isNotEmpty;
   }
 
+  // Token Expiry Key & Methods (Persisted via SharedPrefs setMap)
+  static const String tokenExpiryKey = 'expire-token';
+
+  Future<void> saveTokenExpiry(String expiresAtUtc) async =>
+      await setMap(tokenExpiryKey, {'expiresAtUtc': expiresAtUtc});
+
+  Future<void> setTokenExpiryDate(DateTime expiryDate) async =>
+      await saveTokenExpiry(expiryDate.toUtc().toIso8601String());
+
+  String? getRawTokenExpiry() =>
+      getMap(tokenExpiryKey)?['expiresAtUtc'] as String?;
+
+  DateTime? getTokenExpiry() {
+    final raw = getRawTokenExpiry();
+    if (raw == null || raw.trim().isEmpty) return null;
+    try {
+      return DateTime.parse(raw.trim()).toUtc();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool get isTokenExpired {
+    final expiry = getTokenExpiry();
+    if (expiry == null) return false;
+    return expiry.toUtc().isBefore(
+      DateTime.now().toUtc().add(const Duration(seconds: 30)),
+    );
+  }
+
+  Future<void> deleteTokenExpiry() async =>
+      await deleteMap(tokenExpiryKey);
+
   // Save / Clear All Auth Tokens
   Future<void> saveAuthTokens({
     required String accessToken,
@@ -43,8 +76,10 @@ class StorageService extends StorageServiceBase {
     accessToken: accessToken,
     refreshToken: refreshToken,
   );
-  Future<void> clearAuthTokens() async =>
-      await _secureStorageService.clearAuthTokens();
+  Future<void> clearAuthTokens() async {
+    await _secureStorageService.clearAuthTokens();
+    await deleteTokenExpiry();
+  }
 
   // Backward-compatible aliases
   Future<void> setToken(String token) async => await setAccessToken(token);

@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../core/auth/app_auth_cubit.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/error_handler/error_handler.dart';
 import '../../../../core/network/error_handler/failure.dart';
@@ -36,6 +38,11 @@ class AuthRepositoryImpl implements AuthRepository {
             accessToken: domainModel.accessToken,
             refreshToken: domainModel.refreshToken,
           );
+          if (response.expiresAtUtc != null &&
+              response.expiresAtUtc!.isNotEmpty) {
+            _storageService.saveTokenExpiry(response.expiresAtUtc!);
+          }
+          sl<AppAuthCubit>().loggedIn();
         }
 
         return domainModel;

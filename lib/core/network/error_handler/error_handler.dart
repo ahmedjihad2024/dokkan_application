@@ -47,10 +47,21 @@ Failure _handleDioException(DioException e) => switch (e.type) {
   DioExceptionType.badCertificate => const CustomDioLocalError(
     error: LocalErrorType.BAD_CERTIFICATION,
   ),
-  DioExceptionType.unknown => const CustomDioLocalError(
-    error: LocalErrorType.UNKNOWN,
-  ),
+  DioExceptionType.unknown => switch (e.error) {
+    final Failure f => f,
+    _ => _isSessionDeadError(e.error)
+        ? const CustomServerError(error: ApiErrorType.UNAUTHORIZED)
+        : const CustomDioLocalError(error: LocalErrorType.UNKNOWN),
+  },
 };
+
+bool _isSessionDeadError(Object? err) {
+  if (err == null) return false;
+  final str = err.toString().toLowerCase();
+  return str.contains('invalidrefresh') ||
+      str.contains('refresh token') ||
+      str.contains('session expired');
+}
 
 Failure _handleBadResponse(Response? response) {
   final status = response?.statusCode;

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:dokkan/core/di/dependency_injection.dart';
 import 'package:dokkan/core/services/storage_services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +30,8 @@ class _SplashScreenState extends State<SplashScreen> {
       const Duration(seconds: Constants.splashDelaySeconds),
       () async {
         if (sl<StorageService>().isSkippedOnBoarding) {
-          if (await sl<StorageService>().isUserRegistered) {
+          final hasRefreshToken = await sl<StorageService>().hasRefreshToken();
+          if (hasRefreshToken) {
             if (mounted) context.pushReplacementNamed(Routes.home);
           } else {
             if (mounted) context.pushReplacementNamed(Routes.login);

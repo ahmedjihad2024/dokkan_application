@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:dokkan/core/auth/app_auth_cubit.dart';
+import 'package:dokkan/core/config/constants.dart';
 import 'package:dokkan/core/network/dio_factory.dart';
 import 'package:dokkan/core/services/storage_services/secure_storage_service.dart';
 import 'package:dokkan/core/services/storage_services/shared_prefrences_service.dart';
@@ -12,6 +14,11 @@ import 'package:dokkan/core/shared/data/data_source/review_remote_data_source.da
 import 'package:dokkan/core/shared/data/repository/add_to_cart_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/product_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/review_repository_impl.dart';
+import 'package:dokkan/core/shared/data/api/refresh_token_api_service.dart';
+import 'package:dokkan/core/shared/data/data_source/refresh_token_remote_data_source.dart';
+import 'package:dokkan/core/shared/data/repository/refresh_token_repository_impl.dart';
+import 'package:dokkan/core/shared/domain/repository/refresh_token_repository.dart';
+import 'package:dokkan/core/shared/domain/usecase/refresh_token_usecase.dart';
 import 'package:dokkan/core/shared/domain/repository/add_to_cart_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/product_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/review_repository.dart';
@@ -86,6 +93,16 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerLazySingleton<StorageService>(
     () => StorageService(sl<SecureStorageService>(), sl<SharedPrefsService>()),
+  );
+
+  // ─── Global Auth Session State ───────────────────────────────────────────────
+  final storageService = sl<StorageService>();
+  final hasTokens = await storageService.hasRefreshToken() ||
+      await storageService.hasAccessToken();
+  sl.registerLazySingleton<AppAuthCubit>(
+    () => AppAuthCubit(
+      hasTokens ? AuthStatus.authenticated : AuthStatus.unauthenticated,
+    ),
   );
 
   // ─── Network (DioFactory & Dio) ─────────────────────────────────────────────
@@ -184,6 +201,34 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerLazySingleton<AddToCartUseCase>(
     () => AddToCartUseCase(sl<AddToCartRepository>()),
+  );
+
+  // ─── Shared Refresh Token Feature ───────────────────────────────────────────
+  sl.registerLazySingleton<RefreshTokenApiService>(
+    () => RefreshTokenApiServiceImpl(
+      Dio(
+        BaseOptions(
+          baseUrl: Constants.baseUrl,
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 15),
+          headers: {
+            APPLICATION_JSON: APPLICATION_JSON,
+            CONTENT_TYPE: APPLICATION_JSON,
+            ACCEPT: APPLICATION_JSON,
+          },
+        ),
+      ),
+    ),
+  );
+  sl.registerLazySingleton<RefreshTokenRemoteDataSource>(
+    () => RefreshTokenRemoteDataSourceImpl(sl<RefreshTokenApiService>()),
+  );
+  sl.registerLazySingleton<RefreshTokenRepository>(
+    () => RefreshTokenRepositoryImpl(sl<RefreshTokenRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<RefreshTokenUseCase>(
+    () => RefreshTokenUseCase(sl<RefreshTokenRepository>()),
   );
 
   // ─── Cart Feature ───────────────────────────────────────────────────────────

@@ -44,7 +44,7 @@ class DioFactory {
       ),
     );
 
-    _dio.interceptors.add(AuthInterceptor(_storageService));
+    _dio.interceptors.add(AuthInterceptor(_storageService, dio: _dio));
     _dio.interceptors.add(LanguageInterceptor());
 
     if (kDebugMode) {
