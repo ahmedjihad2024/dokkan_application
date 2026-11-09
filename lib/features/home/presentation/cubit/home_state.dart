@@ -12,25 +12,29 @@ class HomeLoading extends HomeState {
 class HomeSuccess extends HomeState {
   final List<OfferEntity> offers;
   final List<ProductEntity> products;
+  final Set<String> favoriteIds;
 
   const HomeSuccess({
     this.offers = const [],
     this.products = const [],
+    this.favoriteIds = const {},
   });
 
   HomeSuccess copyWith({
     List<OfferEntity>? offers,
     List<ProductEntity>? products,
+    Set<String>? favoriteIds,
   }) {
     return HomeSuccess(
       offers: offers ?? this.offers,
       products: products ?? this.products,
+      favoriteIds: favoriteIds ?? this.favoriteIds,
     );
   }
 
   @override
   String toString() =>
-      'HomeSuccess(offers: ${offers.length}, products: ${products.length})';
+      'HomeSuccess(offers: ${offers.length}, products: ${products.length}, favorites: ${favoriteIds.length})';
 }
 
 class HomeError extends HomeState {

@@ -8,5 +8,6 @@ extension FailureMessage on Failure {
     NoInternetConnection() => 'No internet connection',
     CustomDioLocalError(:final error) => error.message,
     CustomServerError(:final error) => error.message,
+    CacheError(:final message) => message ?? 'Database Error',
   };
 }

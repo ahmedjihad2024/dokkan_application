@@ -1,3 +1,4 @@
+import 'package:dokkan/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -107,13 +108,10 @@ class SearchScreen extends StatelessWidget {
               ),
 
               // Active Filter Tags Row
-              if (activeCount > 0)
-                _buildActiveFilterChips(context, cubit),
+              if (activeCount > 0) _buildActiveFilterChips(context, cubit),
 
               // Main Body Content
-              Expanded(
-                child: _buildBody(context, cubit, state),
-              ),
+              Expanded(child: _buildBody(context, cubit, state)),
             ],
           );
         },
@@ -137,21 +135,25 @@ class SearchScreen extends StatelessWidget {
     final chips = <Widget>[];
 
     if (cubit.minPrice != null) {
-      chips.add(_buildChip(
-        context,
-        icon: Icons.payments_outlined,
-        label: 'Min: \$${cubit.minPrice}',
-        onDeleted: cubit.removeMinPrice,
-      ));
+      chips.add(
+        _buildChip(
+          context,
+          icon: Icons.payments_outlined,
+          label: 'Min: \$${cubit.minPrice}',
+          onDeleted: cubit.removeMinPrice,
+        ),
+      );
     }
 
     if (cubit.maxPrice != null) {
-      chips.add(_buildChip(
-        context,
-        icon: Icons.payments_outlined,
-        label: 'Max: \$${cubit.maxPrice}',
-        onDeleted: cubit.removeMaxPrice,
-      ));
+      chips.add(
+        _buildChip(
+          context,
+          icon: Icons.payments_outlined,
+          label: 'Max: \$${cubit.maxPrice}',
+          onDeleted: cubit.removeMaxPrice,
+        ),
+      );
     }
 
     if (cubit.sortBy != null) {
@@ -163,12 +165,14 @@ class SearchScreen extends StatelessWidget {
           break;
         }
       }
-      chips.add(_buildChip(
-        context,
-        icon: Icons.swap_vert_rounded,
-        label: sortLabel,
-        onDeleted: cubit.removeSorting,
-      ));
+      chips.add(
+        _buildChip(
+          context,
+          icon: Icons.swap_vert_rounded,
+          label: sortLabel,
+          onDeleted: cubit.removeSorting,
+        ),
+      );
     }
 
     chips.add(
@@ -180,9 +184,7 @@ class SearchScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.redAccent.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(
-              color: Colors.redAccent.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -242,11 +244,7 @@ class SearchScreen extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 13.sp,
-            color: ColorM.primary,
-          ),
+          Icon(icon, size: 13.sp, color: ColorM.primary),
           SizedBox(width: 5.w),
           Text(
             label,
@@ -400,14 +398,12 @@ class SearchScreen extends StatelessWidget {
                 onAddToCart: (ProductEntity product) {
                   cubit.addToCart(product, context);
                 },
-                onFavoriteToggle: (productId) {},
+                onFavoriteToggle: context.read<FavoritesCubit>().toggleFavorite,
               ),
             ),
 
             // Bottom spacing
-            SliverToBoxAdapter(
-              child: SizedBox(height: 24.h),
-            ),
+            SliverToBoxAdapter(child: SizedBox(height: 24.h)),
           ],
         ),
       );
@@ -416,4 +412,3 @@ class SearchScreen extends StatelessWidget {
     return const SizedBox.shrink();
   }
 }
-

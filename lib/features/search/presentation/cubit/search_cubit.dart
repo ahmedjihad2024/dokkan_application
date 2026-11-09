@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:dokkan/core/events/app_event_bus.dart';
+import 'package:dokkan/core/events/event_bus_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 
 import '../../../../core/network/failure_message.dart';
 import '../../../../core/shared/data/request/add_to_cart_request.dart';
@@ -13,7 +16,7 @@ import '../../../../core/shared/domain/usecase/get_products_usecase.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import 'search_state.dart';
 
-class SearchCubit extends Cubit<SearchState> {
+class SearchCubit extends Cubit<SearchState> with EventBusMixin {
   final GetProductsUseCase getProductsUseCase;
   final AddToCartUseCase addToCartUseCase;
 
@@ -38,7 +41,16 @@ class SearchCubit extends Cubit<SearchState> {
   SearchCubit({
     required this.getProductsUseCase,
     required this.addToCartUseCase,
-  }) : super(const SearchInitial());
+  }) : super(const SearchInitial()){
+
+   subscribe<ProductFavoriteChanged>(_onFavoriteChanged);
+  }
+
+  void _onFavoriteChanged(ProductFavoriteChanged e) {
+    final current = state;
+    if (current is! SearchActive) return;
+    emit(current.copyWith(products: [...current.products]));
+  }
 
   String? get searchTerm => _searchTerm;
   num? get minPrice => _minPrice;
@@ -55,9 +67,7 @@ class SearchCubit extends Cubit<SearchState> {
     minPriceController.dispose();
     maxPriceController.dispose();
     return super.close();
-  }
-
-  void toggleFilterPanel() {
+  }  void toggleFilterPanel() {
     _isFilterPanelOpen = !_isFilterPanelOpen;
     _emitUpdatedPanelState();
   }

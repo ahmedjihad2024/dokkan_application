@@ -10,7 +10,7 @@ class SearchGrid extends StatelessWidget {
   final List<ProductEntity> products;
   final ValueChanged<ProductEntity>? onProductTap;
   final ValueChanged<ProductEntity>? onAddToCart;
-  final ValueChanged<String>? onFavoriteToggle;
+  final ValueChanged<ProductEntity>? onFavoriteToggle;
 
   const SearchGrid({
     super.key,
@@ -34,7 +34,7 @@ class SearchGrid extends StatelessWidget {
           final product = products[index];
           return ProductCard(
             product: product,
-            onFavoriteToggle: () => onFavoriteToggle?.call(product.id),
+            onFavoriteToggle: () => onFavoriteToggle?.call(product),
             onAddToCart: () => onAddToCart?.call(product),
             onTap: () => onProductTap?.call(product),
           )

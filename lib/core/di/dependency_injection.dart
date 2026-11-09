@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:dokkan/core/auth/app_auth_cubit.dart';
 import 'package:dokkan/core/config/constants.dart';
 import 'package:dokkan/core/network/dio_factory.dart';
@@ -25,6 +26,17 @@ import 'package:dokkan/core/shared/domain/repository/review_repository.dart';
 import 'package:dokkan/core/shared/domain/usecase/add_to_cart_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_products_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_reviews_usecase.dart';
+import 'package:dokkan/features/favorites/data/database/favorite_db_service.dart';
+import 'package:dokkan/features/favorites/data/data_source/favorite_local_data_source.dart';
+import 'package:dokkan/features/favorites/data/repository/favorites_repository_impl.dart';
+import 'package:dokkan/features/favorites/data/response/response.dart';
+import 'package:dokkan/features/favorites/domain/repository/favorites_repository.dart';
+import 'package:dokkan/features/favorites/domain/usecase/add_to_favorites_usecase.dart';
+import 'package:dokkan/features/favorites/domain/usecase/get_favorites_usecase.dart';
+import 'package:dokkan/features/favorites/domain/usecase/is_favorite_usecase.dart';
+import 'package:dokkan/features/favorites/domain/usecase/remove_from_favorites_usecase.dart';
+import 'package:dokkan/features/favorites/domain/usecase/toggle_favorite_usecase.dart';
+import 'package:dokkan/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:dokkan/features/authentication/data/api/auth_api_service.dart';
 import 'package:dokkan/features/authentication/data/data_source/auth_remote_data_source.dart';
 import 'package:dokkan/features/authentication/data/repository/auth_repository_impl.dart';
@@ -203,6 +215,35 @@ Future<void> setupServiceLocator() async {
     () => AddToCartUseCase(sl<AddToCartRepository>()),
   );
 
+  // ─── Favorites Feature ─────────────────────────────────────────────────────
+  sl.registerLazySingleton<Box<Favorite>>(
+    () => Hive.box<Favorite>('favorites'),
+  );
+  sl.registerLazySingleton<FavoriteDbService>(
+    () => FavoriteDbServiceImpl(sl<Box<Favorite>>()),
+  );
+  sl.registerLazySingleton<FavoriteLocalDataSource>(
+    () => FavoriteLocalDataSourceImpl(sl<FavoriteDbService>()),
+  );
+  sl.registerLazySingleton<FavoritesRepository>(
+    () => FavoritesRepositoryImpl(sl<FavoriteLocalDataSource>()),
+  );
+  sl.registerLazySingleton<AddToFavoritesUseCase>(
+    () => AddToFavoritesUseCase(sl<FavoritesRepository>()),
+  );
+  sl.registerLazySingleton<RemoveFromFavoritesUseCase>(
+    () => RemoveFromFavoritesUseCase(sl<FavoritesRepository>()),
+  );
+  sl.registerLazySingleton<IsFavoriteUseCase>(
+    () => IsFavoriteUseCase(sl<FavoritesRepository>()),
+  );
+  sl.registerLazySingleton<ToggleFavoriteUseCase>(
+    () => ToggleFavoriteUseCase(sl<FavoritesRepository>()),
+  );
+  sl.registerLazySingleton<GetFavoritesUseCase>(
+    () => GetFavoritesUseCase(sl<FavoritesRepository>()),
+  );
+
   // ─── Shared Refresh Token Feature ───────────────────────────────────────────
   sl.registerLazySingleton<RefreshTokenApiService>(
     () => RefreshTokenApiServiceImpl(
@@ -373,6 +414,17 @@ Future<void> setupServiceLocator() async {
     () => SearchCubit(
       getProductsUseCase: sl<GetProductsUseCase>(),
       addToCartUseCase: sl<AddToCartUseCase>(),
+    ),
+  );
+
+  // ─── Favorites Feature ─────────────────────────────────────────────────────
+  sl.registerFactory<FavoritesCubit>(
+    () => FavoritesCubit(
+      getFavoritesUseCase: sl<GetFavoritesUseCase>(),
+      removeFromFavoritesUseCase: sl<RemoveFromFavoritesUseCase>(),
+      addToCartUseCase: sl<AddToCartUseCase>(),
+      isFavoriteUseCase: sl<IsFavoriteUseCase>(),
+      toggleFavoriteUseCase: sl<ToggleFavoriteUseCase>(),
     ),
   );
 }

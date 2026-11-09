@@ -28,6 +28,7 @@ import '../../../features/product_details/presentation/cubit/product_details_cub
 import '../../../features/product_details/presentation/product_details_screen.dart';
 import '../../../features/search/presentation/cubit/search_cubit.dart';
 import '../../../features/search/presentation/search_screen.dart';
+import '../../../features/favorites/presentation/favorites_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/about_us_screen.dart';
 import '../../../features/change_password/presentation/screens/change_password_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/privacy_policy_screen.dart';
@@ -174,6 +175,12 @@ class RouteGenerator {
             create: (_) => sl<SearchCubit>()..fetchProducts(),
             child: const SearchScreen(),
           ),
+        );
+
+      // ─── Favorites / Wishlist ──────────────────────────────────
+      case Routes.favorites:
+        return MaterialPageRoute(
+          builder: (_) => const FavoritesScreen(),
         );
 
       // ─── Unified Checkout Flow (Carousel: Address -> Payment -> Review)

@@ -28,3 +28,9 @@ class CustomServerError extends Failure {
   const CustomServerError({required this.error});
 }
 
+class CacheError extends Failure {
+  final String? message;
+  const CacheError({this.message});
+}
+
+

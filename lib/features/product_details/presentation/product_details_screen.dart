@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:dokkan/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,10 +23,7 @@ import 'widgets/product_reviews_section.dart';
 class ProductDetailsScreen extends StatefulWidget {
   final String productId;
 
-  const ProductDetailsScreen({
-    super.key,
-    required this.productId,
-  });
+  const ProductDetailsScreen({super.key, required this.productId});
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -34,20 +34,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
+    _isFavorite = context.read<FavoritesCubit>().isFavorite(widget.productId);
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProductDetailsCubit>().init(widget.productId);
     });
   }
 
-  void _toggleFavorite() {
+  void _toggleFavorite() async {
     setState(() {
       _isFavorite = !_isFavorite;
     });
-    CustomSnackBar.showSuccess(
-      context,
-      _isFavorite ? 'Saved to your Wishlist' : 'Removed from Wishlist',
-    );
+    if (context.read<ProductDetailsCubit>().productEntity != null) {
+      final isFav = (await context.read<FavoritesCubit>().toggleFavorite(
+        context.read<ProductDetailsCubit>().productEntity!,
+      ));
+      setState(() {
+        _isFavorite = isFav;
+      });
+    }
   }
 
   @override
@@ -85,9 +90,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       child: AppErrorWidget(
                         message: state.message,
                         onRetry: () {
-                          context
-                              .read<ProductDetailsCubit>()
-                              .init(widget.productId);
+                          context.read<ProductDetailsCubit>().init(
+                            widget.productId,
+                          );
                         },
                       ),
                     );
@@ -117,21 +122,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   right: 24.w,
                                 ),
                                 sliver: SliverToBoxAdapter(
-                                  child: ProductImageGallery(
-                                    imageUrl: product.coverPictureUrl,
-                                    pictures: product.productPictures,
-                                    discountTag: product.hasDiscount
-                                        ? '-${product.discountPercentage}%'
-                                        : null,
-                                    emoji: '✨',
-                                  )
-                                      .animate()
-                                      .fadeIn(duration: 450.ms)
-                                      .scale(
-                                        begin: const Offset(0.96, 0.96),
-                                        end: const Offset(1, 1),
-                                        curve: Curves.easeOutCubic,
-                                      ),
+                                  child:
+                                      ProductImageGallery(
+                                            imageUrl: product.coverPictureUrl,
+                                            pictures: product.productPictures,
+                                            discountTag: product.hasDiscount
+                                                ? '-${product.discountPercentage}%'
+                                                : null,
+                                            emoji: '✨',
+                                          )
+                                          .animate()
+                                          .fadeIn(duration: 450.ms)
+                                          .scale(
+                                            begin: const Offset(0.96, 0.96),
+                                            end: const Offset(1, 1),
+                                            curve: Curves.easeOutCubic,
+                                          ),
                                 ),
                               ),
 
@@ -143,29 +149,39 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   right: 24.w,
                                 ),
                                 sliver: SliverToBoxAdapter(
-                                  child: ProductInfoHeader(
-                                    title: product.name,
-                                    subtitle:
-                                        'Product Code: ${product.productCode ?? 'PRD-${product.id.length >= 6 ? product.id.substring(0, 6).toUpperCase() : product.id}'} • Official Warranty',
-                                    currentPrice: product.finalPrice,
-                                    originalPrice: product.price == product.finalPrice ? null : product.price,
-                                    materialText: product.color ?? 'Gold',
-                                    weightText: product.weight != null
-                                        ? 'Weight: ${product.weight}g'
-                                        : 'Weight: 60g',
-                                    stockText: product.stock > 0
-                                        ? '● In Stock (${product.stock} left)'
-                                        : '● Out of Stock',
-                                    description: product.description ??
-                                        'Crafted with exquisite attention to detail.',
-                                  )
-                                      .animate()
-                                      .fadeIn(duration: 400.ms, delay: 100.ms)
-                                      .slideY(
-                                        begin: 0.08,
-                                        end: 0,
-                                        curve: Curves.easeOutCubic,
-                                      ),
+                                  child:
+                                      ProductInfoHeader(
+                                            title: product.name,
+                                            subtitle:
+                                                'Product Code: ${product.productCode ?? 'PRD-${product.id.length >= 6 ? product.id.substring(0, 6).toUpperCase() : product.id}'} • Official Warranty',
+                                            currentPrice: product.finalPrice,
+                                            originalPrice:
+                                                product.price ==
+                                                    product.finalPrice
+                                                ? null
+                                                : product.price,
+                                            materialText:
+                                                product.color ?? 'Gold',
+                                            weightText: product.weight != null
+                                                ? 'Weight: ${product.weight}g'
+                                                : 'Weight: 60g',
+                                            stockText: product.stock > 0
+                                                ? '● In Stock (${product.stock} left)'
+                                                : '● Out of Stock',
+                                            description:
+                                                product.description ??
+                                                'Crafted with exquisite attention to detail.',
+                                          )
+                                          .animate()
+                                          .fadeIn(
+                                            duration: 400.ms,
+                                            delay: 100.ms,
+                                          )
+                                          .slideY(
+                                            begin: 0.08,
+                                            end: 0,
+                                            curve: Curves.easeOutCubic,
+                                          ),
                                 ),
                               ),
 
@@ -178,56 +194,60 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     right: 24.w,
                                   ),
                                   sliver: SliverToBoxAdapter(
-                                    child: ProductReviewsSection(
-                                      productId: product.id,
-                                      productName: product.name,
-                                      rating: state.averageRating,
-                                      reviewsCount: state.reviewsCount,
-                                      reviews: state.reviews,
-                                      onExploreAll: () {
-                                        context.pushNamed(
-                                          Routes.productReviews,
-                                          arguments: {
-                                            'productId': product.id,
-                                            'productName': product.name,
-                                            'rating': state.averageRating,
-                                            'reviewsCount': state.reviewsCount,
-                                          },
-                                        );
-                                      },
-                                    )
-                                        .animate()
-                                        .fadeIn(duration: 400.ms, delay: 180.ms)
-                                        .slideY(
-                                          begin: 0.08,
-                                          end: 0,
-                                          curve: Curves.easeOutCubic,
-                                        ),
+                                    child:
+                                        ProductReviewsSection(
+                                              productId: product.id,
+                                              productName: product.name,
+                                              rating: state.averageRating,
+                                              reviewsCount: state.reviewsCount,
+                                              reviews: state.reviews,
+                                              onExploreAll: () {
+                                                context.pushNamed(
+                                                  Routes.productReviews,
+                                                  arguments: {
+                                                    'productId': product.id,
+                                                    'productName': product.name,
+                                                    'rating':
+                                                        state.averageRating,
+                                                    'reviewsCount':
+                                                        state.reviewsCount,
+                                                  },
+                                                );
+                                              },
+                                            )
+                                            .animate()
+                                            .fadeIn(
+                                              duration: 400.ms,
+                                              delay: 180.ms,
+                                            )
+                                            .slideY(
+                                              begin: 0.08,
+                                              end: 0,
+                                              curve: Curves.easeOutCubic,
+                                            ),
                                   ),
                                 ),
 
                               // Bottom spacing sliver
-                              SliverToBoxAdapter(
-                                child: SizedBox(height: 24.h),
-                              ),
+                              SliverToBoxAdapter(child: SizedBox(height: 24.h)),
                             ],
                           ),
                         ),
 
                         // Sticky Bottom Action Bar matching Figma 37:556 - 37:563
                         ProductBottomBar(
-                          quantity: state.quantity,
-                          totalPrice: totalPrice,
-                          isLoading: state.isAddingToCart,
-                          onIncrement: () =>
-                              cubit.incrementQuantity(maxStock, context),
-                          onDecrement: () => cubit.decrementQuantity(),
-                          onAddToCart: () => cubit.addToCart(
-                            product.id,
-                            state.quantity,
-                            context,
-                          ),
-                        )
+                              quantity: state.quantity,
+                              totalPrice: totalPrice,
+                              isLoading: state.isAddingToCart,
+                              onIncrement: () =>
+                                  cubit.incrementQuantity(maxStock, context),
+                              onDecrement: () => cubit.decrementQuantity(),
+                              onAddToCart: () => cubit.addToCart(
+                                product.id,
+                                state.quantity,
+                                context,
+                              ),
+                            )
                             .animate()
                             .fadeIn(duration: 400.ms, delay: 120.ms)
                             .slideY(

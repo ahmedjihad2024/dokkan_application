@@ -1,11 +1,14 @@
+import 'package:dokkan/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/di/dependency_injection.dart';
 import '../../../core/extensions/navigation_extension.dart';
 import '../../../core/res/router/routes.dart';
 import '../../../core/shared/domain/model/product_entity.dart';
+import '../../favorites/domain/usecase/toggle_favorite_usecase.dart';
 import '../../../core/widgets/feedback/app_error_widget.dart';
 import '../../../core/widgets/feedback/custom_snackbar.dart';
 import '../../../core/widgets/refresh/customized_smart_refresh.dart';
@@ -24,8 +27,7 @@ class HomeTab extends StatefulWidget {
   State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab>
-    with AutomaticKeepAliveClientMixin {
+class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
@@ -44,8 +46,8 @@ class _HomeTabState extends State<HomeTab>
     _refreshController.refreshCompleted(resetFooterState: true);
   }
 
-  void _onFavoriteToggle(String productId) {
-    // Favorite toggle handling
+  void _onFavoriteToggle(ProductEntity product) {
+    context.read<FavoritesCubit>().toggleFavorite(product);
   }
 
   @override
@@ -85,11 +87,14 @@ class _HomeTabState extends State<HomeTab>
                 parent: AlwaysScrollableScrollPhysics(),
               ),
               slivers: [
-                // Header (Dokkan Atelier + Greeting)
+                // Header (Dokkan Atelier + Greeting + Favorite Button)
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 14.h),
-                  sliver: const SliverToBoxAdapter(
-                    child: HomeHeader(userName: 'Alexander'),
+                  sliver: SliverToBoxAdapter(
+                    child: HomeHeader(
+                      userName: 'Alexander',
+                      onFavoriteTap: () => context.pushNamed(Routes.favorites),
+                    ),
                   ),
                 ),
 
@@ -106,9 +111,7 @@ class _HomeTabState extends State<HomeTab>
                 // Hero Banner -> Only added if there are offers in state
                 if (state.offers.isNotEmpty)
                   SliverToBoxAdapter(
-                    child: HomePromoBanner(
-                      offers: state.offers,
-                    )
+                    child: HomePromoBanner(offers: state.offers)
                         .animate()
                         .fadeIn(duration: 450.ms, delay: 120.ms)
                         .slideY(
@@ -146,9 +149,7 @@ class _HomeTabState extends State<HomeTab>
                 ),
 
                 // Bottom spacing sliver
-                SliverToBoxAdapter(
-                  child: SizedBox(height: 24.h),
-                ),
+                SliverToBoxAdapter(child: SizedBox(height: 24.h)),
               ],
             ),
           );

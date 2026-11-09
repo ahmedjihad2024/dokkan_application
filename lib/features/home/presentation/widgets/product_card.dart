@@ -1,4 +1,6 @@
+import 'package:dokkan/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
@@ -24,6 +26,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
+    final favCubit = context.read<FavoritesCubit>();
 
     return Container(
       width: 165.w,
@@ -133,14 +136,23 @@ class ProductCard extends StatelessWidget {
                                 width: 1,
                               ),
                             ),
-                            child: Assets.svg.iconHeart.svg(
-                              width: 14.w,
-                              height: 14.w,
-                              colorFilter: ColorFilter.mode(
-                                context.textSecondaryColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
+                            child: favCubit.isFavroite(product.id)
+                                ? Assets.svg.iconHeartFilled.svg(
+                                    width: 14.w,
+                                    height: 14.w,
+                                    colorFilter: const ColorFilter.mode(
+                                      ColorM.danger,
+                                      BlendMode.srcIn,
+                                    ),
+                                  )
+                                : Assets.svg.iconHeart.svg(
+                                    width: 14.w,
+                                    height: 14.w,
+                                    colorFilter: ColorFilter.mode(
+                                      context.textSecondaryColor,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),

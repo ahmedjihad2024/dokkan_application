@@ -5,10 +5,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 
+import '../../../../core/res/gen/assets.gen.dart';
+
 class HomeHeader extends StatelessWidget {
   final String userName;
+  final VoidCallback? onFavoriteTap;
 
-  const HomeHeader({super.key, this.userName = 'Alexander'});
+  const HomeHeader({
+    super.key,
+    this.userName = 'Alexander',
+    this.onFavoriteTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +90,53 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
         ),
+        if (onFavoriteTap != null) ...[
+          SizedBox(width: 12.w),
+          GestureDetector(
+            onTap: onFavoriteTap,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 44.w,
+              height: 44.w,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? ColorM.surfaceDarkElevated
+                    : ColorM.surfaceLightElevated,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDark
+                      ? ColorM.borderDark.withValues(alpha: 0.6)
+                      : ColorM.borderLight.withValues(alpha: 0.8),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Assets.svg.iconHeartFilled.svg(
+                width: 20.w,
+                height: 20.w,
+                colorFilter: const ColorFilter.mode(
+                  ColorM.danger,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          )
+              .animate()
+              .fadeIn(duration: 400.ms, delay: 150.ms)
+              .scale(
+                begin: const Offset(0.85, 0.85),
+                end: const Offset(1, 1),
+                duration: 400.ms,
+                curve: Curves.easeOutBack,
+              ),
+        ],
       ],
     );
   }

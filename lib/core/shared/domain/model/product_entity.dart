@@ -35,6 +35,7 @@ class ProductEntity {
     required this.discountPercentage,
     this.sellerId,
     this.categories = const [],
+
   });
 
   /// Computes final price after applying discount (if any)

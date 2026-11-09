@@ -1,3 +1,5 @@
+import 'package:dokkan/core/events/app_event_bus.dart';
+import 'package:dokkan/core/events/event_bus_mixin.dart';
 import 'package:dokkan/core/network/failure_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +16,7 @@ import '../../domain/model/offer_entity.dart';
 import '../../domain/usecase/get_offers_usecase.dart';
 import 'home_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
+class HomeCubit extends Cubit<HomeState> with EventBusMixin {
   final GetOffersUseCase getOffersUseCase;
   final GetProductsUseCase getProductsUseCase;
   final AddToCartUseCase addToCartUseCase;
@@ -23,7 +25,15 @@ class HomeCubit extends Cubit<HomeState> {
     required this.getOffersUseCase,
     required this.getProductsUseCase,
     required this.addToCartUseCase,
-  }) : super(const HomeLoading());
+  }) : super(const HomeLoading()) {
+    subscribe<ProductFavoriteChanged>(_onFavoriteChanged);
+  }
+
+  void _onFavoriteChanged(ProductFavoriteChanged e) {
+    final current = state;
+    if (current is! HomeSuccess) return;
+    emit(current.copyWith(offers: [...current.offers]));
+  }
 
   Future<void> init() async {
     emit(const HomeLoading());
@@ -33,18 +43,12 @@ class HomeCubit extends Cubit<HomeState> {
       getProductsUseCase(const ProductsRequest(page: 1, pageSize: 10)),
     ]);
 
-    result.fold(
-      (failure) => emit(HomeError(message: failure.message)),
-      (data) {
-        final offers = (data[0] as OffersPaginationEntity).items;
-        final products = (data[1] as ProductsPaginationEntity).items;
+    result.fold((failure) => emit(HomeError(message: failure.message)), (data) {
+      final offers = (data[0] as OffersPaginationEntity).items;
+      final products = (data[1] as ProductsPaginationEntity).items;
 
-        emit(HomeSuccess(
-          offers: offers,
-          products: products,
-        ));
-      },
-    );
+      emit(HomeSuccess(offers: offers, products: products));
+    });
   }
 
   Future<void> getOffers({int page = 1, int pageSize = 10}) async {
@@ -52,31 +56,25 @@ class HomeCubit extends Cubit<HomeState> {
       OffersRequest(page: page, pageSize: pageSize),
     );
 
-    result.fold(
-      (failure) => emit(HomeError(message: failure.message)),
-      (data) {
-        if (state is HomeSuccess) {
-          emit((state as HomeSuccess).copyWith(offers: data.items));
-        } else {
-          emit(HomeSuccess(offers: data.items));
-        }
-      },
-    );
+    result.fold((failure) => emit(HomeError(message: failure.message)), (data) {
+      if (state is HomeSuccess) {
+        emit((state as HomeSuccess).copyWith(offers: data.items));
+      } else {
+        emit(HomeSuccess(offers: data.items));
+      }
+    });
   }
 
   Future<void> getProducts(ProductsRequest request) async {
     final result = await getProductsUseCase(request);
 
-    result.fold(
-      (failure) => emit(HomeError(message: failure.message)),
-      (data) {
-        if (state is HomeSuccess) {
-          emit((state as HomeSuccess).copyWith(products: data.items));
-        } else {
-          emit(HomeSuccess(products: data.items));
-        }
-      },
-    );
+    result.fold((failure) => emit(HomeError(message: failure.message)), (data) {
+      if (state is HomeSuccess) {
+        emit((state as HomeSuccess).copyWith(products: data.items));
+      } else {
+        emit(HomeSuccess(products: data.items));
+      }
+    });
   }
 
   Future<void> addToCart(

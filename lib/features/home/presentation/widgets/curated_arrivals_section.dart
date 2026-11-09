@@ -10,7 +10,7 @@ import 'product_card.dart';
 class CuratedArrivalsSection extends StatelessWidget {
   final List<ProductEntity> products;
   final ValueChanged<ProductEntity>? onProductTap;
-  final ValueChanged<String>? onFavoriteToggle;
+  final ValueChanged<ProductEntity>? onFavoriteToggle;
   final ValueChanged<ProductEntity>? onAddToCart;
   final VoidCallback? onSeeAllPressed;
   final double horizontalPadding;
@@ -117,7 +117,7 @@ class CuratedArrivalsSection extends StatelessWidget {
               return ProductCard(
                 product: product,
                 onTap: () => onProductTap?.call(product),
-                onFavoriteToggle: () => onFavoriteToggle?.call(product.id),
+                onFavoriteToggle: () => onFavoriteToggle?.call(product),
                 onAddToCart: () => onAddToCart?.call(product),
               )
                   .animate(delay: (150 + ((index % 3) * 50)).ms)

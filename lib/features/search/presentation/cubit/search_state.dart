@@ -26,6 +26,7 @@ class SearchActive extends SearchState {
   final ProductSortBy? sortBy;
   final ProductSortOrder? sortOrder;
   final bool isFilterPanelOpen;
+  final Set<String> favoriteIds;
 
   const SearchActive({
     required this.products,
@@ -39,6 +40,7 @@ class SearchActive extends SearchState {
     this.sortBy,
     this.sortOrder,
     this.isFilterPanelOpen = false,
+    this.favoriteIds = const {},
   });
 
   int get activeFiltersCount {
@@ -66,6 +68,7 @@ class SearchActive extends SearchState {
     bool clearMaxPrice = false,
     bool clearSortBy = false,
     bool clearSortOrder = false,
+    Set<String>? favoriteIds,
   }) {
     return SearchActive(
       products: products ?? this.products,
@@ -79,6 +82,7 @@ class SearchActive extends SearchState {
       sortBy: clearSortBy ? null : (sortBy ?? this.sortBy),
       sortOrder: clearSortOrder ? null : (sortOrder ?? this.sortOrder),
       isFilterPanelOpen: isFilterPanelOpen ?? this.isFilterPanelOpen,
+      favoriteIds: favoriteIds ?? this.favoriteIds,
     );
   }
 }

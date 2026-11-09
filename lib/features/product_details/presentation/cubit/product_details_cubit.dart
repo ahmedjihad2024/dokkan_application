@@ -20,6 +20,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
 
   int _quantity = 1;
   int get quantity => _quantity;
+  ProductEntity? productEntity;
 
   ProductDetailsCubit({
     required this.getProductDetailsUseCase,
@@ -43,6 +44,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       (data) {
         final product = data[0] as ProductEntity;
         final reviews = data[1] as List<ReviewEntity>;
+        productEntity = product;
 
         emit(
           ProductDetailsSuccess(

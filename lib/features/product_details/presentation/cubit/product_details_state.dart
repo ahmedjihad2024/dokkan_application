@@ -20,6 +20,7 @@ class ProductDetailsSuccess extends ProductDetailsState {
   final int reviewsCount;
   final int quantity;
   final bool isAddingToCart;
+  final bool isFavorite;
 
   const ProductDetailsSuccess({
     required this.product,
@@ -28,6 +29,7 @@ class ProductDetailsSuccess extends ProductDetailsState {
     required this.reviewsCount,
     this.quantity = 1,
     this.isAddingToCart = false,
+    this.isFavorite = false,
   });
 
   ProductDetailsSuccess copyWith({
@@ -37,6 +39,7 @@ class ProductDetailsSuccess extends ProductDetailsState {
     int? reviewsCount,
     int? quantity,
     bool? isAddingToCart,
+    bool? isFavorite,
   }) {
     return ProductDetailsSuccess(
       product: product ?? this.product,
@@ -45,12 +48,13 @@ class ProductDetailsSuccess extends ProductDetailsState {
       reviewsCount: reviewsCount ?? this.reviewsCount,
       quantity: quantity ?? this.quantity,
       isAddingToCart: isAddingToCart ?? this.isAddingToCart,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
   @override
   String toString() =>
-      'ProductDetailsSuccess(product: ${product.name}, quantity: $quantity, reviews: ${reviews.length})';
+      'ProductDetailsSuccess(product: ${product.name}, quantity: $quantity, isFavorite: $isFavorite)';
 }
 
 class ProductDetailsError extends ProductDetailsState {
