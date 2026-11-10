@@ -32,28 +32,20 @@ class _ProfileScreenState extends State<ProfileScreen> with AutomaticKeepAliveCl
                   fontWeight: FontWeight.bold,
                   color: context.textPrimaryColor,
                 ),
-              )
-                  .animate()
-                  .fadeIn(duration: 400.ms)
-                  .slideX(begin: -0.06, end: 0, curve: Curves.easeOutCubic),
+              ),
               20.verticalSpace,
               const ProfileHeaderCard(
                 name: 'Alexander Mansour',
                 email: 'alexander.mansour@atelier.com',
-              )
-                  .animate()
-                  .fadeIn(duration: 450.ms, delay: 100.ms)
-                  .slideY(
-                    begin: 0.08,
-                    end: 0,
-                    duration: 450.ms,
-                    curve: Curves.easeOutCubic,
-                  ),
+              ),
               16.verticalSpace,
               const ProfileTilesList(),
             ],
           ),
-        ),
+        )
+            .animate()
+            .fadeIn(duration: 380.ms, curve: Curves.easeOutCubic)
+            .slideY(begin: 0.04, end: 0, curve: Curves.easeOutCubic),
       ),
     );
   }

@@ -82,9 +82,9 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                           width: double.infinity,
                           height: 172.h,
                           fit: BoxFit.contain,
-                          errorWidget: _buildWatchAsset(),
+                          errorWidget: _WatchFallbackAsset(emoji: widget.emoji),
                         )
-                      : _buildWatchAsset(),
+                      : _WatchFallbackAsset(emoji: widget.emoji),
                 ),
               ),
 
@@ -148,15 +148,13 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                   clipBehavior: Clip.antiAlias,
                   child: Opacity(
                     opacity: isSelected ? 1.0 : 0.65,
-                    child: ClipRRect(
+                    child: CustomCachedImage(
+                      imageUrl: thumbUrl,
+                      width: 44.w,
+                      height: 44.w,
+                      fit: BoxFit.cover,
                       borderRadius: BorderRadius.circular(12.r),
-                      child: CustomCachedImage(
-                        imageUrl: thumbUrl,
-                        width: 44.w,
-                        height: 44.w,
-                        fit: BoxFit.cover,
-                        errorWidget: _buildThumbnailVisual(),
-                      ),
+                      errorWidget: _ThumbnailFallbackAsset(emoji: widget.emoji),
                     ),
                   ),
                 ),
@@ -167,24 +165,38 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
       ],
     );
   }
+}
 
-  Widget _buildWatchAsset() {
+class _WatchFallbackAsset extends StatelessWidget {
+  final String emoji;
+
+  const _WatchFallbackAsset({required this.emoji});
+
+  @override
+  Widget build(BuildContext context) {
     return Assets.images.productWatch.image(
       height: 110.h,
       fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) {
-        return Text(widget.emoji, style: TextStyle(fontSize: 70.sp));
+        return Text(emoji, style: TextStyle(fontSize: 70.sp));
       },
     );
   }
+}
 
-  Widget _buildThumbnailVisual() {
+class _ThumbnailFallbackAsset extends StatelessWidget {
+  final String emoji;
+
+  const _ThumbnailFallbackAsset({required this.emoji});
+
+  @override
+  Widget build(BuildContext context) {
     return Assets.images.productWatch.image(
       height: 26.w,
       width: 26.w,
       fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) {
-        return Text(widget.emoji, style: TextStyle(fontSize: 18.sp));
+        return Text(emoji, style: TextStyle(fontSize: 18.sp));
       },
     );
   }

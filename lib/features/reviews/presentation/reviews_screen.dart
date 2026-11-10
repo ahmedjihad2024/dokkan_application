@@ -147,18 +147,11 @@ class ReviewsScreen extends StatelessWidget {
                       ],
                     ),
                   ],
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms)
-                    .slideY(
-                      begin: 0.1,
-                      end: 0,
-                      curve: Curves.easeOutCubic,
-                    ),
+                ),
               ),
             ),
 
-            // Reviews list with staggered animated cards
+            // Reviews list
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               sliver: ReviewsListView(reviews: state.reviews),
@@ -170,7 +163,10 @@ class ReviewsScreen extends StatelessWidget {
             ),
           ],
         ),
-      );
+      )
+          .animate()
+          .fadeIn(duration: 380.ms, curve: Curves.easeOutCubic)
+          .slideY(begin: 0.04, end: 0, curve: Curves.easeOutCubic);
     }
 
     return const SizedBox.shrink();

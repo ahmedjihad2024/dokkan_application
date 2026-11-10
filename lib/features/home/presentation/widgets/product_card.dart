@@ -72,6 +72,8 @@ class ProductCard extends StatelessWidget {
                             imageUrl: product.coverPictureUrl!,
                             width: double.infinity,
                             fit: BoxFit.cover,
+                            memCacheHeight: 250,
+                            memCacheWidth: 250,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(16.r),
                               topRight: Radius.circular(16.r),

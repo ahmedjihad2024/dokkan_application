@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -122,7 +123,10 @@ class FavoritesScreen extends StatelessWidget {
                   child: SizedBox(height: 24.h),
                 ),
               ],
-            );
+            )
+                .animate()
+                .fadeIn(duration: 380.ms, curve: Curves.easeOutCubic)
+                .slideY(begin: 0.04, end: 0, curve: Curves.easeOutCubic);
           }
 
           // Empty state
