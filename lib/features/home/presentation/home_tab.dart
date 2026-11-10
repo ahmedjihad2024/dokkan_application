@@ -111,14 +111,16 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 // Hero Banner -> Only added if there are offers in state
                 if (state.offers.isNotEmpty)
                   SliverToBoxAdapter(
-                    child: HomePromoBanner(offers: state.offers)
-                        .animate()
-                        .fadeIn(duration: 450.ms, delay: 120.ms)
-                        .slideY(
-                          begin: 0.08,
-                          end: 0,
-                          curve: Curves.easeOutCubic,
-                        ),
+                    child: RepaintBoundary(
+                      child: HomePromoBanner(offers: state.offers)
+                          .animate()
+                          .fadeIn(duration: 450.ms, delay: 120.ms)
+                          .slideY(
+                            begin: 0.08,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          ),
+                    ),
                   ),
 
                 // Curated Arrivals product cards with See All button

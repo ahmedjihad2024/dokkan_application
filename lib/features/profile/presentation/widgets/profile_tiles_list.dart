@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -82,26 +81,7 @@ class ProfileTilesList extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: items.length,
       separatorBuilder: (context, index) => 12.verticalSpace,
-      itemBuilder: (context, index) {
-        return items[index]
-            .animate(delay: (160 + (index * 45)).ms)
-            .fadeIn(
-              duration: 400.ms,
-              curve: Curves.easeOutCubic,
-            )
-            .slideY(
-              begin: 0.08,
-              end: 0,
-              duration: 400.ms,
-              curve: Curves.easeOutCubic,
-            )
-            .scale(
-              begin: const Offset(0.98, 0.98),
-              end: const Offset(1, 1),
-              duration: 400.ms,
-              curve: Curves.easeOutCubic,
-            );
-      },
+      itemBuilder: (context, index) => items[index],
     );
   }
 }

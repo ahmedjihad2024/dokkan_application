@@ -75,15 +75,17 @@ class Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SplashLogo(isDark: isDark)
-          .animate()
-          .fadeIn(duration: 900.ms, curve: Curves.easeOut)
-          .scale(
-            begin: const Offset(0.92, 0.92),
-            end: const Offset(1.0, 1.0),
-            duration: 900.ms,
-            curve: Curves.easeOutCubic,
-          ),
+      child: RepaintBoundary(
+        child: SplashLogo(isDark: isDark)
+            .animate()
+            .fadeIn(duration: 900.ms, curve: Curves.easeOut)
+            .scale(
+              begin: const Offset(0.92, 0.92),
+              end: const Offset(1.0, 1.0),
+              duration: 900.ms,
+              curve: Curves.easeOutCubic,
+            ),
+      ),
     );
   }
 }

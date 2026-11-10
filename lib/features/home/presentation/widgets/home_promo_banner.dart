@@ -170,6 +170,7 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
                 child: Center(
                   child: offer.coverUrl.isNotEmpty
                       ? CustomCachedImage(
+                          key: ValueKey(offer.coverUrl),
                           imageUrl: offer.coverUrl,
                           width: 76.w,
                           height: 76.w,

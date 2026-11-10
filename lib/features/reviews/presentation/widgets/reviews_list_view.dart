@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../core/shared/domain/model/review_entity.dart';
 import 'review_item_card.dart';
@@ -17,21 +16,7 @@ class ReviewsListView extends StatelessWidget {
     return SliverList.builder(
       itemCount: reviews.length,
       itemBuilder: (context, index) {
-        // Cap staggered delay to first visible items to ensure smooth lazy loading for hundreds of comments
-        final delay = index < 8 ? (index * 50).ms : Duration.zero;
-
-        return ReviewItemCard(review: reviews[index])
-            .animate(delay: delay)
-            .fadeIn(
-              duration: 350.ms,
-              curve: Curves.easeOutCubic,
-            )
-            .slideY(
-              begin: 0.06,
-              end: 0,
-              duration: 350.ms,
-              curve: Curves.easeOutCubic,
-            );
+        return ReviewItemCard(review: reviews[index]);
       },
     );
   }
