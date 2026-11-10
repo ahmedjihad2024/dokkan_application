@@ -52,7 +52,7 @@ class _ManageProductsBodyState extends State<ManageProductsBody> {
   Future<void> _handleDelete(ManageProductItem item) async {
     final confirmed = await DeleteProductDialog.show(context, item);
     if (confirmed == true && mounted) {
-      context.read<ManageProductsCubit>().deleteProduct(item);
+      context.read<ManageProductsCubit>().deleteProduct(item.id);
       CustomSnackBar.showSuccess(
         context,
         'Product deleted successfully',

@@ -5,6 +5,7 @@ import '../response/products_response.dart';
 
 abstract class ProductApiService {
   Future<ProductsResponse> getProducts(ProductsRequest request);
+  Future<void> deleteProduct(String id);
 }
 
 class ProductApiServiceImpl implements ProductApiService {
@@ -21,5 +22,12 @@ class ProductApiServiceImpl implements ProductApiService {
     );
 
     return ProductsResponse.fromJson(response.data as Map<String, dynamic>);
+  }
+  @override
+  Future<void> deleteProduct(String id) async {
+    await _dio.request(
+      '/api/products/$id',
+      method: RequestMethod.DELETE, 
+    );
   }
 }

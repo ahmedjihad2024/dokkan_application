@@ -4,6 +4,7 @@ import '../response/products_response.dart';
 
 abstract class ProductRemoteDataSource {
   Future<ProductsResponse> getProducts(ProductsRequest request);
+  Future<void> deleteProduct(String id);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -14,5 +15,9 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   @override
   Future<ProductsResponse> getProducts(ProductsRequest request) {
     return _apiService.getProducts(request);
+  }
+  @override
+  Future<void> deleteProduct(String id) {
+    return _apiService.deleteProduct(id); 
   }
 }

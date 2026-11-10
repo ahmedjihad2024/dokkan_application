@@ -57,11 +57,27 @@ class ManageProductsCubit extends Cubit<ManageProductsState> {
     }
   }
 
-  void deleteProduct(ManageProductItem item) {
-    final updatedList = state.products.where((p) => p.id != item.id).toList();
+  // void deleteProduct(ManageProductItem item) {
+  //   final updatedList = state.products.where((p) => p.id != item.id).toList();
+  //   emit(state.copyWith(
+  //     products: updatedList,
+  //     status: updatedList.isEmpty ? ReqState.empty : ReqState.success,
+  //   ));
+  // }
+  Future<void> deleteProduct(String id) async {
+  try {
+    
+     await _repository.deleteProduct(id);
+
+    final updatedList = state.products.where((p) => p.id != id).toList();
     emit(state.copyWith(
       products: updatedList,
       status: updatedList.isEmpty ? ReqState.empty : ReqState.success,
     ));
+    
+  } catch (e) {
+    
+    emit(state.copyWith(errorMessage: "Delete failed, please try again."));
   }
+}
 }
