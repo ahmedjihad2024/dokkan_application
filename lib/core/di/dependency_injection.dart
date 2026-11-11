@@ -54,7 +54,8 @@ import 'package:dokkan/features/edit_address/data/api/edit_address_api_service.d
 import 'package:dokkan/features/edit_address/data/data_source/edit_address_remote_data_source.dart';
 import 'package:dokkan/features/edit_address/data/repository/edit_address_repository_impl.dart';
 import 'package:dokkan/features/edit_address/domain/repository/edit_address_repository.dart';
-import 'package:dokkan/features/edit_address/domain/usecase/create_address_usecase.dart' as edit_address_create;
+import 'package:dokkan/features/edit_address/domain/usecase/create_address_usecase.dart'
+    as edit_address_create;
 import 'package:dokkan/features/edit_address/domain/usecase/get_address_by_id_usecase.dart';
 import 'package:dokkan/features/edit_address/domain/usecase/update_address_usecase.dart';
 import 'package:dokkan/features/edit_address/presentation/cubit/edit_address_cubit.dart';
@@ -74,6 +75,12 @@ import 'package:dokkan/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/change_password/data/data_source/change_password_remote_data_source.dart';
+import '../../features/change_password/data/repository/change_password_repository_impl.dart';
+import '../../features/change_password/domain/repository/change_password_repository.dart';
+import '../../features/change_password/domain/usecase/change_password_usecase.dart';
+import '../../features/change_password/presentation/cubit/change_password_cubit.dart';
+
 final GetIt sl = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
@@ -89,25 +96,16 @@ Future<void> setupServiceLocator() async {
   );
 
   // ─── Network (DioFactory & Dio) ─────────────────────────────────────────────
-  sl.registerLazySingleton<DioFactory>(
-    () => DioFactory(sl<StorageService>()),
-  );
-  sl.registerLazySingleton<Dio>(
-    () => sl<DioFactory>().dio,
-  );
+  sl.registerLazySingleton<DioFactory>(() => DioFactory(sl<StorageService>()));
+  sl.registerLazySingleton<Dio>(() => sl<DioFactory>().dio);
 
   // ─── Authentication Feature ─────────────────────────────────────────────────
-  sl.registerLazySingleton<AuthApiService>(
-    () => AuthApiServiceImpl(sl<Dio>()),
-  );
+  sl.registerLazySingleton<AuthApiService>(() => AuthApiServiceImpl(sl<Dio>()));
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl<AuthApiService>()),
   );
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      sl<AuthRemoteDataSource>(),
-      sl<StorageService>(),
-    ),
+    () => AuthRepositoryImpl(sl<AuthRemoteDataSource>(), sl<StorageService>()),
   );
   sl.registerLazySingleton<LoginUseCase>(
     () => LoginUseCase(sl<AuthRepository>()),
@@ -188,9 +186,7 @@ Future<void> setupServiceLocator() async {
   );
 
   // ─── Cart Feature ───────────────────────────────────────────────────────────
-  sl.registerLazySingleton<CartApiService>(
-    () => CartApiServiceImpl(sl<Dio>()),
-  );
+  sl.registerLazySingleton<CartApiService>(() => CartApiServiceImpl(sl<Dio>()));
   sl.registerLazySingleton<CartRemoteDataSource>(
     () => CartRemoteDataSourceImpl(sl<CartApiService>()),
   );
@@ -222,9 +218,7 @@ Future<void> setupServiceLocator() async {
   );
 
   // ─── Home Feature ───────────────────────────────────────────────────────────
-  sl.registerLazySingleton<HomeApiService>(
-    () => HomeApiServiceImpl(sl<Dio>()),
-  );
+  sl.registerLazySingleton<HomeApiService>(() => HomeApiServiceImpl(sl<Dio>()));
   sl.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(sl<HomeApiService>()),
   );
@@ -261,7 +255,7 @@ Future<void> setupServiceLocator() async {
     () => ProductDetailsCubit(
       getProductDetailsUseCase: sl<GetProductDetailsUseCase>(),
       getReviewsUseCase: sl<GetReviewsUseCase>(),
-      addToCartUseCase: sl<AddToCartUseCase>()
+      addToCartUseCase: sl<AddToCartUseCase>(),
     ),
   );
 
@@ -321,8 +315,23 @@ Future<void> setupServiceLocator() async {
 
   // ─── Reviews Feature ───────────────────────────────────────────────────────
   sl.registerFactory<ReviewsCubit>(
-    () => ReviewsCubit(
-      getReviewsUseCase: sl<GetReviewsUseCase>(),
-    ),
+    () => ReviewsCubit(getReviewsUseCase: sl<GetReviewsUseCase>()),
+  );
+
+  // ─── Change Password Feature ──────────────────────────────────────────────
+  sl.registerLazySingleton<ChangePasswordRemoteDataSource>(
+    () => ChangePasswordRemoteDataSourceImpl(sl<AuthApiService>()),
+  );
+
+  sl.registerLazySingleton<ChangePasswordRepository>(
+    () => ChangePasswordRepositoryImpl(sl<ChangePasswordRemoteDataSource>()),
+  );
+
+  sl.registerLazySingleton<ChangePasswordUseCase>(
+    () => ChangePasswordUseCase(sl<ChangePasswordRepository>()),
+  );
+
+  sl.registerFactory<ChangePasswordCubit>(
+    () => ChangePasswordCubit(sl<ChangePasswordUseCase>()),
   );
 }
