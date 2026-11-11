@@ -74,6 +74,21 @@ import 'package:dokkan/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+<<<<<<< Updated upstream
+=======
+import '../../features/change_password/data/data_source/change_password_remote_data_source.dart';
+import '../../features/change_password/data/repository/change_password_repository_impl.dart';
+import '../../features/change_password/domain/repository/change_password_repository.dart';
+import '../../features/change_password/domain/usecase/change_password_usecase.dart';
+import '../../features/change_password/presentation/cubit/change_password_cubit.dart';
+import '../../features/profile/data/data_source/profile_remote_data_source.dart';
+import '../../features/profile/data/repository/profile_repository_impl.dart';
+import '../../features/profile/domain/repository/profile_repository.dart';
+import '../../features/profile/domain/use_cases/get_me_use_case.dart';
+import '../../features/profile/domain/use_cases/logout_use_case.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
+
+>>>>>>> Stashed changes
 final GetIt sl = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
@@ -325,4 +340,31 @@ Future<void> setupServiceLocator() async {
       getReviewsUseCase: sl<GetReviewsUseCase>(),
     ),
   );
+
+  // ─── Profile Feature ──────────────────────────────────────────────────────
+sl.registerLazySingleton<ProfileRemoteDataSource>(
+  () => ProfileRemoteDataSourceImpl(sl<AuthApiService>()),
+);
+
+sl.registerLazySingleton<ProfileRepository>(
+  () => ProfileRepositoryImpl(
+    sl<ProfileRemoteDataSource>(),
+    sl<StorageService>(),
+  ),
+);
+
+sl.registerLazySingleton<GetMeUseCase>(
+  () => GetMeUseCase(sl<ProfileRepository>()),
+);
+
+sl.registerLazySingleton<LogoutUseCase>(
+  () => LogoutUseCase(sl<ProfileRepository>()),
+);
+
+sl.registerFactory<ProfileCubit>(
+  () => ProfileCubit(
+    getMeUseCase: sl<GetMeUseCase>(),
+    logoutUseCase: sl<LogoutUseCase>(),
+  ),
+);
 }

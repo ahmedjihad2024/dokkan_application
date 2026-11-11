@@ -1,6 +1,11 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/base_response.dart';
+<<<<<<< Updated upstream
+=======
+import '../../../change_password/data/request/change_password_request.dart';
+import '../../../profile/data/response/user_response.dart';
+>>>>>>> Stashed changes
 import '../request/login_request.dart';
 import '../request/register_request.dart';
 import '../request/resend_otp_request.dart';
@@ -16,6 +21,15 @@ abstract class AuthApiService {
   Future<BaseResponse> verifyEmail(VerifyEmailRequest request);
 
   Future<BaseResponse> resendOtp(ResendOtpRequest request);
+<<<<<<< Updated upstream
+=======
+
+  Future<BaseResponse> changePassword(ChangePasswordRequest request);
+
+  Future<UserResponse> getMe();
+
+  Future<BaseResponse> logout();
+>>>>>>> Stashed changes
 }
 
 class AuthApiServiceImpl implements AuthApiService {
@@ -69,5 +83,46 @@ class AuthApiServiceImpl implements AuthApiService {
       status: true,
       message: response.data as String,
     );
+<<<<<<< Updated upstream
+=======
+
+    String message = 'Password changed successfully';
+
+    if (response.data is Map<String, dynamic>) {
+      message = response.data['message']?.toString() ?? message;
+    } else if (response.data is String) {
+      message = response.data;
+    }
+
+    return BaseResponse(status: true, message: message);
+  }
+
+  @override
+  Future<UserResponse> getMe() async {
+    final response = await _dio.get('/api/auth/me');
+    print('🔴🔴🔴🔴🔴🔴🔴🔴🔴 GET ME RESPONSE: ${response.data}🔴🔴🔴🔴🔴🔴🔴🔴');
+    final data = response.data is Map<String, dynamic>
+        ? response.data
+        : <String, dynamic>{};
+
+    return UserResponse.fromJson(data);
+  }
+
+  @override
+  Future<BaseResponse> logout() async {
+    final response = await _dio.post('/api/auth/logout');
+
+    final data = response.data is Map<String, dynamic>
+        ? response.data
+        : <String, dynamic>{};
+
+    return BaseResponse(
+      status:
+          data['status'] == true ||
+          data['status'] == 'true' ||
+          data['status'] == 1,
+      message: data['message']?.toString() ?? 'Logged out successfully',
+    );
+>>>>>>> Stashed changes
   }
 }
