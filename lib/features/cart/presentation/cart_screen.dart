@@ -61,8 +61,9 @@ class _CartScreenState extends State<CartScreen>
     return VisibilityDetector(
       key: const Key('cart-tab'),
       onVisibilityChanged: (info) {
+        final current = context.read<CartCubit>().state;
         if (info.visibleFraction == 1 &&
-            context.read<CartCubit>().state is! CartActive) {
+            ( current is! CartActive && current is! CartLoading) ) {
           context.read<CartCubit>().loadCart();
         }
       },

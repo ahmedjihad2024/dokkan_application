@@ -2,6 +2,7 @@ import 'package:dokkan/core/network/dio_factory.dart';
 import 'package:dokkan/features/authentication/data/request/verify_email_request.dart';
 
 import '../../../../core/network/base_response.dart';
+import '../request/change_password_request.dart';
 import '../request/forgot_password_request.dart';
 import '../request/login_request.dart';
 import '../request/register_request.dart';
@@ -28,6 +29,8 @@ abstract class AuthApiService {
   Future<BaseResponse> validateOtp(ValidateOtpRequest request);
 
   Future<BaseResponse> resetPassword(ResetPasswordRequest request);
+
+  Future<BaseResponse> changePassword(ChangePasswordRequest request);
 }
 
 class AuthApiServiceImpl implements AuthApiService {
@@ -39,9 +42,10 @@ class AuthApiServiceImpl implements AuthApiService {
     if (data is Map<String, dynamic>) {
       return BaseResponse.fromJson(data);
     }
+    final text = data is String ? data.trim() : '';
     return BaseResponse(
       status: true,
-      message: data is String ? data : defaultMessage,
+      message: text.isNotEmpty ? text : defaultMessage,
     );
   }
 
@@ -142,6 +146,20 @@ class AuthApiServiceImpl implements AuthApiService {
     return _parseBaseResponse(
       response.data,
       defaultMessage: 'Password reset successfully',
+    );
+  }
+
+  @override
+  Future<BaseResponse> changePassword(ChangePasswordRequest request) async {
+    final response = await _dio.request(
+      '/api/auth/change-password',
+      method: RequestMethod.POST,
+      body: request.toJson(),
+    );
+
+    return _parseBaseResponse(
+      response.data,
+      defaultMessage: 'Password has been changed successfully.',
     );
   }
 }

@@ -12,6 +12,7 @@ import '../../domain/repository/auth_repository.dart';
 import '../data_source/auth_remote_data_source.dart';
 import '../mapper/current_user_mapper.dart';
 import '../mapper/login_mapper.dart';
+import '../request/change_password_request.dart';
 import '../request/forgot_password_request.dart';
 import '../request/login_request.dart';
 import '../request/register_request.dart';
@@ -105,6 +106,16 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, String>> resetPassword(ResetPasswordRequest request) {
     return fastHandler<BaseResponse, String>(
       request: () => _remoteDataSource.resetPassword(request),
+      mapper: (response) => response.message,
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> changePassword(
+    ChangePasswordRequest request,
+  ) {
+    return fastHandler<BaseResponse, String>(
+      request: () => _remoteDataSource.changePassword(request),
       mapper: (response) => response.message,
     );
   }

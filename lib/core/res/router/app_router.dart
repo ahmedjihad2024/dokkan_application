@@ -32,8 +32,10 @@ import '../../../features/search/presentation/cubit/search_cubit.dart';
 import '../../../features/search/presentation/search_screen.dart';
 import '../../../features/favorites/presentation/favorites_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/about_us_screen.dart';
+import '../../../features/change_password/presentation/cubit/change_password_cubit.dart';
 import '../../../features/change_password/presentation/screens/change_password_screen.dart';
 import '../../../features/about_and_privacy/presentation/screens/privacy_policy_screen.dart';
+import '../../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../../features/profile/presentation/screens/profile_screen.dart';
 import '../../../features/reviews/presentation/cubit/reviews_cubit.dart';
 import '../../../features/reviews/presentation/reviews_screen.dart';
@@ -153,7 +155,12 @@ class RouteGenerator {
         );
 
       case Routes.profile:
-        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<ProfileCubit>()..fetchProfile(),
+            child: const ProfileScreen(),
+          ),
+        );
 
       case Routes.aboutUs:
         return MaterialPageRoute(builder: (_) => const AboutUsScreen());
@@ -162,7 +169,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
 
       case Routes.changePassword:
-        return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<ChangePasswordCubit>(),
+            child: const ChangePasswordScreen(),
+          ),
+        );
 
       case Routes.manageProducts:
         return MaterialPageRoute(

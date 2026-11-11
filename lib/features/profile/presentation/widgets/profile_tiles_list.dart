@@ -8,6 +8,7 @@ import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/gen/assets.gen.dart';
 import '../../../../core/res/router/routes.dart';
 import '../../../../core/theme/theme_cubit.dart';
+import '../cubit/profile_cubit.dart';
 import 'profile_tile.dart';
 
 class ProfileTilesList extends StatelessWidget {
@@ -70,15 +71,17 @@ class ProfileTilesList extends StatelessWidget {
         iconColor: ColorM.danger,
         iconBackgroundColor: ColorM.danger.withAlpha(50),
         trailing: const SizedBox.shrink(),
-        onTap: () {
-          context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+        onTap: () async {
+          final needsManualNavigation =
+              await context.read<ProfileCubit>().logout();
+          if (needsManualNavigation && context.mounted) {
+            context.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+          }
         },
       ),
     ];
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    return SliverList.separated(
       itemCount: items.length,
       separatorBuilder: (context, index) => 12.verticalSpace,
       itemBuilder: (context, index) => items[index],

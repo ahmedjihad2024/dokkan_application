@@ -49,6 +49,7 @@ import 'package:dokkan/features/authentication/data/api/auth_api_service.dart';
 import 'package:dokkan/features/authentication/data/data_source/auth_remote_data_source.dart';
 import 'package:dokkan/features/authentication/data/repository/auth_repository_impl.dart';
 import 'package:dokkan/features/authentication/domain/repository/auth_repository.dart';
+import 'package:dokkan/features/authentication/domain/usecase/change_password_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/forgot_password_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/get_current_user_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/login_usecase.dart';
@@ -59,6 +60,7 @@ import 'package:dokkan/features/authentication/domain/usecase/validate_otp_useca
 import 'package:dokkan/features/authentication/domain/usecase/verify_email_usecase.dart';
 import 'package:dokkan/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:dokkan/features/add_product/presentation/cubit/add_product_cubit.dart';
+import 'package:dokkan/features/change_password/presentation/cubit/change_password_cubit.dart';
 import 'package:dokkan/features/cart/data/api/cart_api_service.dart';
 import 'package:dokkan/features/cart/data/data_source/cart_remote_data_source.dart';
 import 'package:dokkan/features/cart/data/repository/cart_repository_impl.dart';
@@ -98,6 +100,7 @@ import 'package:dokkan/features/product_details/domain/repository/product_detail
 import 'package:dokkan/features/product_details/domain/usecase/get_product_details_usecase.dart';
 import 'package:dokkan/features/product_details/presentation/cubit/product_details_cubit.dart';
 import 'package:dokkan/features/manage_products/presentation/cubit/manage_products_cubit.dart';
+import 'package:dokkan/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:dokkan/features/search/presentation/cubit/search_cubit.dart';
 import 'package:dokkan/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:get_it/get_it.dart';
@@ -172,6 +175,9 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerLazySingleton<ResetPasswordUseCase>(
     () => ResetPasswordUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<ChangePasswordUseCase>(
+    () => ChangePasswordUseCase(sl<AuthRepository>()),
   );
 
   sl.registerFactory<AuthCubit>(
@@ -480,6 +486,22 @@ Future<void> setupServiceLocator() async {
       updateProductUseCase: sl<UpdateProductUseCase>(),
       getCategoriesUseCase: sl<GetCategoriesUseCase>(),
       getCurrentUserUseCase: sl<GetCurrentUserUseCase>(),
+    ),
+  );
+
+  // ─── Change Password Feature ───────────────────────────────────────────────
+  sl.registerFactory<ChangePasswordCubit>(
+    () => ChangePasswordCubit(
+      changePasswordUseCase: sl<ChangePasswordUseCase>(),
+    ),
+  );
+
+  // ─── Profile Feature ───────────────────────────────────────────────────────
+  sl.registerFactory<ProfileCubit>(
+    () => ProfileCubit(
+      getCurrentUserUseCase: sl<GetCurrentUserUseCase>(),
+      storageService: sl<StorageService>(),
+      appAuthCubit: sl<AppAuthCubit>(),
     ),
   );
 }

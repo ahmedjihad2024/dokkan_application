@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/network/error_handler/failure.dart';
 import '../../../../core/shared/domain/model/user_profile_entity.dart';
+import '../../data/request/change_password_request.dart';
 import '../../data/request/forgot_password_request.dart';
 import '../../data/request/login_request.dart';
 import '../../data/request/register_request.dart';
@@ -20,4 +21,5 @@ abstract class AuthRepository {
   Future<Either<Failure, String>> forgotPassword(ForgotPasswordRequest request);
   Future<Either<Failure, String>> validateOtp(ValidateOtpRequest request);
   Future<Either<Failure, String>> resetPassword(ResetPasswordRequest request);
+  Future<Either<Failure, String>> changePassword(ChangePasswordRequest request);
 }

@@ -1,5 +1,6 @@
 import '../../../../core/network/base_response.dart';
 import '../api/auth_api_service.dart';
+import '../request/change_password_request.dart';
 import '../request/forgot_password_request.dart';
 import '../request/login_request.dart';
 import '../request/register_request.dart';
@@ -27,6 +28,8 @@ abstract class AuthRemoteDataSource {
   Future<BaseResponse> validateOtp(ValidateOtpRequest request);
 
   Future<BaseResponse> resetPassword(ResetPasswordRequest request);
+
+  Future<BaseResponse> changePassword(ChangePasswordRequest request);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -72,5 +75,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<BaseResponse> resetPassword(ResetPasswordRequest request) {
     return _apiService.resetPassword(request);
+  }
+
+  @override
+  Future<BaseResponse> changePassword(ChangePasswordRequest request) {
+    return _apiService.changePassword(request);
   }
 }
