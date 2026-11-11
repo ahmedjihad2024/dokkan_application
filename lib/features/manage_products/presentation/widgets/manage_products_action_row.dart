@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/theme_extensions.dart';
@@ -21,7 +20,6 @@ class ManageProductsActionRow extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 14.h),
       child: Row(
         children: [
-          // Published Items Count matching Figma 37:637 / 37:702
           Expanded(
             child: Text(
               '$itemCount Published Items',
@@ -32,13 +30,9 @@ class ManageProductsActionRow extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: context.textPrimaryColor,
               ),
-            )
-                .animate()
-                .fadeIn(duration: 400.ms)
-                .slideX(begin: -0.06, end: 0, curve: Curves.easeOutCubic),
+            ),
           ),
           10.horizontalSpace,
-          // Add Product Button matching Figma 37:638 / 37:703
           Material(
             color: Colors.transparent,
             child: InkWell(
@@ -73,15 +67,7 @@ class ManageProductsActionRow extends StatelessWidget {
                 ),
               ),
             ),
-          )
-              .animate()
-              .fadeIn(duration: 400.ms, delay: 60.ms)
-              .scale(
-                begin: const Offset(0.95, 0.95),
-                end: const Offset(1, 1),
-                duration: 400.ms,
-                curve: Curves.easeOutCubic,
-              ),
+          ),
         ],
       ),
     );

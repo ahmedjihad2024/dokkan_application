@@ -6,11 +6,13 @@ import '../../../../core/res/color_manager.dart';
 
 class AddProductSubmitButton extends StatelessWidget {
   final bool isLoading;
+  final bool isEditMode;
   final VoidCallback? onSubmit;
 
   const AddProductSubmitButton({
     super.key,
     this.isLoading = false,
+    this.isEditMode = false,
     this.onSubmit,
   });
 
@@ -43,7 +45,7 @@ class AddProductSubmitButton extends StatelessWidget {
                   ),
                 )
               : Text(
-                  'Save & Publish Product',
+                  isEditMode ? 'Save Changes' : 'Save & Publish Product',
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w700,

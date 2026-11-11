@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../di/dependency_injection.dart';
 import '../../../features/add_product/presentation/add_product_screen.dart';
+import '../../../features/add_product/presentation/cubit/add_product_cubit.dart';
 import '../../../features/authentication/presentation/cubit/auth_cubit.dart';
 import '../../../features/authentication/presentation/screens/create_new_password_screen.dart';
 import '../../../features/authentication/presentation/screens/enter_recovery_code_screen.dart';
@@ -20,6 +21,7 @@ import '../../../features/checkout/presentation/screens/payment_redirect_screen.
 import '../../../features/contact_us/presentation/contact_us_screen.dart';
 import '../../shared/domain/model/product_entity.dart';
 import '../../../features/main_layout/presentation/main_layout_screen.dart';
+import '../../../features/manage_products/presentation/cubit/manage_products_cubit.dart';
 import '../../../features/manage_products/presentation/manage_products_screen.dart';
 import '../../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../../features/order_status/presentation/payment_failed_screen.dart';
@@ -163,10 +165,21 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
 
       case Routes.manageProducts:
-        return MaterialPageRoute(builder: (_) => const ManageProductsScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<ManageProductsCubit>()..fetchProducts(),
+            child: const ManageProductsScreen(),
+          ),
+        );
 
       case Routes.addProduct:
-        return MaterialPageRoute(builder: (_) => const AddProductScreen());
+        final product = settings.arguments as ProductEntity?;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AddProductCubit>()..init(product),
+            child: AddProductScreen(product: product),
+          ),
+        );
 
       // ─── Search & Discover ─────────────────────────────────────
       case Routes.search:

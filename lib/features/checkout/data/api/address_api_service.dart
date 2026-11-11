@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dokkan/core/network/dio_factory.dart';
 
 import '../request/address_request.dart';
 
@@ -9,25 +10,26 @@ abstract class AddressApiService {
 }
 
 class AddressApiServiceImpl implements AddressApiService {
-  final Dio _dio;
+  final DioFactory _dio;
 
   AddressApiServiceImpl(this._dio);
 
   @override
   Future<Response> createAddress(AddressRequest request) {
-    return _dio.post(
+    return _dio.request(
       '/api/addresses',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
   }
 
   @override
   Future<Response> getAddresses() {
-    return _dio.get('/api/addresses');
+    return _dio.request('/api/addresses', method: RequestMethod.GET);
   }
 
   @override
   Future<Response> deleteAddress(String id) {
-    return _dio.delete('/api/addresses/$id');
+    return _dio.request('/api/addresses/$id', method: RequestMethod.DELETE);
   }
 }

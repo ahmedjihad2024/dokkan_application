@@ -6,9 +6,14 @@ import '../../../../core/res/gen/assets.gen.dart';
 import '../../../../core/widgets/buttons/app_icon_button.dart';
 
 class AddProductAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final bool isEditMode;
   final VoidCallback? onBack;
 
-  const AddProductAppBar({super.key, this.onBack});
+  const AddProductAppBar({
+    super.key,
+    this.isEditMode = false,
+    this.onBack,
+  });
 
   @override
   Size get preferredSize => Size.fromHeight(56.h);
@@ -42,7 +47,7 @@ class AddProductAppBar extends StatelessWidget implements PreferredSizeWidget {
             14.horizontalSpace,
             Expanded(
               child: Text(
-                'Add New Product',
+                isEditMode ? 'Edit Product' : 'Add New Product',
                 style: TextStyle(
                   fontSize: 17.sp,
                   fontWeight: FontWeight.w700,

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/extensions/navigation_extension.dart';
 import '../../../../core/res/router/routes.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
+import '../../../../core/widgets/feedback/app_error_widget.dart';
 import '../../../../core/widgets/feedback/custom_snackbar.dart';
 import '../../../../core/widgets/refresh/customized_smart_refresh.dart';
-import '../../data/models/manage_product_item.dart';
 import '../cubit/manage_products_cubit.dart';
 import '../cubit/manage_products_state.dart';
 import 'delete_product_dialog.dart';
 import 'manage_products_action_row.dart';
+import 'manage_products_empty_state.dart';
 import 'manage_products_list_view.dart';
+import 'manage_products_shimmer.dart';
 
-class ManageProductsBody extends StatefulWidget {
+class ManageProductsBody extends StatelessWidget {
   final VoidCallback? onAddProductPressed;
-  final ValueChanged<ManageProductItem>? onEditProduct;
+  final ValueChanged<ProductEntity>? onEditProduct;
 
   const ManageProductsBody({
     super.key,
@@ -21,89 +26,158 @@ class ManageProductsBody extends StatefulWidget {
     this.onEditProduct,
   });
 
-  @override
-  State<ManageProductsBody> createState() => _ManageProductsBodyState();
-}
-
-class _ManageProductsBodyState extends State<ManageProductsBody> {
-  final RefreshController _refreshController = RefreshController();
-
-  @override
-  void dispose() {
-    _refreshController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleRefresh() async {
-    await context.read<ManageProductsCubit>().refreshProducts();
-    if (mounted) {
-      _refreshController.refreshCompleted(resetFooterState: true);
+  Future<void> _handleDelete(
+    BuildContext context,
+    ManageProductsCubit cubit,
+    ProductEntity product,
+  ) async {
+    final confirmed = await DeleteProductDialog.show(context, product);
+    if (confirmed == true && context.mounted) {
+      cubit.deleteProduct(product.id);
     }
   }
 
-  Future<void> _handleLoading() async {
-    // Wait for 1 second timer, then mark loading complete as success
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      _refreshController.loadComplete();
+  Future<void> _handleEdit(
+    BuildContext context,
+    ManageProductsCubit cubit,
+    ProductEntity product,
+  ) async {
+    if (onEditProduct != null) {
+      onEditProduct!(product);
+      return;
+    }
+    final result = await Navigator.pushNamed(
+      context,
+      Routes.addProduct,
+      arguments: product,
+    );
+    if (result == true && context.mounted) {
+      cubit.fetchProducts(isRefresh: true);
     }
   }
 
-  Future<void> _handleDelete(ManageProductItem item) async {
-    final confirmed = await DeleteProductDialog.show(context, item);
-    if (confirmed == true && mounted) {
-      context.read<ManageProductsCubit>().deleteProduct(item);
-      CustomSnackBar.showSuccess(
-        context,
-        'Product deleted successfully',
-        isTop: true,
-      );
+  Future<void> _handleAdd(
+    BuildContext context,
+    ManageProductsCubit cubit,
+  ) async {
+    if (onAddProductPressed != null) {
+      onAddProductPressed!();
+      return;
     }
-  }
-
-  void _handleEdit(ManageProductItem item) {
-    if (widget.onEditProduct != null) {
-      widget.onEditProduct!(item);
-    } else {
-      CustomSnackBar.showSuccess(context, 'Edit product: ${item.name}');
-    }
-  }
-
-  void _handleAdd() {
-    if (widget.onAddProductPressed != null) {
-      widget.onAddProductPressed!();
-    } else {
-      Navigator.pushNamed(context, Routes.addProduct);
+    final result = await Navigator.pushNamed(context, Routes.addProduct);
+    if (result == true && context.mounted) {
+      cubit.fetchProducts(isRefresh: true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ManageProductsCubit, ManageProductsState>(
+    final cubit = context.read<ManageProductsCubit>();
+
+    return BlocConsumer<ManageProductsCubit, ManageProductsState>(
+      listenWhen: (_, current) => current is ManageProductsActionState,
+      listener: (context, state) {
+        if (state is ManageProductsActionSuccess) {
+          CustomSnackBar.showSuccess(context, state.message, isTop: true);
+        } else if (state is ManageProductsActionError) {
+          CustomSnackBar.showError(context, state.message, isTop: true);
+        }
+      },
+      buildWhen: (_, current) => current is! ManageProductsActionState,
       builder: (context, state) {
+        final totalCount = state is ManageProductsActive ? state.totalCount : 0;
+
         return Column(
           children: [
-            // Action Row matching Figma 37:636 / 37:701
             ManageProductsActionRow(
-              itemCount: state.products.length,
-              onAddProduct: _handleAdd,
+              itemCount: totalCount,
+              onAddProduct: () => _handleAdd(context, cubit),
             ),
-
-            // Product List Container with Smart Pull-to-Refresh & Load More
             Expanded(
-              child: ManageProductsListView(
-                products: state.products,
-                refreshController: _refreshController,
-                onRefresh: _handleRefresh,
-                onLoading: _handleLoading,
-                onEdit: _handleEdit,
-                onDelete: _handleDelete,
-                onAddProduct: _handleAdd,
+              child: _ManageProductsContent(
+                cubit: cubit,
+                state: state,
+                onProductTap: (product) => context.pushNamed(
+                  Routes.productDetails,
+                  arguments: product.id,
+                ),
+                onEdit: (product) => _handleEdit(context, cubit, product),
+                onDelete: (product) => _handleDelete(context, cubit, product),
+                onAddProduct: () => _handleAdd(context, cubit),
               ),
             ),
           ],
         );
       },
     );
+  }
+}
+
+class _ManageProductsContent extends StatelessWidget {
+  final ManageProductsCubit cubit;
+  final ManageProductsState state;
+  final ValueChanged<ProductEntity> onProductTap;
+  final ValueChanged<ProductEntity> onEdit;
+  final ValueChanged<ProductEntity> onDelete;
+  final VoidCallback onAddProduct;
+
+  const _ManageProductsContent({
+    required this.cubit,
+    required this.state,
+    required this.onProductTap,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onAddProduct,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (state is ManageProductsInitial || state is ManageProductsLoading) {
+      return const ManageProductsShimmer();
+    }
+
+    if (state is ManageProductsError) {
+      final errorState = state as ManageProductsError;
+      return AppErrorWidget(
+        message: errorState.message,
+        onRetry: () => cubit.fetchProducts(),
+      );
+    }
+
+    if (state is ManageProductsEmpty) {
+      return CustomizedSmartRefresh(
+        controller: cubit.refreshController,
+        onRefresh: () => cubit.fetchProducts(isRefresh: true),
+        enableRefresh: true,
+        enableLoading: false,
+        child: ListView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
+          children: [
+            ManageProductsEmptyState(onAddProduct: onAddProduct),
+          ],
+        ),
+      );
+    }
+
+    if (state is ManageProductsActive) {
+      final activeState = state as ManageProductsActive;
+
+      return ManageProductsListView(
+        products: activeState.products,
+        deletingProductId: activeState.deletingProductId,
+        refreshController: cubit.refreshController,
+        hasNextPage: activeState.hasNextPage,
+        onRefresh: () => cubit.fetchProducts(isRefresh: true),
+        onLoading: cubit.loadMoreProducts,
+        onProductTap: onProductTap,
+        onEdit: onEdit,
+        onDelete: onDelete,
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }

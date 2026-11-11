@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dokkan/core/network/dio_factory.dart';
 
 import '../request/edit_address_request.dart';
 
@@ -9,29 +10,30 @@ abstract class EditAddressApiService {
 }
 
 class EditAddressApiServiceImpl implements EditAddressApiService {
-  final Dio _dio;
+  final DioFactory _dio;
 
   EditAddressApiServiceImpl(this._dio);
 
   @override
   Future<Response> updateAddress(String id, EditAddressRequest request) {
-    return _dio.put(
+    return _dio.request(
       '/api/addresses/$id',
-      data: request.toJson(),
+      method: RequestMethod.PUT,
+      body: request.toJson(),
     );
   }
 
   @override
   Future<Response> getAddressById(String id) {
-    return _dio.get('/api/addresses/$id');
+    return _dio.request('/api/addresses/$id', method: RequestMethod.GET);
   }
 
   @override
   Future<Response> createAddress(EditAddressRequest request) {
-    return _dio.post(
+    return _dio.request(
       '/api/addresses',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
   }
 }
-

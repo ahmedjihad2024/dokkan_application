@@ -1,30 +1,78 @@
-import '../../../../core/enums/request_state.dart';
-import '../../data/models/manage_product_item.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
 
-class ManageProductsState {
-  final ReqState status;
-  final List<ManageProductItem> products;
-  final String? errorMessage;
-  final bool isRefreshing;
+abstract class ManageProductsState {
+  const ManageProductsState();
+}
 
-  const ManageProductsState({
-    this.status = ReqState.idle,
-    this.products = const [],
-    this.errorMessage,
-    this.isRefreshing = false,
+class ManageProductsInitial extends ManageProductsState {
+  const ManageProductsInitial();
+}
+
+class ManageProductsLoading extends ManageProductsState {
+  const ManageProductsLoading();
+}
+
+class ManageProductsActive extends ManageProductsState {
+  final List<ProductEntity> products;
+  final int page;
+  final int totalCount;
+  final bool hasNextPage;
+  final bool isLoadingMore;
+  final String? deletingProductId;
+
+  const ManageProductsActive({
+    required this.products,
+    required this.page,
+    required this.totalCount,
+    required this.hasNextPage,
+    this.isLoadingMore = false,
+    this.deletingProductId,
   });
 
-  ManageProductsState copyWith({
-    ReqState? status,
-    List<ManageProductItem>? products,
-    String? errorMessage,
-    bool? isRefreshing,
+  bool isDeleting(String id) => deletingProductId == id;
+
+  ManageProductsActive copyWith({
+    List<ProductEntity>? products,
+    int? page,
+    int? totalCount,
+    bool? hasNextPage,
+    bool? isLoadingMore,
+    String? deletingProductId,
+    bool clearDeletingProductId = false,
   }) {
-    return ManageProductsState(
-      status: status ?? this.status,
+    return ManageProductsActive(
       products: products ?? this.products,
-      errorMessage: errorMessage ?? this.errorMessage,
-      isRefreshing: isRefreshing ?? this.isRefreshing,
+      page: page ?? this.page,
+      totalCount: totalCount ?? this.totalCount,
+      hasNextPage: hasNextPage ?? this.hasNextPage,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      deletingProductId: clearDeletingProductId
+          ? null
+          : (deletingProductId ?? this.deletingProductId),
     );
   }
+}
+
+class ManageProductsEmpty extends ManageProductsState {
+  const ManageProductsEmpty();
+}
+
+class ManageProductsError extends ManageProductsState {
+  final String message;
+
+  const ManageProductsError({required this.message});
+}
+
+abstract class ManageProductsActionState extends ManageProductsState {
+  final String message;
+
+  const ManageProductsActionState(this.message);
+}
+
+class ManageProductsActionSuccess extends ManageProductsActionState {
+  const ManageProductsActionSuccess(super.message);
+}
+
+class ManageProductsActionError extends ManageProductsActionState {
+  const ManageProductsActionError(super.message);
 }

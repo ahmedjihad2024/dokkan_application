@@ -4,18 +4,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/extensions/theme_extensions.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/gen/assets.gen.dart';
-import '../../data/models/manage_product_item.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
 
 class DeleteProductDialog extends StatelessWidget {
-  final ManageProductItem item;
+  final ProductEntity product;
 
-  const DeleteProductDialog({super.key, required this.item});
+  const DeleteProductDialog({super.key, required this.product});
 
-  static Future<bool?> show(BuildContext context, ManageProductItem item) {
+  static Future<bool?> show(BuildContext context, ProductEntity product) {
     return showDialog<bool>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.55),
-      builder: (context) => DeleteProductDialog(item: item),
+      builder: (context) => DeleteProductDialog(product: product),
     );
   }
 
@@ -32,7 +32,7 @@ class DeleteProductDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Warning Trash Circle matching Figma 37:902 / 37:931
+            // Warning Trash Circle
             Container(
               width: 48.w,
               height: 48.w,
@@ -51,7 +51,7 @@ class DeleteProductDialog extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.h),
-            // Title matching Figma 37:919 / 37:948
+            // Title
             Text(
               'Delete Product?',
               style: TextStyle(
@@ -64,7 +64,7 @@ class DeleteProductDialog extends StatelessWidget {
             SizedBox(height: 8.h),
             // Message Description
             Text(
-              "Are you sure you want to delete '${item.name}'? This action cannot be undone.",
+              "Are you sure you want to delete '${product.name}'? This action cannot be undone.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12.sp,
@@ -74,7 +74,7 @@ class DeleteProductDialog extends StatelessWidget {
               ),
             ),
             SizedBox(height: 22.h),
-            // Dialog Action Buttons matching Figma 37:902 / 37:931
+            // Dialog Action Buttons
             Row(
               children: [
                 Expanded(

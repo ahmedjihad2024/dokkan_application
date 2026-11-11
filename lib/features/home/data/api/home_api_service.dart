@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dokkan/core/network/dio_factory.dart';
 
 import '../request/offers_request.dart';
 import '../response/offers_response.dart';
@@ -8,15 +8,16 @@ abstract class HomeApiService {
 }
 
 class HomeApiServiceImpl implements HomeApiService {
-  final Dio _dio;
+  final DioFactory _dio;
 
   HomeApiServiceImpl(this._dio);
 
   @override
   Future<OffersResponse> getOffers(OffersRequest request) async {
-    final response = await _dio.get(
+    final response = await _dio.request(
       '/api/offers',
-      data: request.toQueryParameters(),
+      method: RequestMethod.GET,
+      body: request.toQueryParameters(),
     );
 
     return OffersResponse.fromJson(
@@ -24,4 +25,3 @@ class HomeApiServiceImpl implements HomeApiService {
     );
   }
 }
-

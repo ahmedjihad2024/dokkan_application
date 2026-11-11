@@ -7,6 +7,7 @@ import '../request/resend_otp_request.dart';
 import '../request/reset_password_request.dart';
 import '../request/validate_otp_request.dart';
 import '../request/verify_email_request.dart';
+import '../response/current_user_response.dart';
 import '../response/login_response.dart';
 import '../response/register_response.dart';
 
@@ -14,6 +15,8 @@ abstract class AuthRemoteDataSource {
   Future<LoginResponse> login(LoginRequest request);
 
   Future<RegisterResponse> register(RegisterRequest request);
+
+  Future<CurrentUserResponse> getCurrentUser();
 
   Future<BaseResponse> verifyEmail(VerifyEmailRequest request);
 
@@ -39,6 +42,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<RegisterResponse> register(RegisterRequest request) {
     return _apiService.register(request);
+  }
+
+  @override
+  Future<CurrentUserResponse> getCurrentUser() {
+    return _apiService.getCurrentUser();
   }
 
   @override

@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dokkan/core/network/dio_factory.dart';
 
 import '../request/reviews_request.dart';
 import '../response/reviews_response.dart';
@@ -8,7 +8,7 @@ abstract class ReviewApiService {
 }
 
 class ReviewApiServiceImpl implements ReviewApiService {
-  final Dio _dio;
+  final DioFactory _dio;
 
   ReviewApiServiceImpl(this._dio);
 
@@ -17,9 +17,10 @@ class ReviewApiServiceImpl implements ReviewApiService {
     String productId,
     ReviewsRequest request,
   ) async {
-    final response = await _dio.get(
+    final response = await _dio.request(
       '/api/reviews/$productId',
-      data: request.toJson(),
+      method: RequestMethod.GET,
+      body: request.toJson(),
     );
 
     return ReviewsResponse.fromJson(
@@ -27,4 +28,3 @@ class ReviewApiServiceImpl implements ReviewApiService {
     );
   }
 }
-

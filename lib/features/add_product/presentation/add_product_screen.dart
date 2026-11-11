@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/extensions/theme_extensions.dart';
-import 'cubit/add_product_cubit.dart';
+import '../../../core/shared/domain/model/product_entity.dart';
 import 'widgets/add_product_app_bar.dart';
 import 'widgets/add_product_body.dart';
 
 class AddProductScreen extends StatelessWidget {
+  final ProductEntity? product;
   final VoidCallback? onProductPublished;
 
-  const AddProductScreen({super.key, this.onProductPublished});
+  const AddProductScreen({
+    super.key,
+    this.product,
+    this.onProductPublished,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AddProductCubit(),
-      child: Scaffold(
-        backgroundColor: context.scaffoldBackgroundColor,
-        appBar: const AddProductAppBar(),
-        body: AddProductBody(onProductPublished: onProductPublished),
-      ),
+    return Scaffold(
+      backgroundColor: context.scaffoldBackgroundColor,
+      appBar: AddProductAppBar(isEditMode: product != null),
+      body: AddProductBody(onProductPublished: onProductPublished),
     );
   }
 }

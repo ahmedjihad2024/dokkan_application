@@ -110,11 +110,20 @@ class ProductItemResponse {
       productCode: json['productCode'] as String?,
       name: json['name'] as String? ?? '',
       description: json['description'] as String?,
-      arabicName: json['arabicName'] as String?,
-      arabicDescription: json['arabicDescription'] as String?,
+      arabicName: (json['arabicName'] ?? json['nameArabic']) as String?,
+      arabicDescription:
+          (json['arabicDescription'] ?? json['descriptionArabic']) as String?,
       coverPictureUrl: json['coverPictureUrl'] as String?,
-      productPictures: (json['productPictures'] as List<dynamic>?)
-          ?.map((e) => e.toString())
+      productPictures: ((json['productPictures'] ?? json['pictures'])
+              as List<dynamic>?)
+          ?.map(
+            (e) =>
+                e is Map<String, dynamic>
+                    ? (e['url'] ?? e['pictureUrl'] ?? e['imageUrl'] ?? '')
+                        .toString()
+                    : e.toString(),
+          )
+          .where((url) => url.trim().isNotEmpty)
           .toList(),
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       stock: json['stock'] as int? ?? 0,
@@ -125,7 +134,13 @@ class ProductItemResponse {
       discountPercentage: (json['discountPercentage'] as num?)?.toInt() ?? 0,
       sellerId: json['sellerId'] as String?,
       categories: (json['categories'] as List<dynamic>?)
-              ?.map((e) => e.toString())
+              ?.map(
+                (e) =>
+                    e is Map<String, dynamic>
+                        ? (e['name'] ?? '').toString()
+                        : e.toString(),
+              )
+              .where((c) => c.trim().isNotEmpty)
               .toList() ??
           const [],
     );

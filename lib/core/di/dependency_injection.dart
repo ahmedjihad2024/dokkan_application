@@ -7,12 +7,15 @@ import 'package:dokkan/core/services/storage_services/secure_storage_service.dar
 import 'package:dokkan/core/services/storage_services/shared_prefrences_service.dart';
 import 'package:dokkan/core/services/storage_services/storage_service.dart';
 import 'package:dokkan/core/shared/data/api/add_to_cart_api_service.dart';
+import 'package:dokkan/core/shared/data/api/category_api_service.dart';
 import 'package:dokkan/core/shared/data/api/product_api_service.dart';
 import 'package:dokkan/core/shared/data/api/review_api_service.dart';
 import 'package:dokkan/core/shared/data/data_source/add_to_cart_remote_data_source.dart';
+import 'package:dokkan/core/shared/data/data_source/category_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/data_source/product_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/data_source/review_remote_data_source.dart';
 import 'package:dokkan/core/shared/data/repository/add_to_cart_repository_impl.dart';
+import 'package:dokkan/core/shared/data/repository/category_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/product_repository_impl.dart';
 import 'package:dokkan/core/shared/data/repository/review_repository_impl.dart';
 import 'package:dokkan/core/shared/data/api/refresh_token_api_service.dart';
@@ -21,11 +24,16 @@ import 'package:dokkan/core/shared/data/repository/refresh_token_repository_impl
 import 'package:dokkan/core/shared/domain/repository/refresh_token_repository.dart';
 import 'package:dokkan/core/shared/domain/usecase/refresh_token_usecase.dart';
 import 'package:dokkan/core/shared/domain/repository/add_to_cart_repository.dart';
+import 'package:dokkan/core/shared/domain/repository/category_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/product_repository.dart';
 import 'package:dokkan/core/shared/domain/repository/review_repository.dart';
 import 'package:dokkan/core/shared/domain/usecase/add_to_cart_usecase.dart';
+import 'package:dokkan/core/shared/domain/usecase/create_product_usecase.dart';
+import 'package:dokkan/core/shared/domain/usecase/delete_product_usecase.dart';
+import 'package:dokkan/core/shared/domain/usecase/get_categories_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_products_usecase.dart';
 import 'package:dokkan/core/shared/domain/usecase/get_reviews_usecase.dart';
+import 'package:dokkan/core/shared/domain/usecase/update_product_usecase.dart';
 import 'package:dokkan/features/favorites/data/database/favorite_db_service.dart';
 import 'package:dokkan/features/favorites/data/data_source/favorite_local_data_source.dart';
 import 'package:dokkan/features/favorites/data/repository/favorites_repository_impl.dart';
@@ -42,6 +50,7 @@ import 'package:dokkan/features/authentication/data/data_source/auth_remote_data
 import 'package:dokkan/features/authentication/data/repository/auth_repository_impl.dart';
 import 'package:dokkan/features/authentication/domain/repository/auth_repository.dart';
 import 'package:dokkan/features/authentication/domain/usecase/forgot_password_usecase.dart';
+import 'package:dokkan/features/authentication/domain/usecase/get_current_user_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/login_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/register_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/resend_otp_usecase.dart';
@@ -49,6 +58,7 @@ import 'package:dokkan/features/authentication/domain/usecase/reset_password_use
 import 'package:dokkan/features/authentication/domain/usecase/validate_otp_usecase.dart';
 import 'package:dokkan/features/authentication/domain/usecase/verify_email_usecase.dart';
 import 'package:dokkan/features/authentication/presentation/cubit/auth_cubit.dart';
+import 'package:dokkan/features/add_product/presentation/cubit/add_product_cubit.dart';
 import 'package:dokkan/features/cart/data/api/cart_api_service.dart';
 import 'package:dokkan/features/cart/data/data_source/cart_remote_data_source.dart';
 import 'package:dokkan/features/cart/data/repository/cart_repository_impl.dart';
@@ -87,6 +97,7 @@ import 'package:dokkan/features/product_details/data/repository/product_details_
 import 'package:dokkan/features/product_details/domain/repository/product_details_repository.dart';
 import 'package:dokkan/features/product_details/domain/usecase/get_product_details_usecase.dart';
 import 'package:dokkan/features/product_details/presentation/cubit/product_details_cubit.dart';
+import 'package:dokkan/features/manage_products/presentation/cubit/manage_products_cubit.dart';
 import 'package:dokkan/features/search/presentation/cubit/search_cubit.dart';
 import 'package:dokkan/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:get_it/get_it.dart';
@@ -127,7 +138,7 @@ Future<void> setupServiceLocator() async {
 
   // ─── Authentication Feature ─────────────────────────────────────────────────
   sl.registerLazySingleton<AuthApiService>(
-    () => AuthApiServiceImpl(sl<Dio>()),
+    () => AuthApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl<AuthApiService>()),
@@ -143,6 +154,9 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerLazySingleton<RegisterUseCase>(
     () => RegisterUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<GetCurrentUserUseCase>(
+    () => GetCurrentUserUseCase(sl<AuthRepository>()),
   );
   sl.registerLazySingleton<VerifyEmailUseCase>(
     () => VerifyEmailUseCase(sl<AuthRepository>()),
@@ -186,10 +200,33 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<GetProductsUseCase>(
     () => GetProductsUseCase(sl<ProductRepository>()),
   );
+  sl.registerLazySingleton<CreateProductUseCase>(
+    () => CreateProductUseCase(sl<ProductRepository>()),
+  );
+  sl.registerLazySingleton<UpdateProductUseCase>(
+    () => UpdateProductUseCase(sl<ProductRepository>()),
+  );
+  sl.registerLazySingleton<DeleteProductUseCase>(
+    () => DeleteProductUseCase(sl<ProductRepository>()),
+  );
+
+  // ─── Shared Categories Feature ──────────────────────────────────────────────
+  sl.registerLazySingleton<CategoryApiService>(
+    () => CategoryApiServiceImpl(sl<DioFactory>()),
+  );
+  sl.registerLazySingleton<CategoryRemoteDataSource>(
+    () => CategoryRemoteDataSourceImpl(sl<CategoryApiService>()),
+  );
+  sl.registerLazySingleton<CategoryRepository>(
+    () => CategoryRepositoryImpl(sl<CategoryRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetCategoriesUseCase>(
+    () => GetCategoriesUseCase(sl<CategoryRepository>()),
+  );
 
   // ─── Shared Reviews Feature ─────────────────────────────────────────────────
   sl.registerLazySingleton<ReviewApiService>(
-    () => ReviewApiServiceImpl(sl<Dio>()),
+    () => ReviewApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<ReviewRemoteDataSource>(
     () => ReviewRemoteDataSourceImpl(sl<ReviewApiService>()),
@@ -203,7 +240,7 @@ Future<void> setupServiceLocator() async {
 
   // ─── Shared Add To Cart Feature ─────────────────────────────────────────────
   sl.registerLazySingleton<AddToCartApiService>(
-    () => AddToCartApiServiceImpl(sl<Dio>()),
+    () => AddToCartApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<AddToCartRemoteDataSource>(
     () => AddToCartRemoteDataSourceImpl(sl<AddToCartApiService>()),
@@ -274,7 +311,7 @@ Future<void> setupServiceLocator() async {
 
   // ─── Cart Feature ───────────────────────────────────────────────────────────
   sl.registerLazySingleton<CartApiService>(
-    () => CartApiServiceImpl(sl<Dio>()),
+    () => CartApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<CartRemoteDataSource>(
     () => CartRemoteDataSourceImpl(sl<CartApiService>()),
@@ -308,7 +345,7 @@ Future<void> setupServiceLocator() async {
 
   // ─── Home Feature ───────────────────────────────────────────────────────────
   sl.registerLazySingleton<HomeApiService>(
-    () => HomeApiServiceImpl(sl<Dio>()),
+    () => HomeApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(sl<HomeApiService>()),
@@ -330,7 +367,7 @@ Future<void> setupServiceLocator() async {
 
   // ─── Product Details Feature ───────────────────────────────────────────────
   sl.registerLazySingleton<ProductDetailsApiService>(
-    () => ProductDetailsApiServiceImpl(sl<Dio>()),
+    () => ProductDetailsApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<ProductDetailsRemoteDataSource>(
     () => ProductDetailsRemoteDataSourceImpl(sl<ProductDetailsApiService>()),
@@ -351,7 +388,7 @@ Future<void> setupServiceLocator() async {
 
   // ─── Checkout / Addresses Feature ──────────────────────────────────────────
   sl.registerLazySingleton<AddressApiService>(
-    () => AddressApiServiceImpl(sl<Dio>()),
+    () => AddressApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<AddressRemoteDataSource>(
     () => AddressRemoteDataSourceImpl(sl<AddressApiService>()),
@@ -379,7 +416,7 @@ Future<void> setupServiceLocator() async {
 
   // ─── Edit Address Feature ──────────────────────────────────────────────────
   sl.registerLazySingleton<EditAddressApiService>(
-    () => EditAddressApiServiceImpl(sl<Dio>()),
+    () => EditAddressApiServiceImpl(sl<DioFactory>()),
   );
   sl.registerLazySingleton<EditAddressRemoteDataSource>(
     () => EditAddressRemoteDataSourceImpl(sl<EditAddressApiService>()),
@@ -425,6 +462,24 @@ Future<void> setupServiceLocator() async {
       addToCartUseCase: sl<AddToCartUseCase>(),
       isFavoriteUseCase: sl<IsFavoriteUseCase>(),
       toggleFavoriteUseCase: sl<ToggleFavoriteUseCase>(),
+    ),
+  );
+
+  // ─── Manage Products Feature ───────────────────────────────────────────────
+  sl.registerFactory<ManageProductsCubit>(
+    () => ManageProductsCubit(
+      getProductsUseCase: sl<GetProductsUseCase>(),
+      deleteProductUseCase: sl<DeleteProductUseCase>(),
+    ),
+  );
+
+  // ─── Add / Edit Product Feature ────────────────────────────────────────────
+  sl.registerFactory<AddProductCubit>(
+    () => AddProductCubit(
+      createProductUseCase: sl<CreateProductUseCase>(),
+      updateProductUseCase: sl<UpdateProductUseCase>(),
+      getCategoriesUseCase: sl<GetCategoriesUseCase>(),
+      getCurrentUserUseCase: sl<GetCurrentUserUseCase>(),
     ),
   );
 }

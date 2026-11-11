@@ -1,67 +1,83 @@
+import 'package:flutter/material.dart';
+
 import '../../../../core/enums/request_state.dart';
+import '../../../../core/shared/domain/model/category_entity.dart';
+import '../../../../core/shared/domain/model/product_entity.dart';
+
+class GalleryUrlEntry {
+  final int id;
+  final TextEditingController controller;
+
+  const GalleryUrlEntry({
+    required this.id,
+    required this.controller,
+  });
+}
 
 class AddProductState {
   final ReqState status;
-  final String? coverImagePath;
-  final List<String> galleryImages;
-  final String productNameEn;
-  final String productNameAr;
-  final String descriptionEn;
-  final String descriptionAr;
-  final String unitPrice;
-  final String discountRate;
-  final String stockQuantity;
-  final String weightFinish;
-  final Set<String> selectedCategories;
+  final bool isEditMode;
+  final ReqState categoriesStatus;
+  final List<CategoryEntity> availableCategories;
+  final String? categoriesError;
+  final Set<String> selectedCategoryIds;
+  final ReqState sellerStatus;
+  final String? sellerId;
+  final String? sellerError;
+  final List<GalleryUrlEntry> galleryEntries;
+  final ProductEntity? savedProduct;
   final String? errorMessage;
+  final int feedbackCount;
 
   const AddProductState({
     this.status = ReqState.idle,
-    this.coverImagePath,
-    this.galleryImages = const [],
-    this.productNameEn = '',
-    this.productNameAr = '',
-    this.descriptionEn = '',
-    this.descriptionAr = '',
-    this.unitPrice = '',
-    this.discountRate = '',
-    this.stockQuantity = '',
-    this.weightFinish = '',
-    this.selectedCategories = const {'Watches'},
+    this.isEditMode = false,
+    this.categoriesStatus = ReqState.idle,
+    this.availableCategories = const [],
+    this.categoriesError,
+    this.selectedCategoryIds = const {},
+    this.sellerStatus = ReqState.idle,
+    this.sellerId,
+    this.sellerError,
+    this.galleryEntries = const [],
+    this.savedProduct,
     this.errorMessage,
+    this.feedbackCount = 0,
   });
 
   AddProductState copyWith({
     ReqState? status,
-    String? coverImagePath,
-    bool clearCoverImage = false,
-    List<String>? galleryImages,
-    String? productNameEn,
-    String? productNameAr,
-    String? descriptionEn,
-    String? descriptionAr,
-    String? unitPrice,
-    String? discountRate,
-    String? stockQuantity,
-    String? weightFinish,
-    Set<String>? selectedCategories,
+    bool? isEditMode,
+    ReqState? categoriesStatus,
+    List<CategoryEntity>? availableCategories,
+    String? categoriesError,
+    bool clearCategoriesError = false,
+    Set<String>? selectedCategoryIds,
+    ReqState? sellerStatus,
+    String? sellerId,
+    String? sellerError,
+    bool clearSellerError = false,
+    List<GalleryUrlEntry>? galleryEntries,
+    ProductEntity? savedProduct,
     String? errorMessage,
+    bool clearError = false,
+    int? feedbackCount,
   }) {
     return AddProductState(
       status: status ?? this.status,
-      coverImagePath:
-          clearCoverImage ? null : (coverImagePath ?? this.coverImagePath),
-      galleryImages: galleryImages ?? this.galleryImages,
-      productNameEn: productNameEn ?? this.productNameEn,
-      productNameAr: productNameAr ?? this.productNameAr,
-      descriptionEn: descriptionEn ?? this.descriptionEn,
-      descriptionAr: descriptionAr ?? this.descriptionAr,
-      unitPrice: unitPrice ?? this.unitPrice,
-      discountRate: discountRate ?? this.discountRate,
-      stockQuantity: stockQuantity ?? this.stockQuantity,
-      weightFinish: weightFinish ?? this.weightFinish,
-      selectedCategories: selectedCategories ?? this.selectedCategories,
-      errorMessage: errorMessage ?? this.errorMessage,
+      isEditMode: isEditMode ?? this.isEditMode,
+      categoriesStatus: categoriesStatus ?? this.categoriesStatus,
+      availableCategories: availableCategories ?? this.availableCategories,
+      categoriesError:
+          clearCategoriesError ? null : (categoriesError ?? this.categoriesError),
+      selectedCategoryIds: selectedCategoryIds ?? this.selectedCategoryIds,
+      sellerStatus: sellerStatus ?? this.sellerStatus,
+      sellerId: sellerId ?? this.sellerId,
+      sellerError: clearSellerError ? null : (sellerError ?? this.sellerError),
+      galleryEntries: galleryEntries ?? this.galleryEntries,
+      savedProduct: savedProduct ?? this.savedProduct,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      feedbackCount: feedbackCount ?? this.feedbackCount,
     );
   }
 }

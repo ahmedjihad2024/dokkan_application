@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dokkan/core/network/dio_factory.dart';
 
 import '../request/add_to_cart_request.dart';
 
@@ -7,16 +8,16 @@ abstract class AddToCartApiService {
 }
 
 class AddToCartApiServiceImpl implements AddToCartApiService {
-  final Dio _dio;
+  final DioFactory _dio;
 
   AddToCartApiServiceImpl(this._dio);
 
   @override
   Future<Response> addToCart(AddToCartRequest request) {
-    return _dio.post(
+    return _dio.request(
       '/api/cart/items',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
   }
 }
-

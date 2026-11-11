@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dokkan/core/network/dio_factory.dart';
 import 'package:dokkan/features/authentication/data/request/verify_email_request.dart';
 
 import '../../../../core/network/base_response.dart';
@@ -8,6 +8,7 @@ import '../request/register_request.dart';
 import '../request/resend_otp_request.dart';
 import '../request/reset_password_request.dart';
 import '../request/validate_otp_request.dart';
+import '../response/current_user_response.dart';
 import '../response/login_response.dart';
 import '../response/register_response.dart';
 
@@ -15,6 +16,8 @@ abstract class AuthApiService {
   Future<LoginResponse> login(LoginRequest request);
 
   Future<RegisterResponse> register(RegisterRequest request);
+
+  Future<CurrentUserResponse> getCurrentUser();
 
   Future<BaseResponse> verifyEmail(VerifyEmailRequest request);
 
@@ -28,7 +31,7 @@ abstract class AuthApiService {
 }
 
 class AuthApiServiceImpl implements AuthApiService {
-  final Dio _dio;
+  final DioFactory _dio;
 
   AuthApiServiceImpl(this._dio);
 
@@ -44,9 +47,10 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<LoginResponse> login(LoginRequest request) async {
-    final response = await _dio.post(
+    final response = await _dio.request(
       '/api/auth/login',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
 
     return LoginResponse.fromJson(
@@ -56,19 +60,33 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<RegisterResponse> register(RegisterRequest request) async {
-    final response = await _dio.post(
+    final response = await _dio.request(
       '/api/auth/register',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
 
     return RegisterResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
+  Future<CurrentUserResponse> getCurrentUser() async {
+    final response = await _dio.request(
+      '/api/auth/me',
+      method: RequestMethod.GET,
+    );
+
+    return CurrentUserResponse.fromJson(
+      response.data as Map<String, dynamic>,
+    );
+  }
+
+  @override
   Future<BaseResponse> verifyEmail(VerifyEmailRequest request) async {
-    final response = await _dio.post(
+    final response = await _dio.request(
       '/api/auth/verify-email',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
 
     return _parseBaseResponse(response.data);
@@ -76,9 +94,10 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<BaseResponse> resendOtp(ResendOtpRequest request) async {
-    final response = await _dio.post(
+    final response = await _dio.request(
       '/api/auth/resend-otp',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
 
     return _parseBaseResponse(response.data);
@@ -86,9 +105,10 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<BaseResponse> forgotPassword(ForgotPasswordRequest request) async {
-    final response = await _dio.post(
+    final response = await _dio.request(
       '/api/auth/forgot-password',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
 
     return _parseBaseResponse(
@@ -99,9 +119,10 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<BaseResponse> validateOtp(ValidateOtpRequest request) async {
-    final response = await _dio.post(
+    final response = await _dio.request(
       '/api/auth/validate-otp',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
 
     return _parseBaseResponse(
@@ -112,9 +133,10 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<BaseResponse> resetPassword(ResetPasswordRequest request) async {
-    final response = await _dio.post(
+    final response = await _dio.request(
       '/api/auth/reset-password',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
 
     return _parseBaseResponse(

@@ -6,9 +6,11 @@ import '../../../../core/network/base_response.dart';
 import '../../../../core/network/error_handler/error_handler.dart';
 import '../../../../core/network/error_handler/failure.dart';
 import '../../../../core/services/storage_services/storage_service.dart';
+import '../../../../core/shared/domain/model/user_profile_entity.dart';
 import '../../domain/model/auth_token_model.dart';
 import '../../domain/repository/auth_repository.dart';
 import '../data_source/auth_remote_data_source.dart';
+import '../mapper/current_user_mapper.dart';
 import '../mapper/login_mapper.dart';
 import '../request/forgot_password_request.dart';
 import '../request/login_request.dart';
@@ -17,6 +19,7 @@ import '../request/resend_otp_request.dart';
 import '../request/reset_password_request.dart';
 import '../request/validate_otp_request.dart';
 import '../request/verify_email_request.dart';
+import '../response/current_user_response.dart';
 import '../response/login_response.dart';
 import '../response/register_response.dart';
 
@@ -55,6 +58,14 @@ class AuthRepositoryImpl implements AuthRepository {
     return fastHandler<RegisterResponse, String>(
       request: () => _remoteDataSource.register(request),
       mapper: (response) => response.message,
+    );
+  }
+
+  @override
+  Future<Either<Failure, UserProfileEntity>> getCurrentUser() {
+    return fastHandler<CurrentUserResponse, UserProfileEntity>(
+      request: () => _remoteDataSource.getCurrentUser(),
+      mapper: (response) => response.toDomain(),
     );
   }
 

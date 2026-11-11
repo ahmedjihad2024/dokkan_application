@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dokkan/core/network/dio_factory.dart';
 
 import '../request/add_cart_item_request.dart';
 import '../request/decrement_cart_item_request.dart';
@@ -13,44 +14,48 @@ abstract class CartApiService {
 }
 
 class CartApiServiceImpl implements CartApiService {
-  final Dio _dio;
+  final DioFactory _dio;
 
   CartApiServiceImpl(this._dio);
 
   @override
   Future<Response> getCart() {
-    return _dio.get('/api/cart');
+    return _dio.request('/api/cart', method: RequestMethod.GET);
   }
 
   @override
   Future<Response> addCartItem(AddCartItemRequest request) {
-    return _dio.post(
+    return _dio.request(
       '/api/cart/items',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
   }
 
   @override
   Future<Response> updateCartItem(UpdateCartItemRequest request) {
-    return _dio.put(
+    return _dio.request(
       '/api/cart/items/${request.id}',
-      data: request.toJson(),
+      method: RequestMethod.PUT,
+      body: request.toJson(),
     );
   }
 
   @override
   Future<Response> decrementCartItem(DecrementCartItemRequest request) {
-    return _dio.post(
+    return _dio.request(
       '/api/cart/items/decrement',
-      data: request.toJson(),
+      method: RequestMethod.POST,
+      body: request.toJson(),
     );
   }
 
   @override
   Future<Response> deleteCartItem(String itemId) {
-    return _dio.delete(
+    return _dio.request(
       '/api/cart/items/$itemId',
-      data: {'id': itemId},
+      method: RequestMethod.DELETE,
+      body: {'id': itemId},
     );
   }
 }
